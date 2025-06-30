@@ -10,4 +10,8 @@
     <string name="password_hint">Password</string>
     <string name="display_name_hint">Display Name</string>
     <string name="update_name">Update Name</string>
+    <!-- Workout names -->
+    <string name="workout_name_1">Sun Salutation</string>
+    <string name="workout_name_2">Warrior Flow</string>
+    <string name="workout_name_3">Balance Basics</string>
 </resources>
