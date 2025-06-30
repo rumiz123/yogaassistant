@@ -2,7 +2,7 @@
     <string name="app_name">Yoga Helper</string>
     <string name="title_home">Account</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_workout">Workout</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="email_hint">Email</string>

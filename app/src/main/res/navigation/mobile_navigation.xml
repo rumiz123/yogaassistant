@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.rumiznellasery.yogahelper.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_workout"
+        android:name="com.rumiznellasery.yogahelper.ui.workout.WorkoutFragment"
+        android:label="@string/title_workout"
+        tools:layout="@layout/fragment_workout" />
 </navigation>
