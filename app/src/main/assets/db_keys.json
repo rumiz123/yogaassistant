@@ -1,0 +1,8 @@
+{
+  "database_url": "YOUR_DB_URL",
+  "users": "users",
+  "displayName": "displayName",
+  "workouts": "workouts",
+  "score": "score",
+  "level": "level"
+}

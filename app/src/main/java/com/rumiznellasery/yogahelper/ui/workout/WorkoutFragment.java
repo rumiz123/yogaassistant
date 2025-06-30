@@ -13,6 +13,12 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.rumiznellasery.yogahelper.databinding.FragmentWorkoutBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.rumiznellasery.yogahelper.data.DbKeys;
 
 public class WorkoutFragment extends Fragment {
 
@@ -31,6 +37,15 @@ public class WorkoutFragment extends Fragment {
             int workouts = prefs.getInt("workouts", 0) + 1;
             int calories = prefs.getInt("calories", 0) + 50;
             prefs.edit().putInt("workouts", workouts).putInt("calories", calories).putInt("streak", workouts).apply();
+
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                DbKeys keys = DbKeys.get(requireContext());
+                DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                        .getReference(keys.users).child(currentUser.getUid());
+                ref.child(keys.workouts).setValue(ServerValue.increment(1));
+                ref.child(keys.score).setValue(ServerValue.increment(1));
+            }
 
             Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.temp.TempActivity.class);
             startActivity(intent);

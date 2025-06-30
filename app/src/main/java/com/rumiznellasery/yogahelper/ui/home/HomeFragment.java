@@ -7,6 +7,9 @@ import android.view.ViewGroup;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.rumiznellasery.yogahelper.data.DbKeys;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -52,6 +55,10 @@ public class HomeFragment extends Fragment {
                     if (task.isSuccessful()) {
                         binding.textAccountDetails.setText(
                                 "Name: " + name + "\nEmail: " + currentUser.getEmail() + "\nUID: " + currentUser.getUid());
+                        DbKeys keys = DbKeys.get(requireContext());
+                        DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                .getReference(keys.users).child(currentUser.getUid());
+                        ref.child(keys.displayName).setValue(name);
                     }
                 });
             }

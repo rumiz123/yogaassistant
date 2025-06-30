@@ -9,12 +9,18 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.rumiznellasery.yogahelper.data.DbKeys;
 
 public class AuthActivity extends AppCompatActivity {
 
     private FirebaseAuth auth;
     private EditText emailEditText;
     private EditText passwordEditText;
+    private EditText nameEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +31,7 @@ public class AuthActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.editTextEmail);
         passwordEditText = findViewById(R.id.editTextPassword);
+        nameEditText = findViewById(R.id.editTextDisplayName);
         Button signInButton = findViewById(R.id.buttonSignIn);
         Button signUpButton = findViewById(R.id.buttonSignUp);
 
@@ -49,6 +56,22 @@ public class AuthActivity extends AppCompatActivity {
         auth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user != null) {
+                            DbKeys keys = DbKeys.get(this);
+                            DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                    .getReference(keys.users)
+                                    .child(user.getUid());
+                            ref.child(keys.displayName).get().addOnCompleteListener(r -> {
+                                if (!r.isSuccessful() || r.getResult() == null || !r.getResult().exists()) {
+                                    String display = user.getDisplayName() == null ? "" : user.getDisplayName();
+                                    ref.child(keys.displayName).setValue(display);
+                                    ref.child(keys.workouts).setValue(0);
+                                    ref.child(keys.score).setValue(0);
+                                    ref.child(keys.level).setValue(1);
+                                }
+                            });
+                        }
                         startMain();
                     } else {
                         Toast.makeText(this, "Sign in failed", Toast.LENGTH_SHORT).show();
@@ -59,12 +82,28 @@ public class AuthActivity extends AppCompatActivity {
     private void signUp() {
         String email = emailEditText.getText().toString().trim();
         String password = passwordEditText.getText().toString().trim();
+        String name = nameEditText.getText().toString().trim();
         if (email.isEmpty() || password.isEmpty()) {
             return;
         }
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user != null && !name.isEmpty()) {
+                            UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name)
+                                    .build();
+                            user.updateProfile(req);
+                            DbKeys keys = DbKeys.get(this);
+                            DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                    .getReference(keys.users)
+                                    .child(user.getUid());
+                            ref.child(keys.displayName).setValue(name);
+                            ref.child(keys.workouts).setValue(0);
+                            ref.child(keys.score).setValue(0);
+                            ref.child(keys.level).setValue(1);
+                        }
                         startMain();
                     } else {
                         Toast.makeText(this, "Sign up failed", Toast.LENGTH_SHORT).show();
