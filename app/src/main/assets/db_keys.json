@@ -3,6 +3,9 @@
   "users": "users",
   "displayName": "displayName",
   "workouts": "workouts",
+  "totalWorkouts": "totalWorkouts",
+  "calories": "calories",
+  "streak": "streak",
   "score": "score",
   "level": "level"
 }
