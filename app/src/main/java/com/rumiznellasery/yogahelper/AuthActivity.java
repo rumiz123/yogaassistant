@@ -67,6 +67,9 @@ public class AuthActivity extends AppCompatActivity {
                                     String display = user.getDisplayName() == null ? "" : user.getDisplayName();
                                     ref.child(keys.displayName).setValue(display);
                                     ref.child(keys.workouts).setValue(0);
+                                    ref.child(keys.totalWorkouts).setValue(0);
+                                    ref.child(keys.calories).setValue(0);
+                                    ref.child(keys.streak).setValue(0);
                                     ref.child(keys.score).setValue(0);
                                     ref.child(keys.level).setValue(1);
                                 }
@@ -101,6 +104,9 @@ public class AuthActivity extends AppCompatActivity {
                                     .child(user.getUid());
                             ref.child(keys.displayName).setValue(name);
                             ref.child(keys.workouts).setValue(0);
+                            ref.child(keys.totalWorkouts).setValue(0);
+                            ref.child(keys.calories).setValue(0);
+                            ref.child(keys.streak).setValue(0);
                             ref.child(keys.score).setValue(0);
                             ref.child(keys.level).setValue(1);
                         }

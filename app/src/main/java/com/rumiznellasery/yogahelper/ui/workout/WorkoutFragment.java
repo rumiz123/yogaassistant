@@ -44,6 +44,9 @@ public class WorkoutFragment extends Fragment {
                 DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
                         .getReference(keys.users).child(currentUser.getUid());
                 ref.child(keys.workouts).setValue(ServerValue.increment(1));
+                ref.child(keys.totalWorkouts).setValue(ServerValue.increment(1));
+                ref.child(keys.calories).setValue(ServerValue.increment(50));
+                ref.child(keys.streak).setValue(ServerValue.increment(1));
                 ref.child(keys.score).setValue(ServerValue.increment(1));
             }
 

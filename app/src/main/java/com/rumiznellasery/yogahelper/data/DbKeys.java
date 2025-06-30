@@ -13,6 +13,9 @@ public class DbKeys {
     public final String users;
     public final String displayName;
     public final String workouts;
+    public final String totalWorkouts;
+    public final String calories;
+    public final String streak;
     public final String score;
     public final String level;
 
@@ -31,6 +34,9 @@ public class DbKeys {
             users = obj.getString("users");
             displayName = obj.getString("displayName");
             workouts = obj.getString("workouts");
+            totalWorkouts = obj.optString("totalWorkouts", "totalWorkouts");
+            calories = obj.optString("calories", "calories");
+            streak = obj.optString("streak", "streak");
             score = obj.getString("score");
             level = obj.getString("level");
         } catch (Exception e) {
