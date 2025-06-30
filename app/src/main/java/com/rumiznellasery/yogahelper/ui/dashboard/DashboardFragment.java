@@ -1,5 +1,6 @@
 package com.rumiznellasery.yogahelper.ui.dashboard;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +18,19 @@ public class DashboardFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
-        return binding.getRoot();
+
+        View root = binding.getRoot();
+
+        View.OnClickListener listener = v -> {
+            Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.temp.TempActivity.class);
+            startActivity(intent);
+        };
+
+        binding.buttonPlaceholder1.setOnClickListener(listener);
+        binding.buttonPlaceholder2.setOnClickListener(listener);
+        binding.buttonPlaceholder3.setOnClickListener(listener);
+
+        return root;
     }
 
     @Override
