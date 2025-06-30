@@ -11,79 +11,100 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <LinearLayout
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_box"
-            android:padding="16dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Placeholder 1"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <Button
-                android:id="@+id/button_placeholder1"
-                android:layout_width="120dp"
-                android:layout_height="48dp"
-                android:text="Start"
-                android:textColor="@color/white"
-                android:background="@drawable/button_gradient"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/workout_name_1"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
 
-        <LinearLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_placeholder1"
+                    android:layout_width="120dp"
+                    android:layout_height="48dp"
+                    android:text="Start"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_gradient"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_box"
-            android:padding="16dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Placeholder 2"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <Button
-                android:id="@+id/button_placeholder2"
-                android:layout_width="120dp"
-                android:layout_height="48dp"
-                android:text="Start"
-                android:textColor="@color/white"
-                android:background="@drawable/button_gradient"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/workout_name_2"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
 
-        <LinearLayout
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_placeholder2"
+                    android:layout_width="120dp"
+                    android:layout_height="48dp"
+                    android:text="Start"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_gradient"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/rounded_box"
-            android:padding="16dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Placeholder 3"
-                android:textColor="@color/black"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-            <Button
-                android:id="@+id/button_placeholder3"
-                android:layout_width="120dp"
-                android:layout_height="48dp"
-                android:text="Start"
-                android:textColor="@color/white"
-                android:background="@drawable/button_gradient"
-                android:layout_gravity="center_horizontal" />
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/workout_name_3"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_placeholder3"
+                    android:layout_width="120dp"
+                    android:layout_height="48dp"
+                    android:text="Start"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_gradient"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
 </ScrollView>
