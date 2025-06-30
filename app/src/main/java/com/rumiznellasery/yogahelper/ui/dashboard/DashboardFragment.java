@@ -27,8 +27,16 @@ public class DashboardFragment extends Fragment {
         int streak = prefs.getInt("streak", 0);
 
         binding.textTotalWorkouts.setText("Total workouts: " + workouts);
+        binding.progressWorkouts.setMax(100);
+        binding.progressWorkouts.setProgress(Math.min(workouts, 100));
+
         binding.textCalories.setText("Calories burned: " + calories);
+        binding.progressCalories.setMax(1000);
+        binding.progressCalories.setProgress(Math.min(calories, 1000));
+
         binding.textStreak.setText("Streak: " + streak + " days");
+        binding.progressStreak.setMax(30);
+        binding.progressStreak.setProgress(Math.min(streak, 30));
 
         return root;
     }
