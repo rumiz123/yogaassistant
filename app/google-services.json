@@ -1,25 +1,21 @@
 {
   "project_info": {
-    "project_number": "YOUR_PROJECT_NUMBER",
-    "project_id": "YOUR_PROJECT_ID"
+    "project_number": "592210117580",
+    "project_id": "yogahelper-7f226",
+    "storage_bucket": "yogahelper-7f226.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "YOUR_APP_ID",
+        "mobilesdk_app_id": "1:592210117580:android:b69fddf2f700bde1f79369",
         "android_client_info": {
           "package_name": "com.rumiznellasery.yogahelper"
         }
       },
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "YOUR_API_KEY"
-        }
-      ],
-      "oauth_client": [
-        {
-          "client_id": "YOUR_OAUTH_CLIENT_ID",
-          "client_type": 3
+          "current_key": "AIzaSyAjwpURgJrbpc1NyEkFg9QKhBoBJHHzdk8"
         }
       ],
       "services": {
