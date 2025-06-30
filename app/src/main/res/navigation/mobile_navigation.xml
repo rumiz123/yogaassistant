@@ -22,4 +22,10 @@
         android:name="com.rumiznellasery.yogahelper.ui.workout.WorkoutFragment"
         android:label="@string/title_workout"
         tools:layout="@layout/fragment_workout" />
+
+    <fragment
+        android:id="@+id/navigation_leaderboard"
+        android:name="com.rumiznellasery.yogahelper.ui.leaderboard.LeaderboardFragment"
+        android:label="@string/title_leaderboard"
+        tools:layout="@layout/fragment_leaderboard" />
 </navigation>

@@ -1,6 +1,8 @@
 package com.rumiznellasery.yogahelper.ui.workout;
 
 import android.content.Intent;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,11 @@ public class WorkoutFragment extends Fragment {
         View root = binding.getRoot();
 
         View.OnClickListener listener = v -> {
+            SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+            int workouts = prefs.getInt("workouts", 0) + 1;
+            int calories = prefs.getInt("calories", 0) + 50;
+            prefs.edit().putInt("workouts", workouts).putInt("calories", calories).putInt("streak", workouts).apply();
+
             Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.temp.TempActivity.class);
             startActivity(intent);
         };
