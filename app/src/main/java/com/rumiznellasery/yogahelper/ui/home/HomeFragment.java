@@ -1,5 +1,6 @@
 package com.rumiznellasery.yogahelper.ui.home;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.rumiznellasery.yogahelper.AuthActivity;
 import com.rumiznellasery.yogahelper.data.DbKeys;
 
 import androidx.annotation.NonNull;
@@ -31,37 +33,60 @@ public class HomeFragment extends Fragment {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            StringBuilder sb = new StringBuilder();
-            if (user.getDisplayName() != null) {
-                sb.append("Name: ").append(user.getDisplayName()).append('\n');
-                binding.editDisplayName.setText(user.getDisplayName());
+            // Display name
+            if (user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
+                binding.textDisplayName.setText(user.getDisplayName());
+            } else {
+                binding.textDisplayName.setText("User");
             }
-            if (user.getEmail() != null) sb.append("Email: ").append(user.getEmail()).append('\n');
-            if (user.getPhoneNumber() != null) sb.append("Phone: ").append(user.getPhoneNumber()).append('\n');
-            sb.append("UID: ").append(user.getUid());
-            binding.textAccountDetails.setText(sb.toString());
+            
+            // Display UID
+            binding.textUserId.setText(user.getUid());
         } else {
-            binding.textAccountDetails.setText("No account data");
+            binding.textDisplayName.setText("No account data");
+            binding.textUserId.setText("");
         }
 
-        binding.buttonUpdateName.setOnClickListener(v -> {
-            String name = binding.editDisplayName.getText().toString().trim();
-            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-            if (currentUser != null && !name.isEmpty()) {
-                UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(name)
-                        .build();
-                currentUser.updateProfile(request).addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        binding.textAccountDetails.setText(
-                                "Name: " + name + "\nEmail: " + currentUser.getEmail() + "\nUID: " + currentUser.getUid());
-                        DbKeys keys = DbKeys.get(requireContext());
-                        DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
-                                .getReference(keys.users).child(currentUser.getUid());
-                        ref.child(keys.displayName).setValue(name);
+        binding.iconEditName.setOnClickListener(v -> {
+            // Show dialog to edit name
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+            builder.setTitle("Edit Name");
+            
+            final android.widget.EditText input = new android.widget.EditText(requireContext());
+            input.setText(binding.textDisplayName.getText().toString());
+            builder.setView(input);
+            
+            builder.setPositiveButton("Update", (dialog, which) -> {
+                String newName = input.getText().toString().trim();
+                if (!newName.isEmpty()) {
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (currentUser != null) {
+                        UserProfileChangeRequest request = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(newName)
+                                .build();
+                        currentUser.updateProfile(request).addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                binding.textDisplayName.setText(newName);
+                                DbKeys keys = DbKeys.get(requireContext());
+                                DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                        .getReference(keys.users).child(currentUser.getUid());
+                                ref.child(keys.displayName).setValue(newName);
+                            }
+                        });
                     }
-                });
-            }
+                }
+            });
+            
+            builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+            builder.show();
+        });
+
+        binding.buttonLogout.setOnClickListener(v -> {
+            android.widget.Toast.makeText(requireContext(), "Logout button clicked!", android.widget.Toast.LENGTH_SHORT).show();
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(requireContext(), AuthActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         });
 
         return root;
