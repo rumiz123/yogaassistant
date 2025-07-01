@@ -31,14 +31,26 @@
                     android:scaleType="centerCrop"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/workout_name_1"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_dashboard_black_24dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/workout_name_1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_placeholder1"
@@ -71,14 +83,26 @@
                     android:scaleType="centerCrop"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/workout_name_2"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_account_circle_black_24dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/workout_name_2"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_placeholder2"
@@ -110,14 +134,26 @@
                     android:scaleType="centerCrop"
                     android:layout_marginBottom="8dp" />
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/workout_name_3"
-                    android:textColor="@color/white"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="8dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginEnd="8dp"
+                        android:src="@drawable/ic_home_black_24dp" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/workout_name_3"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_placeholder3"
