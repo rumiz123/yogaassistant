@@ -1,5 +1,5 @@
 {
-  "database_url": "YOUR_DB_URL",
+  "database_url": "https://yogahelper-7f226-default-rtdb.firebaseio.com/",
   "users": "users",
   "displayName": "displayName",
   "workouts": "workouts",
