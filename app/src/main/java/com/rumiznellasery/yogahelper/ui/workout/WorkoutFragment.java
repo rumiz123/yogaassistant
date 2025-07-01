@@ -38,7 +38,6 @@ public class WorkoutFragment extends Fragment {
         View root = binding.getRoot();
 
         // Hide/show bottom nav bar on scroll removed to keep navigation visible
-        // and anchored at the bottom.
 
         View.OnClickListener startWorkoutListener = v -> {
             SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
