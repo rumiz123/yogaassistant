@@ -16,4 +16,5 @@
     <color name="medal_bronze">#CD7F32</color>
     <!-- default/tint target for other ranks -->
     <color name="medal_bg">#333333</color>
+    <color name="progress_purple">#A259FF</color>
 </resources>

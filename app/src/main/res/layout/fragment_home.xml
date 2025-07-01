@@ -53,6 +53,50 @@
             android:textColor="@color/white"
             android:textSize="16sp" />
 
+        <!-- Email -->
+        <TextView
+            android:id="@+id/text_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <!-- Email Verified -->
+        <TextView
+            android:id="@+id/text_email_verified"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:alpha="0.8"
+            android:textColor="@color/white"
+            android:textSize="16sp" />
+
+        <!-- Send Verification Button -->
+        <Button
+            android:id="@+id/button_send_verification"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/button_gradient"
+            android:elevation="6dp"
+            android:padding="8dp"
+            android:text="VERIFY EMAIL"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
+        <!-- Provider ID -->
+        <TextView
+            android:id="@+id/text_provider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:alpha="0.8"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
     </LinearLayout>
 
     <!-- Spacer to push logout button to bottom -->
@@ -63,7 +107,7 @@
 
     <!-- Logout Button -->
     <Button
-        android:id="@+id/buttonLogout"
+        android:id="@+id/button_logout"
         android:layout_width="237dp"
         android:layout_height="50dp"
         android:layout_gravity="center"

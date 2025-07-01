@@ -1,0 +1,12 @@
+{
+  "database_url": "https://yogahelper-7f226-default-rtdb.firebaseio.com/",
+  "users": "users",
+  "displayName": "displayName",
+  "workouts": "workouts",
+  "totalWorkouts": "totalWorkouts",
+  "calories": "calories",
+  "streak": "streak",
+  "score": "score",
+  "level": "level",
+  "emailVerified": "emailVerified"
+}
