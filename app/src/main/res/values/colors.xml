@@ -10,4 +10,5 @@
     <!-- Gradient used for backgrounds and buttons -->
     <color name="gradient_start">#FF6200EE</color>
     <color name="gradient_end">#FF03DAC5</color>
+    <color name="progress_purple">#A259FF</color>
 </resources>

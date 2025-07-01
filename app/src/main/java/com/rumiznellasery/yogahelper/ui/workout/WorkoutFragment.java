@@ -19,6 +19,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.rumiznellasery.yogahelper.data.DbKeys;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Calendar;
 
 public class WorkoutFragment extends Fragment {
 
@@ -36,7 +40,34 @@ public class WorkoutFragment extends Fragment {
             SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
             int workouts = prefs.getInt("workouts", 0) + 1;
             int calories = prefs.getInt("calories", 0) + 50;
-            prefs.edit().putInt("workouts", workouts).putInt("calories", calories).putInt("streak", workouts).apply();
+
+            // --- Streak logic ---
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            String today = sdf.format(new Date());
+            String lastWorkoutDate = prefs.getString("last_workout_date", "");
+            int streak = prefs.getInt("streak", 0);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            String yesterday = sdf.format(cal.getTime());
+            boolean streakIncreased = false;
+            if (lastWorkoutDate.equals(today)) {
+                // Already logged today, do not increment streak
+            } else if (lastWorkoutDate.equals(yesterday)) {
+                // Consecutive day, increment streak
+                streak += 1;
+                streakIncreased = true;
+            } else {
+                // Missed a day or first workout, reset streak
+                streak = 1;
+                streakIncreased = true;
+            }
+            // Save new stats
+            prefs.edit()
+                .putInt("workouts", workouts)
+                .putInt("calories", calories)
+                .putInt("streak", streak)
+                .putString("last_workout_date", today)
+                .apply();
 
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             if (currentUser != null) {
@@ -46,8 +77,24 @@ public class WorkoutFragment extends Fragment {
                 ref.child(keys.workouts).setValue(ServerValue.increment(1));
                 ref.child(keys.totalWorkouts).setValue(ServerValue.increment(1));
                 ref.child(keys.calories).setValue(ServerValue.increment(50));
-                ref.child(keys.streak).setValue(ServerValue.increment(1));
+                if (streakIncreased) {
+                    ref.child(keys.streak).setValue(streak);
+                }
                 ref.child(keys.score).setValue(ServerValue.increment(1));
+            }
+
+            // --- Weekly workouts logic ---
+            Calendar calendar = Calendar.getInstance();
+            int currentWeek = calendar.get(Calendar.WEEK_OF_YEAR);
+            int savedWeek = prefs.getInt("workouts_week", -1);
+            int workoutsThisWeek = prefs.getInt("workouts_this_week", 0);
+            if (savedWeek != currentWeek) {
+                // New week, reset
+                workoutsThisWeek = 1;
+                prefs.edit().putInt("workouts_week", currentWeek).putInt("workouts_this_week", 1).apply();
+            } else {
+                workoutsThisWeek += 1;
+                prefs.edit().putInt("workouts_this_week", workoutsThisWeek).apply();
             }
 
             Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.temp.TempActivity.class);

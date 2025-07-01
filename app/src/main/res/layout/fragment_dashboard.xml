@@ -1,61 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_gradient">
 
-    <LinearLayout
-        android:id="@+id/layout_stats"
-        android:layout_width="0dp"
+    <!-- Welcome Message -->
+    <TextView
+        android:id="@+id/text_welcome"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="32dp"
+        android:text="Welcome back!"
+        android:textColor="@color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:fontFamily="sans-serif-medium"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="36dp"/>
+
+    <!-- Calories Burned Circular Progress -->
+
+    <!-- Streak with Fire Icon -->
+    <FrameLayout
+        android:id="@+id/frame_calories"
+        android:layout_width="263dp"
+        android:layout_height="247dp"
+        android:layout_marginTop="24dp"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.561"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_welcome">
+
+        <!-- Material CircularProgressIndicator, progress/max set in code -->
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/circle_calories"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:indicatorColor="@color/progress_purple"
+            app:indicatorSize="200dp"
+            app:showAnimationBehavior="none"
+            app:trackColor="@color/white"
+            app:trackThickness="16dp" />
+
+        <TextView
+            android:id="@+id/text_calories_center"
+            android:layout_width="210dp"
+            android:layout_height="191dp"
+            android:gravity="center"
+            android:text="0\ncalories"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/layout_streak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/frame_calories"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp">
+
+        <ImageView
+            android:id="@+id/icon_fire"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_fire"
+            android:contentDescription="Streak"/>
+        <TextView
+            android:id="@+id/text_streak_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:textColor="@color/white"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- Workouts Done This Week Bar -->
+    <TextView
+        android:id="@+id/text_workouts_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Workouts this week"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/layout_streak"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="60dp"/>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_workouts"
+        android:layout_width="0dp"
+        android:layout_height="18dp"
+        app:layout_constraintTop_toBottomOf="@id/text_workouts_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        app:trackThickness="18dp"
+        app:indicatorColor="@color/progress_purple"
+        app:trackColor="@color/white"/>
+
+    <!-- Workouts done count -->
+    <TextView
+        android:id="@+id/text_workouts_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/progress_workouts"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:text="0/10 workouts"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
+
+    <!-- Reset Bars Button (for testing) -->
+    <Button
+        android:id="@+id/button_reset_bars"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset Bars"
+        android:textSize="14sp"
+        android:background="@drawable/white_button"
+        android:textColor="@color/progress_purple"
+        android:layout_marginBottom="90dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <TextView
-            android:id="@+id/text_total_workouts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/white"
-            android:textSize="20sp"/>
-        <ProgressBar
-            android:id="@+id/progress_workouts"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/text_calories"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textSize="20sp"/>
-        <ProgressBar
-            android:id="@+id/progress_calories"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
-
-        <TextView
-            android:id="@+id/text_streak"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/white"
-            android:textSize="20sp"/>
-        <ProgressBar
-            android:id="@+id/progress_streak"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
-    </LinearLayout>
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
