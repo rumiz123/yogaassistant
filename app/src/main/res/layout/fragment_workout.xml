@@ -24,11 +24,19 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="8dp" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/workout_name_1"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -56,11 +64,19 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="8dp" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/workout_name_2"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -87,11 +103,19 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    android:scaleType="centerCrop"
+                    android:layout_marginBottom="8dp" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/workout_name_3"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
