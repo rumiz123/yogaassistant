@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ScrollView;
+import android.view.ViewTreeObserver;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -23,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Calendar;
+import com.rumiznellasery.yogahelper.R;
 
 public class WorkoutFragment extends Fragment {
 
@@ -35,6 +39,25 @@ public class WorkoutFragment extends Fragment {
 
         binding = FragmentWorkoutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+
+        // Hide/show bottom nav bar on scroll
+        ScrollView scrollView = root.findViewById(R.id.scrollView);
+        BottomNavigationView navView = getActivity().findViewById(R.id.nav_view);
+        scrollView.getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
+            int lastScrollY = 0;
+            @Override
+            public void onScrollChanged() {
+                int scrollY = scrollView.getScrollY();
+                if (scrollY > lastScrollY) {
+                    // Scrolling down
+                    navView.animate().translationY(navView.getHeight()).setDuration(200);
+                } else if (scrollY < lastScrollY) {
+                    // Scrolling up
+                    navView.animate().translationY(0).setDuration(200);
+                }
+                lastScrollY = scrollY;
+            }
+        });
 
         View.OnClickListener startWorkoutListener = v -> {
             SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
