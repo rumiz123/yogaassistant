@@ -93,22 +93,30 @@ public class AuthActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
-                        if (user != null && !name.isEmpty()) {
-                            UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(name)
-                                    .build();
-                            user.updateProfile(req);
-                            DbKeys keys = DbKeys.get(this);
-                            DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
-                                    .getReference(keys.users)
-                                    .child(user.getUid());
-                            ref.child(keys.displayName).setValue(name);
-                            ref.child(keys.workouts).setValue(0);
-                            ref.child(keys.totalWorkouts).setValue(0);
-                            ref.child(keys.calories).setValue(0);
-                            ref.child(keys.streak).setValue(0);
-                            ref.child(keys.score).setValue(0);
-                            ref.child(keys.level).setValue(1);
+                        if (user != null) {
+                            if (!name.isEmpty()) {
+                                UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(name)
+                                        .build();
+                                user.updateProfile(req);
+                                DbKeys keys = DbKeys.get(this);
+                                DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                        .getReference(keys.users)
+                                        .child(user.getUid());
+                                ref.child(keys.displayName).setValue(name);
+                                ref.child(keys.workouts).setValue(0);
+                                ref.child(keys.totalWorkouts).setValue(0);
+                                ref.child(keys.calories).setValue(0);
+                                ref.child(keys.streak).setValue(0);
+                                ref.child(keys.score).setValue(0);
+                                ref.child(keys.level).setValue(1);
+                            }
+
+                            user.sendEmailVerification().addOnCompleteListener(vt -> {
+                                if (vt.isSuccessful()) {
+                                    Toast.makeText(this, "Verification email sent", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                         startMain();
                     } else {
