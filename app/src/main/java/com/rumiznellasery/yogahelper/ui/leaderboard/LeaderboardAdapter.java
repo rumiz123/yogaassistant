@@ -50,6 +50,7 @@ public class LeaderboardAdapter
 
     // bind name, level & score
     h.tvName.setText(e.name != null ? e.name : "");
+    h.ivVerified.setVisibility(e.verified ? View.VISIBLE : View.GONE);
     h.tvDetails.setText("Level " + e.level);
     h.tvScore.setText(String.valueOf(e.score));
 
@@ -64,15 +65,16 @@ public class LeaderboardAdapter
 
   static class VH extends RecyclerView.ViewHolder {
     final TextView tvRank, tvName, tvDetails, tvScore;
-    final ImageView ivAvatar;
+    final ImageView ivAvatar, ivVerified;
 
     VH(View v) {
       super(v);
-      tvRank    = v.findViewById(R.id.tvRank);
-      tvName    = v.findViewById(R.id.tvName);
-      tvDetails = v.findViewById(R.id.tvDetails);
-      tvScore   = v.findViewById(R.id.tvScore);
-      ivAvatar  = v.findViewById(R.id.ivAvatar);
+      tvRank     = v.findViewById(R.id.tvRank);
+      tvName     = v.findViewById(R.id.tvName);
+      tvDetails  = v.findViewById(R.id.tvDetails);
+      tvScore    = v.findViewById(R.id.tvScore);
+      ivAvatar   = v.findViewById(R.id.ivAvatar);
+      ivVerified = v.findViewById(R.id.ivVerified);
     }
   }
 }
