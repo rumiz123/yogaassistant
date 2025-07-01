@@ -9,4 +9,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gradient_start">#000000</color>
     <color name="gradient_end">#000000</color>
+
+    <!-- leaderboard medal colors -->
+    <color name="medal_gold">#FFD700</color>
+    <color name="medal_silver">#C0C0C0</color>
+    <color name="medal_bronze">#CD7F32</color>
+    <!-- default/tint target for other ranks -->
+    <color name="medal_bg">#333333</color>
 </resources>

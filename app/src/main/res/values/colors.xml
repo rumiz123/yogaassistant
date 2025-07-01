@@ -7,8 +7,14 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <!-- Gradient used for backgrounds and buttons -->
-    <color name="gradient_start">#FF6200EE</color>
-    <color name="gradient_end">#FF03DAC5</color>
+    <color name="gradient_start">#FFFFFFFF</color>
+    <color name="gradient_end">#FFFFFFFF</color>
+
+    <!-- leaderboard medal colors -->
+    <color name="medal_gold">#FFD700</color>
+    <color name="medal_silver">#C0C0C0</color>
+    <color name="medal_bronze">#CD7F32</color>
+    <!-- default/tint-target for non-top3 ranks -->
+    <color name="medal_bg">#333333</color>
     <color name="progress_purple">#A259FF</color>
 </resources>

@@ -1,18 +1,15 @@
 package com.rumiznellasery.yogahelper.ui.leaderboard;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,55 +23,66 @@ import java.util.Collections;
 import java.util.List;
 
 public class LeaderboardFragment extends Fragment {
-
     private FragmentLeaderboardBinding binding;
+    private LeaderboardAdapter adapter;
+    private final List<Entry> entries = new ArrayList<>();
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             ViewGroup container,
+                             Bundle savedInstanceState) {
         binding = FragmentLeaderboardBinding.inflate(inflater, container, false);
-        View root = binding.getRoot();
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        // setup RecyclerView
+        RecyclerView rv = binding.rvLeaderboard;
+        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        adapter = new LeaderboardAdapter(requireContext(), entries);
+        rv.setAdapter(adapter);
+
+        // pull-to-refresh
+        binding.swipeRefresh.setOnRefreshListener(this::loadData);
+        loadData();
+
+        return binding.getRoot();
+    }
+
+    private void loadData() {
+        binding.swipeRefresh.setRefreshing(true);
         DbKeys keys = DbKeys.get(requireContext());
-        DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl).getReference(keys.users);
-        LinearLayout containerLayout = binding.containerRows;
-        containerLayout.removeAllViews();
+        DatabaseReference ref = FirebaseDatabase
+            .getInstance(keys.databaseUrl)
+            .getReference(keys.users);
 
-        ref.orderByChild(keys.score).addListenerForSingleValueEvent(new ValueEventListener() {
+        ref.orderByChild(keys.score)
+           .addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                List<Entry> entries = new ArrayList<>();
-                for (DataSnapshot child : snapshot.getChildren()) {
-                    String name = child.child(keys.displayName).getValue(String.class);
-                    Long score = child.child(keys.score).getValue(Long.class);
-                    Long level = child.child(keys.level).getValue(Long.class);
+            public void onDataChange(@NonNull DataSnapshot snap) {
+                entries.clear();
+                for (DataSnapshot c : snap.getChildren()) {
                     Entry e = new Entry();
-                    e.name = name == null ? "" : name;
-                    e.score = score == null ? 0 : score.intValue();
-                    e.level = level == null ? 1 : level.intValue();
+                    e.name  = c.child(keys.displayName)
+                               .getValue(String.class);
+                    e.score = safeInt(c.child(keys.score)
+                               .getValue(Long.class));
+                    e.level = safeInt(c.child(keys.level)
+                               .getValue(Long.class));
                     entries.add(e);
                 }
-                Collections.sort(entries, (a, b) -> b.score - a.score);
-                containerLayout.removeAllViews();
-                int rank = 1;
-                for (Entry e : entries) {
-                    TextView tv = new TextView(requireContext());
-                    tv.setTextColor(getResources().getColor(android.R.color.white));
-                    String text = rank + ". " + e.name + " - Level " + e.level + " (" + e.score + ")";
-                    tv.setText(text);
-                    tv.setTextSize(18);
-                    tv.setPadding(0, 8, 0, 8);
-                    containerLayout.addView(tv);
-                    rank++;
-                }
+                // show highest score first
+                Collections.reverse(entries);
+                adapter.notifyDataSetChanged();
+                binding.swipeRefresh.setRefreshing(false);
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+            public void onCancelled(@NonNull DatabaseError err) {
+                binding.swipeRefresh.setRefreshing(false);
             }
         });
+    }
 
-        return root;
+    private int safeInt(Long v) {
+        return v == null ? 0 : v.intValue();
     }
 
     @Override
@@ -83,7 +91,8 @@ public class LeaderboardFragment extends Fragment {
         binding = null;
     }
 
-    private static class Entry {
+    // simple data holder for each row
+    static class Entry {
         String name;
         int score;
         int level;
