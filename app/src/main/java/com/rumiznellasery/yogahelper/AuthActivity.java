@@ -104,6 +104,8 @@ public class AuthActivity extends AppCompatActivity {
                                     ref.child(keys.score).setValue(0);
                                     ref.child(keys.level).setValue(1);
                                 }
+                                // update verification status on every sign-in
+                                ref.child(keys.emailVerified).setValue(user.isEmailVerified());
                             });
                         }
                         startMain();
@@ -140,6 +142,8 @@ public class AuthActivity extends AppCompatActivity {
                                 ref.child(keys.score).setValue(0);
                                 ref.child(keys.level).setValue(1);
                             }
+                            // mark Google users as verified
+                            ref.child(keys.emailVerified).setValue(true);
                         });
                     }
                     startMain();
@@ -164,15 +168,15 @@ public class AuthActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = auth.getCurrentUser();
                         if (user != null) {
+                            DbKeys keys = DbKeys.get(this);
+                            DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                                    .getReference(keys.users)
+                                    .child(user.getUid());
                             if (!name.isEmpty()) {
                                 UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
                                         .setDisplayName(name)
                                         .build();
                                 user.updateProfile(req);
-                                DbKeys keys = DbKeys.get(this);
-                                DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
-                                        .getReference(keys.users)
-                                        .child(user.getUid());
                                 ref.child(keys.displayName).setValue(name);
                                 ref.child(keys.workouts).setValue(0);
                                 ref.child(keys.totalWorkouts).setValue(0);
@@ -181,6 +185,8 @@ public class AuthActivity extends AppCompatActivity {
                                 ref.child(keys.score).setValue(0);
                                 ref.child(keys.level).setValue(1);
                             }
+                            // mark account as not yet verified
+                            ref.child(keys.emailVerified).setValue(false);
 
                             user.sendEmailVerification().addOnCompleteListener(vt -> {
                                 if (vt.isSuccessful()) {
