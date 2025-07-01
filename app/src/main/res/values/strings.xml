@@ -6,6 +6,7 @@
     <string name="title_leaderboard">Leaderboard</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
+    <string name="sign_in_google">Sign in with Google</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="display_name_hint">Display Name</string>
