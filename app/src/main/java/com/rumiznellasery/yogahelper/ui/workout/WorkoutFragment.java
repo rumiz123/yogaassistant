@@ -32,7 +32,7 @@ public class WorkoutFragment extends Fragment {
         binding = FragmentWorkoutBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        View.OnClickListener listener = v -> {
+        View.OnClickListener updateStatsListener = v -> {
             SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
             int workouts = prefs.getInt("workouts", 0) + 1;
             int calories = prefs.getInt("calories", 0) + 50;
@@ -54,9 +54,15 @@ public class WorkoutFragment extends Fragment {
             startActivity(intent);
         };
 
-        binding.buttonPlaceholder1.setOnClickListener(listener);
-        binding.buttonPlaceholder2.setOnClickListener(listener);
-        binding.buttonPlaceholder3.setOnClickListener(listener);
+        View.OnClickListener cameraListener = v -> {
+            updateStatsListener.onClick(v);
+            Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.camera.CameraActivity.class);
+            startActivity(intent);
+        };
+
+        binding.buttonPlaceholder1.setOnClickListener(cameraListener);
+        binding.buttonPlaceholder2.setOnClickListener(updateStatsListener);
+        binding.buttonPlaceholder3.setOnClickListener(updateStatsListener);
         return root;
     }
 
