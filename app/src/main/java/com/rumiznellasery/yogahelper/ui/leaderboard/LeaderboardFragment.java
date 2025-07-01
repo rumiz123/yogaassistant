@@ -66,6 +66,9 @@ public class LeaderboardFragment extends Fragment {
                                .getValue(Long.class));
                     e.level = safeInt(c.child(keys.level)
                                .getValue(Long.class));
+                    Boolean verified = c.child(keys.emailVerified)
+                                         .getValue(Boolean.class);
+                    e.verified = verified != null && verified;
                     entries.add(e);
                 }
                 // show highest score first
@@ -96,5 +99,6 @@ public class LeaderboardFragment extends Fragment {
         String name;
         int score;
         int level;
+        boolean verified;
     }
 }
