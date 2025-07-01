@@ -1,12 +1,16 @@
 package com.rumiznellasery.yogahelper.ui.home;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -23,6 +27,23 @@ import com.rumiznellasery.yogahelper.databinding.FragmentHomeBinding;
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private ActivityResultLauncher<Intent> pickImageLauncher;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // prepare the image-picker launcher
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        if (uri != null) updateProfilePicture(uri);
+                    }
+                }
+        );
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -32,41 +53,46 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        // default: hide the verified icon
+        // hide verified icon until we know state
         binding.iconVerified.setVisibility(View.GONE);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
-            // reload to ensure emailVerified is up-to-date
+            // load existing photo
+            Uri photoUri = user.getPhotoUrl();
+            if (photoUri != null) {
+                binding.imageProfile.setImageURI(photoUri);
+            }
+
+            // reload for up-to-date emailVerified
             user.reload().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    FirebaseUser fresh = FirebaseAuth.getInstance().getCurrentUser();
-                    if (fresh != null && fresh.isEmailVerified()) {
-                        binding.iconVerified.setVisibility(View.VISIBLE);
-                    }
+                FirebaseUser fresh = FirebaseAuth.getInstance().getCurrentUser();
+                if (fresh != null && fresh.isEmailVerified()) {
+                    binding.iconVerified.setVisibility(View.VISIBLE);
                 }
             });
 
-            // Display name
-            String displayName = user.getDisplayName();
+            // name, UID, email
+            String name = user.getDisplayName();
             binding.textDisplayName.setText(
-                    (displayName != null && !displayName.isEmpty()) ? displayName : "User"
+                    (name != null && !name.isEmpty()) ? name : "User"
             );
-
-            // UID
             binding.textUserId.setText("UID: " + user.getUid());
-
-            // Email
-            String email = user.getEmail();
-            binding.textEmail.setText("Email: " + (email != null ? email : "N/A"));
+            binding.textEmail.setText("Email: " + (user.getEmail() != null ? user.getEmail() : "N/A"));
         } else {
-            // No user logged in
             binding.textDisplayName.setText("No account data");
             binding.textUserId.setText("");
             binding.textEmail.setText("");
         }
 
-        // Edit display name
+        // tap avatar → pick new image
+        binding.imageProfile.setOnClickListener(v -> {
+            Intent pick = new Intent(Intent.ACTION_GET_CONTENT);
+            pick.setType("image/*");
+            pickImageLauncher.launch(pick);
+        });
+
+        // edit name…
         binding.iconEditName.setOnClickListener(v -> {
             android.app.AlertDialog.Builder builder =
                     new android.app.AlertDialog.Builder(requireContext());
@@ -79,24 +105,22 @@ public class HomeFragment extends Fragment {
             builder.setPositiveButton("Update", (dialog, which) -> {
                 String newName = input.getText().toString().trim();
                 if (newName.isEmpty()) return;
+                FirebaseUser curr = FirebaseAuth.getInstance().getCurrentUser();
+                if (curr == null) return;
 
-                FirebaseUser current = FirebaseAuth.getInstance().getCurrentUser();
-                if (current == null) return;
+                UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(newName)
+                        .build();
 
-                UserProfileChangeRequest req =
-                        new UserProfileChangeRequest.Builder()
-                                .setDisplayName(newName)
-                                .build();
-
-                current.updateProfile(req).addOnCompleteListener(t -> {
+                curr.updateProfile(req).addOnCompleteListener(t -> {
                     if (t.isSuccessful()) {
                         binding.textDisplayName.setText(newName);
-                        // update in Realtime Database
+                        // also save to Realtime DB if desired
                         DbKeys keys = DbKeys.get(requireContext());
                         DatabaseReference ref = FirebaseDatabase
                                 .getInstance(keys.databaseUrl)
                                 .getReference(keys.users)
-                                .child(current.getUid());
+                                .child(curr.getUid());
                         ref.child(keys.displayName).setValue(newName);
                     } else {
                         Toast.makeText(requireContext(),
@@ -104,21 +128,50 @@ public class HomeFragment extends Fragment {
                     }
                 });
             });
+
             builder.setNegativeButton("Cancel", (d, w) -> d.cancel());
             builder.show();
         });
 
-        // Logout
+        // logout…
         binding.buttonLogout.setOnClickListener(v -> {
             Toast.makeText(requireContext(),
                     "Logging out…", Toast.LENGTH_SHORT).show();
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(requireContext(), AuthActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
+            Intent i = new Intent(requireContext(), AuthActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i);
         });
 
         return root;
+    }
+
+    private void updateProfilePicture(Uri uri) {
+        FirebaseUser curr = FirebaseAuth.getInstance().getCurrentUser();
+        if (curr == null) return;
+
+        UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(uri)
+                .build();
+
+        curr.updateProfile(req).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                binding.imageProfile.setImageURI(uri);
+                // save URL in Realtime DB if you like:
+                DbKeys keys = DbKeys.get(requireContext());
+                DatabaseReference ref = FirebaseDatabase
+                        .getInstance(keys.databaseUrl)
+                        .getReference(keys.users)
+                        .child(curr.getUid());
+                ref.child("photoUrl").setValue(uri.toString());
+
+                Toast.makeText(requireContext(),
+                        "Profile picture updated", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(),
+                        "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
