@@ -4,6 +4,9 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
+import org.pytorch.Module;
+import org.pytorch.LiteModuleLoader;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.camera.core.CameraSelector;
@@ -14,20 +17,29 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.rumiznellasery.yogahelper.R;
+import com.rumiznellasery.yogahelper.camera.AssetUtils;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import java.util.concurrent.ExecutionException;
+import java.io.IOException;
 
 public class CameraActivity extends AppCompatActivity {
     private static final int REQUEST_CODE_PERMISSIONS = 10;
     private final String[] REQUIRED_PERMISSIONS = new String[]{Manifest.permission.CAMERA};
     private PreviewView previewView;
+    private Module module;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
         previewView = findViewById(R.id.view_finder);
+
+        try {
+            module = LiteModuleLoader.load(AssetUtils.assetFilePath(this, "yolo11s-yoga.pt"));
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading model", e);
+        }
 
         if (allPermissionsGranted()) {
             startCamera();

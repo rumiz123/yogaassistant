@@ -14,6 +14,7 @@ playServicesMaps = "19.2.0"
 playServicesAuth = "21.3.0"
 firebaseAuth = "23.2.1"
 firebaseDatabase = "21.0.0"
+pytorch = "1.13.1"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,6 +31,8 @@ play-services-maps = { group = "com.google.android.gms", name = "play-services-m
 play-services-auth = { group = "com.google.android.gms", name = "play-services-auth", version.ref = "playServicesAuth" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
+pytorch-android = { group = "org.pytorch", name = "pytorch_android", version.ref = "pytorch" }
+pytorch-android-torchvision = { group = "org.pytorch", name = "pytorch_android_torchvision", version.ref = "pytorch" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
