@@ -33,6 +33,7 @@ firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 pytorch-android = { group = "org.pytorch", name = "pytorch_android", version.ref = "pytorch" }
 pytorch-android-torchvision = { group = "org.pytorch", name = "pytorch_android_torchvision", version.ref = "pytorch" }
+pytorch-android-lite = { group = "org.pytorch", name = "pytorch_android_lite", version.ref = "pytorch" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
