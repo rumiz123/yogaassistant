@@ -3,13 +3,8 @@
   <component name="deploymentTargetSelector">
     <selectionStates>
       <SelectionState runConfigName="app">
-<<<<<<< HEAD
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-02T02:30:21.037330400Z">
-=======
-        <option name="selectionMode" value="DIALOG" />
         <DropdownSelection timestamp="2025-06-29T22:37:26.651175100Z">
->>>>>>> parent of 95ce90d (sum changes)
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\rumiz\.android\avd\Medium_Phone.avd" />
