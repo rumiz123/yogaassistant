@@ -17,17 +17,15 @@
         <activity android:name=".temp.TempActivity" />
         <activity android:name=".camera.CameraActivity" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".AuthActivity"
             android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".AuthActivity"
-            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="false" />
