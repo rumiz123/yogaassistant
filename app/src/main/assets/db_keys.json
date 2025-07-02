@@ -7,5 +7,6 @@
   "calories": "calories",
   "streak": "streak",
   "score": "score",
-  "level": "level"
+  "level": "level",
+  "emailVerified": "emailVerified"
 }
