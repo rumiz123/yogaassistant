@@ -15,7 +15,10 @@
         android:background="@android:color/transparent"
         android:padding="8dp"
         android:layout_gravity="start"
-        android:tint="@color/white" />
+        android:tint="@color/white"
+        android:layout_marginTop="100dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="32dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -71,5 +74,25 @@
                 android:layout_marginTop="4dp" />
         </LinearLayout>
     </LinearLayout>
+
+    <!-- Spacer to push logout button to bottom -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Logout Button -->
+    <Button
+        android:id="@+id/button_logout"
+        android:layout_width="237dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/button_red_rounded"
+        android:elevation="10dp"
+        android:text="LOGOUT"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </LinearLayout> 

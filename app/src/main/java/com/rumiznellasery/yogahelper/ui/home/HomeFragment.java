@@ -25,6 +25,7 @@ import com.rumiznellasery.yogahelper.R;
 import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.databinding.FragmentHomeBinding;
 import com.rumiznellasery.yogahelper.utils.Logger;
+import com.rumiznellasery.yogahelper.ui.home.SettingsActivity;
 
 public class HomeFragment extends Fragment {
 
@@ -211,33 +212,13 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            // logout…
-            binding.buttonLogout.setOnClickListener(v -> {
-                try {
-                    Toast.makeText(requireContext(),
-                            "Logging out…", Toast.LENGTH_SHORT).show();
-                    FirebaseAuth.getInstance().signOut();
-                    Intent i = new Intent(requireContext(), AuthActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(i);
-                } catch (Exception e) {
-                    Logger.error("Error during logout in HomeFragment", e);
-                }
-            });
-
             // Add this after binding = FragmentHomeBinding.inflate(...)
             binding.buttonSettings.setOnClickListener(v -> {
                 try {
-                    // Hide bottom nav bar
-                    View navBar = requireActivity().findViewById(R.id.nav_view);
-                    if (navBar != null) navBar.setVisibility(View.GONE);
-                    requireActivity().getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(((ViewGroup) requireView().getParent()).getId(), new com.rumiznellasery.yogahelper.ui.home.SettingsFragment())
-                        .addToBackStack(null)
-                        .commit();
+                    Intent intent = new Intent(requireContext(), SettingsActivity.class);
+                    startActivity(intent);
                 } catch (Exception e) {
-                    Logger.error("Error opening SettingsFragment from HomeFragment", e);
+                    Logger.error("Error opening SettingsActivity from HomeFragment", e);
                 }
             });
 

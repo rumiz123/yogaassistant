@@ -32,6 +32,9 @@
         <activity
             android:name=".OnboardingActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.home.SettingsActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
