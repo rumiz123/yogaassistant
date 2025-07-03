@@ -25,6 +25,7 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.rumiznellasery.yogahelper.data.DbKeys;
+import com.rumiznellasery.yogahelper.utils.Logger;
 
 public class OnboardingActivity extends AppCompatActivity {
 
@@ -45,6 +46,7 @@ public class OnboardingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.info("OnboardingActivity onCreate started");
         
         // Hide the action bar
         if (getSupportActionBar() != null) {
@@ -60,9 +62,12 @@ public class OnboardingActivity extends AppCompatActivity {
                     if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
                         Uri uri = result.getData().getData();
                         if (uri != null) {
+                            Logger.info("Image selected: " + uri.toString());
                             userPhotoUrl = uri.toString();
                             updateProfilePicture(uri);
                         }
+                    } else {
+                        Logger.warn("Image picker cancelled or failed");
                     }
                 }
         );
@@ -79,6 +84,7 @@ public class OnboardingActivity extends AppCompatActivity {
 
         updateStepIndicator();
         setupButtons();
+        Logger.info("OnboardingActivity onCreate completed");
     }
 
     private void setupButtons() {
@@ -110,30 +116,35 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private boolean validateCurrentStep() {
+        Logger.info("Validating step: " + currentStep);
         switch (currentStep) {
             case 0: // Name step
                 EditText nameEdit = findViewById(R.id.nameEditText);
                 if (nameEdit != null) {
                     userName = nameEdit.getText().toString().trim();
                     if (userName.isEmpty()) {
+                        Logger.warn("Name validation failed: empty name");
                         Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
                         return false;
                     }
+                    Logger.info("Name validated: " + userName);
                 }
                 break;
             case 1: // Profile picture step
-                // Photo is optional, so always valid
+                Logger.info("Profile picture step - optional, always valid");
                 break;
             case 2: // Referral source step
                 Spinner referralSpinner = findViewById(R.id.referralSpinner);
                 if (referralSpinner != null) {
                     referralSource = referralSpinner.getSelectedItem().toString();
+                    Logger.info("Referral source selected: " + referralSource);
                 }
                 break;
             case 3: // Yoga level step
                 Spinner levelSpinner = findViewById(R.id.levelSpinner);
                 if (levelSpinner != null) {
                     yogaLevel = levelSpinner.getSelectedItem().toString();
+                    Logger.info("Yoga level selected: " + yogaLevel);
                 }
                 break;
         }
@@ -160,9 +171,13 @@ public class OnboardingActivity extends AppCompatActivity {
     }
 
     private void completeOnboarding() {
+        Logger.info("Completing onboarding process");
         // Save all data to database
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user == null) return;
+        if (user == null) {
+            Logger.error("No user found during onboarding completion");
+            return;
+        }
 
         DbKeys keys = DbKeys.get(this);
         DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
@@ -178,6 +193,7 @@ public class OnboardingActivity extends AppCompatActivity {
         }
 
         // Save to database
+        Logger.info("Saving user data to database");
         ref.child(keys.displayName).setValue(userName);
         if (!userPhotoUrl.isEmpty()) {
             ref.child("photoUrl").setValue(userPhotoUrl);
@@ -191,9 +207,11 @@ public class OnboardingActivity extends AppCompatActivity {
         ref.child(keys.score).setValue(0);
         ref.child(keys.level).setValue(1);
 
+        Logger.info("Onboarding data saved - Name: " + userName + ", Photo: " + userPhotoUrl + ", Referral: " + referralSource + ", Level: " + yogaLevel);
         Toast.makeText(this, "Welcome to Yoga Helper!", Toast.LENGTH_SHORT).show();
         
         // Navigate to main activity
+        Logger.info("Navigating to MainActivity");
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

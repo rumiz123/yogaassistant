@@ -11,6 +11,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.rumiznellasery.yogahelper.databinding.ActivityMainBinding;
+import com.rumiznellasery.yogahelper.utils.Logger;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Logger.info("MainActivity onCreate started");
 
         // Hide the action bar
         if (getSupportActionBar() != null) {
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        Logger.info("MainActivity onCreate completed - Navigation setup finished");
     }
 
 }
