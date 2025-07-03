@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/theme_dark"
+    android:background="#2e2d3b"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -259,7 +259,7 @@
                 android:layout_weight="1"
                 android:text="Start Workout"
                 android:textSize="14sp"
-                android:background="@color/theme_purple"
+                android:background="@drawable/rounded_button"
                 android:textColor="@color/white"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="sans-serif-medium"/>
@@ -271,8 +271,8 @@
                 android:layout_weight="1"
                 android:text="Reset Progress"
                 android:textSize="14sp"
-                android:background="@color/card_background_light"
-                android:textColor="@color/theme_purple_light"
+                android:background="@drawable/rounded_button"
+                android:textColor="@color/white"
                 android:layout_marginStart="8dp"
                 android:fontFamily="sans-serif-medium"/>
         </LinearLayout>

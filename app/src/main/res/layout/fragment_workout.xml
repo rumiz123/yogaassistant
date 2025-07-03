@@ -61,7 +61,7 @@
                     android:layout_height="48dp"
                     android:text="Start"
                     android:textColor="@color/white"
-                    android:background="@drawable/button_gradient"
+                    android:background="@drawable/rounded_button"
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -113,7 +113,7 @@
                     android:layout_height="48dp"
                     android:text="Start"
                     android:textColor="@color/white"
-                    android:background="@drawable/button_gradient"
+                    android:background="@drawable/rounded_button"
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -164,7 +164,7 @@
                     android:layout_height="48dp"
                     android:text="Start"
                     android:textColor="@color/white"
-                    android:background="@drawable/button_gradient"
+                    android:background="@drawable/rounded_button"
                     android:layout_gravity="center_horizontal" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
