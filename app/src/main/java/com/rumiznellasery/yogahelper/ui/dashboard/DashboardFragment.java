@@ -19,9 +19,12 @@ import com.rumiznellasery.yogahelper.data.DbKeys;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.rumiznellasery.yogahelper.databinding.FragmentDashboardBinding;
-
+import com.rumiznellasery.yogahelper.R;
+import android.widget.TextView;
+    
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
@@ -38,6 +41,14 @@ public class DashboardFragment extends Fragment {
         int workoutsThisWeek = getWeeklyWorkouts(prefs);
 
         updateUI(calories, streak, workoutsThisWeek);
+
+        // Start Workout button logic
+        binding.buttonStartWorkout.setOnClickListener(v -> {
+            // Switch to workout tab in bottom navigation
+            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
+                requireActivity().findViewById(R.id.nav_view);
+            bottomNav.setSelectedItemId(R.id.navigation_workout);
+        });
 
         // Reset bars button logic
         binding.buttonResetBars.setOnClickListener(v -> {
@@ -107,11 +118,10 @@ public class DashboardFragment extends Fragment {
         // Calories circular progress (max 500)
         binding.circleCalories.setMax(500);
         binding.circleCalories.setProgressCompat(Math.min(calories, 500), true);
-        binding.textCaloriesCenter.setText(calories + "\ncalories");
+        binding.textCaloriesCenter.setText(calories + " calories");
 
         // Streak number
         binding.textStreakNumber.setText(String.valueOf(streak));
-        // Fire icon is static
 
         // Workouts this week bar (max 10)
         binding.progressWorkouts.setMax(10);
@@ -120,6 +130,34 @@ public class DashboardFragment extends Fragment {
 
         // Show workouts done count
         binding.textWorkoutsCount.setText(workoutsThisWeek + "/10 workouts");
+        
+        // Update motivational message based on progress
+        updateMotivationalMessage(calories, streak, workoutsThisWeek);
+    }
+    
+    private void updateMotivationalMessage(int calories, int streak, int workoutsThisWeek) {
+        String title;
+        String message;
+        
+        if (streak >= 7) {
+            title = "🔥 Amazing Streak! 🔥";
+            message = "You're on fire! Keep this incredible momentum going. You're building healthy habits that will last a lifetime!";
+        } else if (streak >= 3) {
+            title = "🌟 Great Progress! 🌟";
+            message = "You're building a solid foundation! Consistency is key - you're doing fantastic!";
+        } else if (workoutsThisWeek >= 5) {
+            title = "💪 Strong Week! 💪";
+            message = "You're crushing your weekly goals! Keep up this amazing energy!";
+        } else if (calories >= 300) {
+            title = "🔥 Burning Bright! 🔥";
+            message = "Look at those calories burn! Your body is thanking you for this amazing workout!";
+        } else {
+            title = "🌟 Keep Going! 🌟";
+            message = "Every workout brings you closer to your goals. Stay consistent and watch your progress grow!";
+        }
+        
+        binding.textMotivationTitle.setText(title);
+        binding.textMotivationMessage.setText(message);
     }
 
     // Helper to get weekly workouts, resets if week changes

@@ -1,142 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_gradient">
+    android:background="@color/theme_dark"
+    android:fillViewport="true">
 
-    <!-- Welcome Message -->
-    <TextView
-        android:id="@+id/text_welcome"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Welcome back!"
-        android:textColor="@color/white"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:fontFamily="sans-serif-medium"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="36dp"/>
+        android:padding="16dp">
 
-    <!-- Calories Burned Circular Progress -->
-
-    <!-- Streak with Fire Icon -->
-    <FrameLayout
-        android:id="@+id/frame_calories"
-        android:layout_width="263dp"
-        android:layout_height="247dp"
-        android:layout_marginTop="24dp"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.561"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_welcome">
-
-        <!-- Material CircularProgressIndicator, progress/max set in code -->
-        <com.google.android.material.progressindicator.CircularProgressIndicator
-            android:id="@+id/circle_calories"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:indicatorColor="@color/progress_purple"
-            app:indicatorSize="200dp"
-            app:showAnimationBehavior="none"
-            app:trackColor="@color/white"
-            app:trackThickness="16dp" />
-
+        <!-- Welcome Message -->
         <TextView
-            android:id="@+id/text_calories_center"
-            android:layout_width="210dp"
-            android:layout_height="191dp"
-            android:gravity="center"
-            android:text="0\ncalories"
-            android:textColor="@color/white"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/layout_streak"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@id/frame_calories"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="60dp">
-
-        <ImageView
-            android:id="@+id/icon_fire"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_fire"
-            android:contentDescription="Streak"/>
-        <TextView
-            android:id="@+id/text_streak_number"
-            android:layout_width="wrap_content"
+            android:id="@+id/text_welcome"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="0"
+            android:text="Welcome back!"
             android:textColor="@color/white"
-            android:textSize="28sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginStart="8dp"/>
-    </LinearLayout>
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"/>
 
-    <!-- Workouts Done This Week Bar -->
-    <TextView
-        android:id="@+id/text_workouts_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Workouts this week"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/layout_streak"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="60dp"/>
+        <!-- Main Stats Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_main_stats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:layout_constraintTop_toBottomOf="@id/text_welcome"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    <com.google.android.material.progressindicator.LinearProgressIndicator
-        android:id="@+id/progress_workouts"
-        android:layout_width="0dp"
-        android:layout_height="18dp"
-        app:layout_constraintTop_toBottomOf="@id/text_workouts_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:trackThickness="18dp"
-        app:indicatorColor="@color/progress_purple"
-        app:trackColor="@color/white"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
-    <!-- Workouts done count -->
-    <TextView
-        android:id="@+id/text_workouts_count"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/progress_workouts"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="8dp"
-        android:text="0/10 workouts"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+                <!-- Streak Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/rounded_box"
+                    android:layout_marginBottom="16dp">
 
-    <!-- Reset Bars Button (for testing) -->
-    <Button
-        android:id="@+id/button_reset_bars"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Reset Bars"
-        android:textSize="14sp"
-        android:background="@drawable/white_button"
-        android:textColor="@color/progress_purple"
-        android:layout_marginBottom="90dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+                    <ImageView
+                        android:id="@+id/icon_fire"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_fire"
+                        android:contentDescription="Streak"
+                        android:layout_marginEnd="12dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Current Streak"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/text_streak_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textColor="@color/text_primary"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔥"
+                        android:textSize="24sp"/>
+                </LinearLayout>
+
+                <!-- Calories Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/rounded_box"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circular_button"
+                        android:layout_marginEnd="12dp"/>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Calories Burned"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="14sp"/>
+
+                        <TextView
+                            android:id="@+id/text_calories_center"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0 calories"
+                            android:textColor="@color/text_primary"
+                            android:textSize="28sp"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/circle_calories"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:indicatorColor="@color/theme_purple_light"
+                        app:indicatorSize="40dp"
+                        app:showAnimationBehavior="none"
+                        app:trackColor="@color/text_secondary_alpha"
+                        app:trackThickness="4dp"/>
+                </LinearLayout>
+
+                <!-- Weekly Progress Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:background="@drawable/rounded_box">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="This Week's Progress"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/text_workouts_count"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="0/10 workouts"
+                            android:textColor="@color/text_primary"
+                            android:textSize="18sp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Goal: 10"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.progressindicator.LinearProgressIndicator
+                        android:id="@+id/progress_workouts"
+                        android:layout_width="match_parent"
+                        android:layout_height="12dp"
+                        app:trackThickness="12dp"
+                        app:indicatorColor="@color/theme_purple_light"
+                        app:trackColor="@color/text_secondary_alpha"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Motivational Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_motivation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/theme_purple"
+            app:layout_constraintTop_toBottomOf="@id/card_main_stats"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/text_motivation_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌟 Keep Going! 🌟"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:gravity="center"
+                    android:layout_marginBottom="8dp"/>
+
+                <TextView
+                    android:id="@+id/text_motivation_message"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Every workout brings you closer to your goals. Stay consistent and watch your progress grow!"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:gravity="center"
+                    android:alpha="0.9"
+                    android:lineSpacingExtra="2dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Quick Actions -->
+        <LinearLayout
+            android:id="@+id/layout_quick_actions"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/card_motivation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <Button
+                android:id="@+id/button_start_workout"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Start Workout"
+                android:textSize="14sp"
+                android:background="@color/theme_purple"
+                android:textColor="@color/white"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="sans-serif-medium"/>
+
+            <Button
+                android:id="@+id/button_reset_bars"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="Reset Progress"
+                android:textSize="14sp"
+                android:background="@color/card_background_light"
+                android:textColor="@color/theme_purple_light"
+                android:layout_marginStart="8dp"
+                android:fontFamily="sans-serif-medium"/>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
