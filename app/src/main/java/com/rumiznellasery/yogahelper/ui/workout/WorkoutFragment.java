@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,6 +25,10 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Calendar;
 import com.rumiznellasery.yogahelper.R;
+import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 public class WorkoutFragment extends Fragment {
 
@@ -107,7 +112,61 @@ public class WorkoutFragment extends Fragment {
         binding.buttonPlaceholder1.setOnClickListener(startWorkoutListener);
         binding.buttonPlaceholder2.setOnClickListener(startWorkoutListener);
         binding.buttonPlaceholder3.setOnClickListener(startWorkoutListener);
+
+        // Fetch yogaLevel from Firebase and highlight recommended workout
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference()
+                .child("users").child(currentUser.getUid()).child("yogaLevel");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String yogaLevel = snapshot.getValue(String.class);
+                    int recommended = 1; // default to 1 if not found
+                    if (yogaLevel != null) {
+                        switch (yogaLevel) {
+                            case "Brand New":
+                            case "Beginner":
+                                recommended = 1;
+                                break;
+                            case "Average":
+                                recommended = 2;
+                                break;
+                            case "Expert":
+                                recommended = 3;
+                                break;
+                            case "Professional":
+                                recommended = 4;
+                                break;
+                        }
+                    }
+                    highlightRecommendedWorkout(recommended);
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
+        }
+
         return root;
+    }
+
+    private void highlightRecommendedWorkout(int recommended) {
+        int[] cardIds = {R.id.card_workout1, R.id.card_workout2, R.id.card_workout3, R.id.card_workout4};
+        int[] labelIds = {R.id.label_recommended1, R.id.label_recommended2, R.id.label_recommended3, R.id.label_recommended4};
+        for (int i = 0; i < cardIds.length; i++) {
+            MaterialCardView card = getView().findViewById(cardIds[i]);
+            TextView label = getView().findViewById(labelIds[i]);
+            if (card != null) {
+                if (i == recommended - 1) {
+                    card.setStrokeWidth(8);
+                    card.setStrokeColor(getResources().getColor(R.color.teal_200));
+                    if (label != null) label.setVisibility(View.VISIBLE);
+                } else {
+                    card.setStrokeWidth(0);
+                    if (label != null) label.setVisibility(View.GONE);
+                }
+            }
+        }
     }
 
     @Override
