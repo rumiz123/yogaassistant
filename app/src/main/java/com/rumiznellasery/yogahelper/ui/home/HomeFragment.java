@@ -143,6 +143,15 @@ public class HomeFragment extends Fragment {
             startActivity(i);
         });
 
+        // Add this after binding = FragmentHomeBinding.inflate(...)
+        binding.buttonSettings.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(((ViewGroup) requireView().getParent()).getId(), new com.rumiznellasery.yogahelper.ui.home.SettingsFragment())
+                .addToBackStack(null)
+                .commit();
+        });
+
         return root;
     }
 

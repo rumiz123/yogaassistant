@@ -7,6 +7,18 @@
     android:orientation="vertical"
     tools:context=".ui.home.HomeFragment">
 
+    <!-- Settings button at top left -->
+    <ImageView
+        android:id="@+id/button_settings"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="start"
+        android:background="@android:color/transparent"
+        android:contentDescription="Settings"
+        android:padding="8dp"
+        android:src="@drawable/ic_settings"
+        android:tint="@color/white" />
+
     <!-- Account Info Section at Top -->
     <LinearLayout
         android:id="@+id/account_info_container"
