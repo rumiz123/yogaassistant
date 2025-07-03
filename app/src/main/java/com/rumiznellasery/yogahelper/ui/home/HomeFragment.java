@@ -118,7 +118,24 @@ public class HomeFragment extends Fragment {
                     }
                 });
 
-                binding.textUserId.setText("UID: " + user.getUid());
+                ref.child("developer").get().addOnCompleteListener(devTask -> {
+                    try {
+                        boolean isDev = false;
+                        if (devTask.isSuccessful() && devTask.getResult() != null && devTask.getResult().exists()) {
+                            Boolean devFlag = devTask.getResult().getValue(Boolean.class);
+                            isDev = devFlag != null && devFlag;
+                        }
+                        if (isDev) {
+                            binding.textUserId.setVisibility(View.VISIBLE);
+                        } else {
+                            binding.textUserId.setVisibility(View.GONE);
+                        }
+                    } catch (Exception e) {
+                        Logger.error("Error loading developer flag in HomeFragment", e);
+                        binding.textUserId.setVisibility(View.GONE);
+                    }
+                });
+
                 binding.textEmail.setText("Email: " + (user.getEmail() != null ? user.getEmail() : "N/A"));
             } else {
                 Logger.warn("No user found in HomeFragment");
@@ -211,6 +228,9 @@ public class HomeFragment extends Fragment {
             // Add this after binding = FragmentHomeBinding.inflate(...)
             binding.buttonSettings.setOnClickListener(v -> {
                 try {
+                    // Hide bottom nav bar
+                    View navBar = requireActivity().findViewById(R.id.nav_view);
+                    if (navBar != null) navBar.setVisibility(View.GONE);
                     requireActivity().getSupportFragmentManager()
                         .beginTransaction()
                         .replace(((ViewGroup) requireView().getParent()).getId(), new com.rumiznellasery.yogahelper.ui.home.SettingsFragment())
@@ -229,6 +249,13 @@ public class HomeFragment extends Fragment {
             }
         }
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        View navBar = requireActivity().findViewById(R.id.nav_view);
+        if (navBar != null) navBar.setVisibility(View.VISIBLE);
     }
 
     private void updateProfilePicture(Uri uri) {

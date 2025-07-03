@@ -129,6 +129,7 @@ public class AuthActivity extends AppCompatActivity {
                             ref.child(keys.streak).setValue(0);
                             ref.child(keys.score).setValue(0);
                             ref.child(keys.level).setValue(1);
+                            ref.child("developer").setValue(false);
 
                             user.sendEmailVerification().addOnCompleteListener(vt -> {
                                 if (vt.isSuccessful()) {

@@ -35,6 +35,8 @@ public class DashboardFragment extends Fragment {
         binding = FragmentDashboardBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        binding.buttonResetBars.setVisibility(View.GONE);
+
         SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
         int calories = prefs.getInt("calories", 0);
         int streak = prefs.getInt("streak", 0);
@@ -105,6 +107,23 @@ public class DashboardFragment extends Fragment {
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+
+            ref.child("developer").get().addOnCompleteListener(devTask -> {
+                try {
+                    boolean isDev = false;
+                    if (devTask.isSuccessful() && devTask.getResult() != null && devTask.getResult().exists()) {
+                        Boolean devFlag = devTask.getResult().getValue(Boolean.class);
+                        isDev = devFlag != null && devFlag;
+                    }
+                    if (isDev) {
+                        binding.buttonResetBars.setVisibility(View.VISIBLE);
+                    } else {
+                        binding.buttonResetBars.setVisibility(View.GONE);
+                    }
+                } catch (Exception e) {
+                    binding.buttonResetBars.setVisibility(View.GONE);
                 }
             });
         } else {

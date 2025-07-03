@@ -221,4 +221,11 @@ public class SettingsFragment extends Fragment {
             profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        View navBar = requireActivity().findViewById(R.id.nav_view);
+        if (navBar != null) navBar.setVisibility(View.VISIBLE);
+    }
 } 
