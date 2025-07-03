@@ -31,16 +31,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/editTextEmail" />
 
-    <EditText
-        android:id="@+id/editTextDisplayName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:hint="@string/display_name_hint"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextPassword" />
-
     <Button
         android:id="@+id/buttonSignIn"
         android:layout_width="0dp"
@@ -52,16 +42,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextDisplayName" />
-
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/buttonGoogleSignIn"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonSignIn" />
+        app:layout_constraintTop_toBottomOf="@id/editTextPassword" />
 
     <Button
         android:id="@+id/buttonSignUp"
@@ -74,6 +55,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonGoogleSignIn" />
+        app:layout_constraintTop_toBottomOf="@id/buttonSignIn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

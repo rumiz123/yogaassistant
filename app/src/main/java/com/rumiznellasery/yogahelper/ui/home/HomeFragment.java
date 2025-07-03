@@ -72,11 +72,30 @@ public class HomeFragment extends Fragment {
                 }
             });
 
-            // name, UID, email
-            String name = user.getDisplayName();
-            binding.textDisplayName.setText(
-                    (name != null && !name.isEmpty()) ? name : "User"
-            );
+            // Load display name from database
+            DbKeys keys = DbKeys.get(requireContext());
+            DatabaseReference ref = FirebaseDatabase
+                    .getInstance(keys.databaseUrl)
+                    .getReference(keys.users)
+                    .child(user.getUid());
+            
+            ref.child(keys.displayName).get().addOnCompleteListener(task -> {
+                if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
+                    String displayName = task.getResult().getValue(String.class);
+                    if (displayName != null && !displayName.isEmpty()) {
+                        binding.textDisplayName.setText(displayName);
+                    } else {
+                        binding.textDisplayName.setText("User");
+                    }
+                } else {
+                    // Fallback to Firebase Auth display name
+                    String name = user.getDisplayName();
+                    binding.textDisplayName.setText(
+                            (name != null && !name.isEmpty()) ? name : "User"
+                    );
+                }
+            });
+
             binding.textUserId.setText("UID: " + user.getUid());
             binding.textEmail.setText("Email: " + (user.getEmail() != null ? user.getEmail() : "N/A"));
         } else {
@@ -108,20 +127,29 @@ public class HomeFragment extends Fragment {
                 FirebaseUser curr = FirebaseAuth.getInstance().getCurrentUser();
                 if (curr == null) return;
 
+                // Update both Firebase Auth and database
                 UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
                         .setDisplayName(newName)
                         .build();
 
                 curr.updateProfile(req).addOnCompleteListener(t -> {
                     if (t.isSuccessful()) {
-                        binding.textDisplayName.setText(newName);
-                        // also save to Realtime DB if desired
+                        // Update database
                         DbKeys keys = DbKeys.get(requireContext());
                         DatabaseReference ref = FirebaseDatabase
                                 .getInstance(keys.databaseUrl)
                                 .getReference(keys.users)
                                 .child(curr.getUid());
-                        ref.child(keys.displayName).setValue(newName);
+                        ref.child(keys.displayName).setValue(newName).addOnCompleteListener(dbTask -> {
+                            if (dbTask.isSuccessful()) {
+                                binding.textDisplayName.setText(newName);
+                                Toast.makeText(requireContext(),
+                                        "Name updated successfully", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(requireContext(),
+                                        "Could not update name in database.", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     } else {
                         Toast.makeText(requireContext(),
                                 "Could not update name.", Toast.LENGTH_SHORT).show();
