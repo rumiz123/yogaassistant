@@ -14,7 +14,8 @@
         android:contentDescription="Back"
         android:background="@android:color/transparent"
         android:padding="8dp"
-        android:layout_gravity="start" />
+        android:layout_gravity="start"
+        android:tint="@color/white" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -25,12 +26,50 @@
         android:textStyle="bold"
         android:layout_marginTop="24dp" />
 
-    <!-- Placeholder for settings options -->
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- Profile Picture Section -->
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Settings options will appear here."
-        android:textColor="@color/white"
-        android:layout_marginTop="32dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="32dp"
+        android:padding="16dp"
+        android:background="@drawable/rounded_box"
+        android:layout_marginHorizontal="8dp">
+
+        <ImageView
+            android:id="@+id/settings_profile_pic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_avatar_placeholder"
+            android:contentDescription="Profile picture"
+            android:scaleType="centerCrop"
+            android:background="@drawable/ic_account_circle_black_24dp" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Profile Picture"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tap to change your profile picture"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:alpha="0.7"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout> 
