@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2e2d3b"
+    android:background="@drawable/background_gradient"
     android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -18,8 +18,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Welcome back!"
-            android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textColor="@color/text_primary"
+            android:textSize="28sp"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
@@ -34,8 +34,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
             app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@id/text_welcome"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <!-- Streak Section -->
                 <LinearLayout
@@ -53,17 +53,18 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:background="@drawable/rounded_box"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="20dp">
 
                     <ImageView
                         android:id="@+id/icon_fire"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:src="@drawable/ic_fire"
                         android:contentDescription="Streak"
-                        android:layout_marginEnd="12dp"/>
+                        android:layout_marginEnd="16dp"
+                        android:tint="@color/theme_purple"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -76,7 +77,8 @@
                             android:layout_height="wrap_content"
                             android:text="Current Streak"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
 
                         <TextView
                             android:id="@+id/text_streak_number"
@@ -84,15 +86,16 @@
                             android:layout_height="wrap_content"
                             android:text="0"
                             android:textColor="@color/text_primary"
-                            android:textSize="28sp"
-                            android:textStyle="bold"/>
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"/>
                     </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🔥"
-                        android:textSize="24sp"/>
+                        android:textSize="32sp"/>
                 </LinearLayout>
 
                 <!-- Calories Section -->
@@ -101,15 +104,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:background="@drawable/rounded_box"
-                    android:layout_marginBottom="16dp">
+                    android:layout_marginBottom="20dp">
 
                     <View
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/circular_button"
-                        android:layout_marginEnd="12dp"/>
+                        android:layout_marginEnd="16dp"/>
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -122,7 +125,8 @@
                             android:layout_height="wrap_content"
                             android:text="Calories Burned"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp"/>
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
 
                         <TextView
                             android:id="@+id/text_calories_center"
@@ -130,19 +134,20 @@
                             android:layout_height="wrap_content"
                             android:text="0 calories"
                             android:textColor="@color/text_primary"
-                            android:textSize="28sp"
-                            android:textStyle="bold"/>
+                            android:textSize="32sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"/>
                     </LinearLayout>
 
                     <com.google.android.material.progressindicator.CircularProgressIndicator
                         android:id="@+id/circle_calories"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        app:indicatorColor="@color/theme_purple_light"
-                        app:indicatorSize="40dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        app:indicatorColor="@color/theme_purple"
+                        app:indicatorSize="48dp"
                         app:showAnimationBehavior="none"
-                        app:trackColor="@color/text_secondary_alpha"
-                        app:trackThickness="4dp"/>
+                        app:trackColor="@color/progress_background"
+                        app:trackThickness="6dp"/>
                 </LinearLayout>
 
                 <!-- Weekly Progress Section -->
@@ -150,7 +155,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="12dp"
+                    android:padding="16dp"
                     android:background="@drawable/rounded_box">
 
                     <TextView
@@ -159,14 +164,15 @@
                         android:text="This Week's Progress"
                         android:textColor="@color/text_secondary"
                         android:textSize="14sp"
-                        android:layout_marginBottom="8dp"/>
+                        android:fontFamily="sans-serif"
+                        android:layout_marginBottom="12dp"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="8dp">
+                        android:layout_marginBottom="12dp">
 
                         <TextView
                             android:id="@+id/text_workouts_count"
@@ -175,24 +181,26 @@
                             android:layout_weight="1"
                             android:text="0/10 workouts"
                             android:textColor="@color/text_primary"
-                            android:textSize="18sp"
-                            android:textStyle="bold"/>
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Goal: 10"
                             android:textColor="@color/text_secondary"
-                            android:textSize="12sp"/>
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"/>
                     </LinearLayout>
 
                     <com.google.android.material.progressindicator.LinearProgressIndicator
                         android:id="@+id/progress_workouts"
                         android:layout_width="match_parent"
-                        android:layout_height="12dp"
-                        app:trackThickness="12dp"
-                        app:indicatorColor="@color/theme_purple_light"
-                        app:trackColor="@color/text_secondary_alpha"/>
+                        android:layout_height="16dp"
+                        app:trackThickness="16dp"
+                        app:indicatorColor="@color/theme_purple"
+                        app:trackColor="@color/progress_background"/>
                 </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -202,9 +210,9 @@
             android:id="@+id/card_motivation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="4dp"
+            android:layout_marginTop="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
             app:cardBackgroundColor="@color/theme_purple"
             app:layout_constraintTop_toBottomOf="@id/card_main_stats"
             app:layout_constraintStart_toStartOf="parent"
@@ -214,7 +222,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="24dp"
                 android:gravity="center">
 
                 <TextView
@@ -223,10 +231,11 @@
                     android:layout_height="wrap_content"
                     android:text="🌟 Keep Going! 🌟"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     android:gravity="center"
-                    android:layout_marginBottom="8dp"/>
+                    android:fontFamily="sans-serif-medium"
+                    android:layout_marginBottom="12dp"/>
 
                 <TextView
                     android:id="@+id/text_motivation_message"
@@ -234,10 +243,11 @@
                     android:layout_height="wrap_content"
                     android:text="Every workout brings you closer to your goals. Stay consistent and watch your progress grow!"
                     android:textColor="@color/white"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:gravity="center"
-                    android:alpha="0.9"
-                    android:lineSpacingExtra="2dp"/>
+                    android:alpha="0.95"
+                    android:lineSpacingExtra="4dp"
+                    android:fontFamily="sans-serif"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
@@ -247,34 +257,36 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toBottomOf="@id/card_motivation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_start_workout"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:text="Start Workout"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_button"
+                android:textSize="16sp"
+                android:background="@drawable/button_primary_gradient"
                 android:textColor="@color/white"
                 android:layout_marginEnd="8dp"
-                android:fontFamily="sans-serif-medium"/>
+                android:fontFamily="sans-serif-medium"
+                android:elevation="8dp"/>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_reset_bars"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:text="Reset Progress"
-                android:textSize="14sp"
-                android:background="@drawable/rounded_button"
-                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:background="@drawable/button_secondary_gradient"
+                android:textColor="@color/text_primary"
                 android:layout_marginStart="8dp"
-                android:fontFamily="sans-serif-medium"/>
+                android:fontFamily="sans-serif-medium"
+                android:elevation="4dp"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -151,8 +151,8 @@ public class WorkoutFragment extends Fragment {
     }
 
     private void highlightRecommendedWorkout(int recommended) {
-        int[] cardIds = {R.id.card_workout1, R.id.card_workout2, R.id.card_workout3, R.id.card_workout4};
-        int[] labelIds = {R.id.label_recommended1, R.id.label_recommended2, R.id.label_recommended3, R.id.label_recommended4};
+        int[] cardIds = {R.id.card_workout1, R.id.card_workout2, R.id.card_workout3};
+        int[] labelIds = {R.id.label_recommended1, R.id.label_recommended2, R.id.label_recommended3};
         for (int i = 0; i < cardIds.length; i++) {
             MaterialCardView card = getView().findViewById(cardIds[i]);
             TextView label = getView().findViewById(labelIds[i]);
