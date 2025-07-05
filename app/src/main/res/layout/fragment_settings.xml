@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+    android:padding="24dp">
 
         <!-- Header -->
         <LinearLayout
@@ -21,24 +21,24 @@
             android:layout_marginTop="48dp"
             android:layout_marginBottom="32dp">
 
-            <ImageView
-                android:id="@+id/button_back"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_home_black_24dp"
+    <ImageView
+        android:id="@+id/button_back"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_home_black_24dp"
                 android:contentDescription="@string/back"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="8dp"
+        android:padding="8dp"
                 android:tint="@color/white" />
 
-            <TextView
+    <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+        android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/settings"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="28sp"
+        android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginEnd="40dp" />
         </LinearLayout>
@@ -54,45 +54,45 @@
             app:strokeWidth="1dp"
             app:strokeColor="@color/card_background_accent">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
                 android:padding="20dp"
                 android:gravity="center_vertical">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/settings_profile_pic"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/ic_avatar_placeholder"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/settings_profile_pic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_avatar_placeholder"
                     android:contentDescription="@string/profile_picture"
-                    android:scaleType="centerCrop" />
+            android:scaleType="centerCrop" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical"
-                    android:layout_marginStart="16dp">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                         android:text="@string/profile_picture"
                         android:textColor="@color/text_primary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                         android:text="@string/tap_to_change_profile"
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
-                        android:layout_marginTop="4dp" />
-                </LinearLayout>
-            </LinearLayout>
+                android:textSize="14sp"
+                android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
         <!-- Appearance Section -->
@@ -597,7 +597,7 @@
                     android:layout_marginBottom="16dp" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+        android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical">
@@ -632,20 +632,20 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Logout Button -->
+    <!-- Logout Button -->
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_logout"
+        android:id="@+id/button_logout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="16dp"
-            android:layout_marginBottom="32dp"
+        android:layout_marginBottom="32dp"
             android:text="@string/logout"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:background="@drawable/button_red_rounded"
-            android:textColor="@color/white"
+        android:background="@drawable/button_red_rounded"
+        android:textColor="@color/white"
             app:cornerRadius="28dp"
             app:elevation="8dp" />
 
-    </LinearLayout>
+</LinearLayout> 
 </ScrollView> 

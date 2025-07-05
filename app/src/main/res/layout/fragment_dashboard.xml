@@ -308,18 +308,18 @@
                     android:fontFamily="sans-serif-medium"
                     android:elevation="4dp"/>
 
-                <com.google.android.material.button.MaterialButton
+            <com.google.android.material.button.MaterialButton
                     android:id="@+id/button_view_leaderboard"
-                    android:layout_width="0dp"
+                android:layout_width="0dp"
                     android:layout_height="48dp"
-                    android:layout_weight="1"
+                android:layout_weight="1"
                     android:text="🏅 Leaderboard"
                     android:textSize="14sp"
-                    android:background="@drawable/button_secondary_gradient"
-                    android:textColor="@color/text_primary"
+                android:background="@drawable/button_secondary_gradient"
+                android:textColor="@color/text_primary"
                     android:layout_marginStart="6dp"
-                    android:fontFamily="sans-serif-medium"
-                    android:elevation="4dp"/>
+                android:fontFamily="sans-serif-medium"
+                android:elevation="4dp"/>
             </LinearLayout>
 
             <!-- Export Data Row -->

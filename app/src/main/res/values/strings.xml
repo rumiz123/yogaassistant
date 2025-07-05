@@ -19,6 +19,24 @@
     <string name="workout_name_3">Balance Basics</string>
     <string name="workout_name_4">Expert Power Flow</string>
     
+    <!-- Pose Detection -->
+    <string name="pose_detection_initializing">Initializing pose detection...</string>
+    <string name="pose_detection_enabled">Pose detection enabled</string>
+    <string name="pose_detection_disabled">Pose detection disabled</string>
+    <string name="pose_captured">Pose captured! Analysis saved.</string>
+    <string name="no_pose_detected">No pose detected</string>
+    <string name="pose_detection_error">Pose detection error</string>
+    <string name="camera_permission_required">Camera permission required</string>
+    
+    <!-- Yoga Pose Names -->
+    <string name="pose_mountain">Mountain Pose (Tadasana)</string>
+    <string name="pose_warrior">Warrior Pose</string>
+    <string name="pose_tree">Tree Pose (Vrikshasana)</string>
+    <string name="pose_downward_dog">Downward Dog</string>
+    <string name="pose_child">Child\'s Pose (Balasana)</string>
+    <string name="pose_no_pose">No Pose</string>
+    <string name="pose_incomplete">Incomplete</string>
+    
     <!-- Settings -->
     <string name="settings">Settings</string>
     <string name="profile_picture">Profile Picture</string>
