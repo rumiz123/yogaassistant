@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.rumiznellasery.yogahelper.R;
 
 import java.util.List;
@@ -20,10 +21,16 @@ public class LeaderboardAdapter
 
   private final List<LeaderboardFragment.Entry> data;
   private final Context ctx;
+  private final OnItemLongClickListener longClickListener;
 
-  public LeaderboardAdapter(Context ctx, List<LeaderboardFragment.Entry> data) {
+  public interface OnItemLongClickListener {
+    void onItemLongClick(int position);
+  }
+
+  public LeaderboardAdapter(Context ctx, List<LeaderboardFragment.Entry> data, OnItemLongClickListener longClickListener) {
     this.ctx = ctx;
     this.data = data;
+    this.longClickListener = longClickListener;
   }
 
   @NonNull
@@ -54,8 +61,26 @@ public class LeaderboardAdapter
     h.tvDetails.setText("Level " + e.level);
     h.tvScore.setText(String.valueOf(e.score));
 
-    // TODO: load avatar URL into ivAvatar (e.g. using Glide or Coil)
-    // e.g. Glide.with(ctx).load(e.avatarUrl).placeholder(R.drawable.ic_avatar_placeholder).into(h.ivAvatar);
+    // Load avatar URL into ivAvatar using Glide
+    if (e.photoUrl != null && !e.photoUrl.isEmpty()) {
+        Glide.with(ctx)
+            .load(e.photoUrl)
+            .placeholder(R.drawable.ic_avatar_placeholder)
+            .error(R.drawable.ic_avatar_placeholder)
+            .circleCrop()
+            .into(h.ivAvatar);
+    } else {
+        h.ivAvatar.setImageResource(R.drawable.ic_avatar_placeholder);
+    }
+    
+    // Set long click listener for developer mode
+    h.itemView.setOnLongClickListener(v -> {
+      if (longClickListener != null) {
+        longClickListener.onItemLongClick(pos);
+        return true;
+      }
+      return false;
+    });
   }
 
   @Override

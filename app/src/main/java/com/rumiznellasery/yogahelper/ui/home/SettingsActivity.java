@@ -2,6 +2,7 @@ package com.rumiznellasery.yogahelper.ui.home;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +20,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.rumiznellasery.yogahelper.R;
 import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.utils.Logger;
+import com.rumiznellasery.yogahelper.utils.DeveloperMode;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class SettingsActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> pickImageLauncher;
@@ -65,26 +71,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         // Load existing profile picture
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-            Logger.info("Loading profile picture for user: " + user.getUid());
-            Uri photoUri = user.getPhotoUrl();
-            if (photoUri != null) {
-                Logger.info("Setting profile picture from URI: " + photoUri.toString());
-                try {
-                    loadProfilePictureFromDatabase(profilePic, photoUri);
-                } catch (Exception e) {
-                    Logger.error("Error setting profile picture from URI", e);
-                    profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
-                }
-            } else {
-                Logger.info("No profile picture URI found, using default");
-                profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
-            }
-        } else {
-            Logger.warn("No authenticated user found in SettingsActivity");
-            profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
-        }
+        loadProfilePictureFromInternalStorage(profilePic);
 
         // Profile picture click to change
         profilePic.setOnClickListener(v -> {
@@ -99,11 +86,22 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        // Setup developer mode
+        setupDeveloperMode();
+
         // Logout button
         View logoutButton = findViewById(R.id.button_logout);
         if (logoutButton != null) {
             logoutButton.setOnClickListener(v -> {
                 try {
+                    // Delete profile picture from internal storage
+                    SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+                    String path = prefs.getString("profile_picture_path", null);
+                    if (path != null) {
+                        File file = new File(path);
+                        if (file.exists()) file.delete();
+                        prefs.edit().remove("profile_picture_path").apply();
+                    }
                     Logger.info("User logging out from SettingsActivity");
                     FirebaseAuth.getInstance().signOut();
                     Intent i = new Intent(SettingsActivity.this, com.rumiznellasery.yogahelper.AuthActivity.class);
@@ -120,100 +118,73 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void updateProfilePicture(Uri uri) {
         Logger.info("Updating profile picture in SettingsActivity: " + uri.toString());
-        FirebaseUser curr = FirebaseAuth.getInstance().getCurrentUser();
-        if (curr == null) {
-            Logger.error("No authenticated user found when updating profile picture");
-            return;
-        }
-
-        UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(uri)
-                .build();
-
-        curr.updateProfile(req).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                Logger.info("Profile picture updated successfully in Firebase Auth");
-                try {
-                    ImageView profilePic = findViewById(R.id.settings_profile_pic);
-                    if (profilePic != null) {
-                        profilePic.setImageURI(uri);
-                        Logger.info("Profile picture ImageView updated successfully");
-                    } else {
-                        Logger.warn("Profile picture ImageView not found after update");
-                    }
-
-                    // save URL in Realtime DB
-                    try {
-                        DbKeys keys = DbKeys.get(this);
-                        DatabaseReference ref = FirebaseDatabase
-                                .getInstance(keys.databaseUrl)
-                                .getReference(keys.users)
-                                .child(curr.getUid());
-                        ref.child("photoUrl").setValue(uri.toString()).addOnCompleteListener(dbTask -> {
-                            if (dbTask.isSuccessful()) {
-                                Logger.info("Profile picture URL saved to database successfully");
-                            } else {
-                                Logger.error("Failed to save profile picture URL to database", dbTask.getException());
-                            }
-                        });
-                    } catch (Exception e) {
-                        Logger.error("Error saving profile picture URL to database", e);
-                    }
-
-                    Toast.makeText(this,
-                            "Profile picture updated", Toast.LENGTH_SHORT).show();
-                } catch (Exception e) {
-                    Logger.error("Error updating UI after profile picture change", e);
-                    Toast.makeText(this,
-                            "Profile picture updated but UI update failed", Toast.LENGTH_SHORT).show();
+        try {
+            // Save image to internal storage
+            InputStream inputStream = getContentResolver().openInputStream(uri);
+            if (inputStream == null) throw new Exception("Unable to open input stream for URI: " + uri);
+            File file = new File(getFilesDir(), "profile_picture.jpg");
+            try (OutputStream outputStream = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4096];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
                 }
-            } else {
-                Logger.error("Failed to update profile picture in Firebase Auth", task.getException());
-                Toast.makeText(this,
-                        "Failed to update profile picture", Toast.LENGTH_SHORT).show();
             }
-        });
+            inputStream.close();
+            // Save file path to SharedPreferences
+            SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+            prefs.edit().putString("profile_picture_path", file.getAbsolutePath()).apply();
+            // Update UI
+            ImageView profilePic = findViewById(R.id.settings_profile_pic);
+            if (profilePic != null) {
+                profilePic.setImageURI(Uri.fromFile(file));
+                Logger.info("Profile picture ImageView updated successfully");
+            }
+            Toast.makeText(this, "Profile picture updated", Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Logger.error("Error saving profile picture to internal storage", e);
+            Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void loadProfilePictureFromDatabase(ImageView profilePic, Uri fallbackUri) {
-        try {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Logger.warn("No user found when loading profile picture from database");
-                profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
+    private void loadProfilePictureFromInternalStorage(ImageView profilePic) {
+        SharedPreferences prefs = getSharedPreferences("profile", MODE_PRIVATE);
+        String path = prefs.getString("profile_picture_path", null);
+        if (path != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                profilePic.setImageURI(Uri.fromFile(file));
                 return;
             }
-
-            DbKeys keys = DbKeys.get(this);
-            DatabaseReference ref = FirebaseDatabase
-                    .getInstance(keys.databaseUrl)
-                    .getReference(keys.users)
-                    .child(user.getUid());
-
-            ref.child("photoUrl").get().addOnCompleteListener(task -> {
-                try {
-                    if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
-                        String photoUrl = task.getResult().getValue(String.class);
-                        if (photoUrl != null && !photoUrl.isEmpty()) {
-                            Logger.info("Loading profile picture from database: " + photoUrl);
-                            Uri uri = Uri.parse(photoUrl);
-                            profilePic.setImageURI(uri);
-                        } else {
-                            Logger.info("No photo URL in database, using fallback");
-                            profilePic.setImageURI(fallbackUri);
-                        }
-                    } else {
-                        Logger.info("No photo URL in database, using fallback");
-                        profilePic.setImageURI(fallbackUri);
-                    }
-                } catch (Exception e) {
-                    Logger.error("Error loading profile picture from database", e);
-                    profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
-                }
+        }
+        profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
+    }
+    
+    private void setupDeveloperMode() {
+        View developerSection = findViewById(R.id.developer_section);
+        androidx.appcompat.widget.SwitchCompat developerSwitch = findViewById(R.id.switch_developer_mode);
+        
+        if (developerSection == null || developerSwitch == null) {
+            return;
+        }
+        
+        // Check if current user is a developer
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null && DeveloperMode.isDeveloperEmail(currentUser.getEmail())) {
+            developerSection.setVisibility(View.VISIBLE);
+            
+            // Set current state
+            developerSwitch.setChecked(DeveloperMode.isDeveloperMode(this));
+            
+            // Handle switch changes
+            developerSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                DeveloperMode.setDeveloperMode(this, isChecked);
+                Toast.makeText(this, 
+                    isChecked ? "Developer mode enabled" : "Developer mode disabled", 
+                    Toast.LENGTH_SHORT).show();
             });
-        } catch (Exception e) {
-            Logger.error("Error in loadProfilePictureFromDatabase", e);
-            profilePic.setImageResource(R.drawable.ic_avatar_placeholder);
+        } else {
+            developerSection.setVisibility(View.GONE);
         }
     }
 } 
