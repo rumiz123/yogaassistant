@@ -29,14 +29,15 @@
         android:background="@drawable/bg_rank_circle"/>
 
     <!-- Avatar placeholder -->
-    <de.hdodenhof.circleimageview.CircleImageView
+    <ImageView
         android:id="@+id/ivAvatar"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginStart="16dp"
         android:src="@drawable/ic_avatar_placeholder"
+        android:background="@drawable/circular_button"
         android:padding="4dp"
-        android:contentDescription="@string/avatar" />
+        android:contentDescription="@string/avatar"/>
 
     <!-- Name / Level & Score -->
     <LinearLayout
