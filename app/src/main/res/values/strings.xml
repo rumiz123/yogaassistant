@@ -1,9 +1,10 @@
 <resources>
     <string name="app_name"></string>
-    <string name="title_home">Account</string>
+    <string name="title_home">Settings</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_workout">Workout</string>
     <string name="title_leaderboard">Leaderboard</string>
+    <string name="title_friends">Friends</string>
     <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="sign_in_google">Sign in with Google</string>
@@ -17,4 +18,119 @@
     <string name="workout_name_2">Warrior Flow</string>
     <string name="workout_name_3">Balance Basics</string>
     <string name="workout_name_4">Expert Power Flow</string>
+    
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="profile_picture">Profile Picture</string>
+    <string name="tap_to_change_profile">Tap to change your profile picture</string>
+    <string name="developer_mode">Developer Mode</string>
+    <string name="developer_mode_description">Enable developer features like leaderboard management</string>
+    <string name="logout">LOGOUT</string>
+    
+    <!-- Theme Settings -->
+    <string name="appearance">Appearance</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="dark_mode_description">Use dark theme throughout the app</string>
+    <string name="auto_theme">Auto Theme</string>
+    <string name="auto_theme_description">Follow system theme settings</string>
+    
+    <!-- Notifications -->
+    <string name="notifications">Notifications</string>
+    <string name="workout_reminders">Workout Reminders</string>
+    <string name="workout_reminders_description">Get reminded to do your daily yoga practice</string>
+    <string name="reminder_time">Reminder Time</string>
+    <string name="reminder_time_description">Set when you want to be reminded</string>
+    <string name="achievement_notifications">Achievement Notifications</string>
+    <string name="achievement_notifications_description">Get notified when you unlock achievements</string>
+    <string name="friend_activity">Friend Activity</string>
+    <string name="friend_activity_description">Get notified about your friends\' progress</string>
+    
+    <!-- Privacy & Data -->
+    <string name="privacy_data">Privacy &amp; Data</string>
+    <string name="data_export">Export Data</string>
+    <string name="data_export_description">Download your workout data and progress</string>
+    <string name="data_backup">Backup Data</string>
+    <string name="data_backup_description">Backup your data to cloud storage</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="delete_account_description">Permanently delete your account and data</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_service">Terms of Service</string>
+    
+    <!-- Accessibility -->
+    <string name="accessibility">Accessibility</string>
+    <string name="large_text">Large Text</string>
+    <string name="large_text_description">Increase text size for better readability</string>
+    <string name="high_contrast">High Contrast</string>
+    <string name="high_contrast_description">Increase contrast for better visibility</string>
+    <string name="reduce_motion">Reduce Motion</string>
+    <string name="reduce_motion_description">Reduce animations and transitions</string>
+    
+    <!-- Quick Actions -->
+    <string name="quick_actions">Quick Actions</string>
+    <string name="start_workout">Start Workout</string>
+    <string name="view_progress">View Progress</string>
+    <string name="add_friend">Add Friend</string>
+    <string name="view_leaderboard">View Leaderboard</string>
+    
+    <!-- Statistics -->
+    <string name="statistics">Statistics</string>
+    <string name="total_workouts">Total Workouts</string>
+    <string name="current_streak">Current Streak</string>
+    <string name="longest_streak">Longest Streak</string>
+    <string name="total_calories">Total Calories</string>
+    <string name="average_workout_time">Average Workout Time</string>
+    <string name="favorite_workout">Favorite Workout</string>
+    
+    <!-- General -->
+    <string name="on">On</string>
+    <string name="off">Off</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="confirm">Confirm</string>
+    <string name="back">Back</string>
+    <string name="next">Next</string>
+    <string name="done">Done</string>
+    <string name="loading">Loading...</string>
+    <string name="error">Error</string>
+    <string name="success">Success</string>
+    <string name="warning">Warning</string>
+    <string name="info">Info</string>
+    
+    <!-- Friends -->
+    <string name="friends">Friends</string>
+    <string name="add_friends">Add Friends</string>
+    <string name="search_users">Search Users</string>
+    <string name="search_hint">Search by name or email...</string>
+    <string name="send_friend_request">Send Friend Request</string>
+    <string name="friend_request_sent">Friend request sent!</string>
+    <string name="already_friends">Already friends</string>
+    <string name="remove_friend">Remove Friend</string>
+    <string name="friend_removed">Friend removed</string>
+    <string name="no_friends_yet">No friends yet</string>
+    <string name="no_friends_yet_description">Start by adding some friends to compete and motivate each other!</string>
+    <string name="competition">Competition</string>
+    <string name="create_competition">Create Competition</string>
+    <string name="competition_title">Competition Title</string>
+    <string name="competition_description">Description</string>
+    <string name="competition_duration">Duration (days)</string>
+    <string name="competition_goal">Goal (workouts)</string>
+    <string name="competition_created">Competition created!</string>
+    <string name="active_competitions">Active Competitions</string>
+    <string name="no_active_competitions">No active competitions</string>
+    
+    <!-- Achievements -->
+    <string name="achievements">Achievements</string>
+    <string name="first_workout">First Workout</string>
+    <string name="first_workout_description">Complete your first yoga workout</string>
+    <string name="week_streak">Week Warrior</string>
+    <string name="week_streak_description">Maintain a 7-day workout streak</string>
+    <string name="month_streak">Monthly Master</string>
+    <string name="month_streak_description">Maintain a 30-day workout streak</string>
+    <string name="hundred_workouts">Century Club</string>
+    <string name="hundred_workouts_description">Complete 100 workouts</string>
+    <string name="social_butterfly">Social Butterfly</string>
+    <string name="social_butterfly_description">Add 10 friends</string>
+    <string name="competition_winner">Champion</string>
+    <string name="competition_winner_description">Win your first competition</string>
 </resources>

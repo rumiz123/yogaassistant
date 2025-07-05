@@ -75,4 +75,7 @@
     <color name="learning_green">#10B981</color>
     <color name="learning_yellow">#F59E0B</color>
     <color name="learning_purple">#8B5CF6</color>
+    
+    <!-- Additional Colors -->
+    <color name="red">#EF4444</color>
 </resources>
