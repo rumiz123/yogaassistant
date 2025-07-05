@@ -31,9 +31,9 @@ public class SettingsActivity extends AppCompatActivity {
         }
         setContentView(R.layout.fragment_settings);
 
-        // Hide the bottom nav bar
-        View navBar = findViewById(R.id.nav_view);
-        if (navBar != null) navBar.setVisibility(View.GONE);
+        // Hide the bottom nav bar - removed for camera functionality
+        // View navBar = findViewById(R.id.nav_view);
+        // if (navBar != null) navBar.setVisibility(View.GONE);
 
         // prepare the image-picker launcher
         pickImageLauncher = registerForActivityResult(

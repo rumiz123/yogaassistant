@@ -235,8 +235,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        View navBar = requireActivity().findViewById(R.id.nav_view);
-        if (navBar != null) navBar.setVisibility(View.VISIBLE);
+        // Navigation bar removed for camera functionality
+        // View navBar = requireActivity().findViewById(R.id.nav_view);
+        // if (navBar != null) navBar.setVisibility(View.VISIBLE);
     }
 
     private void updateProfilePicture(Uri uri) {

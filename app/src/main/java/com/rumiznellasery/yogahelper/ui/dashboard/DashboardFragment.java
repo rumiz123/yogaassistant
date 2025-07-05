@@ -44,12 +44,12 @@ public class DashboardFragment extends Fragment {
 
         updateUI(calories, streak, workoutsThisWeek);
 
-        // Start Workout button logic
+        // Start Workout button logic - navigation removed for camera functionality
         binding.buttonStartWorkout.setOnClickListener(v -> {
-            // Switch to workout tab in bottom navigation
-            com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
-                requireActivity().findViewById(R.id.nav_view);
-            bottomNav.setSelectedItemId(R.id.navigation_workout);
+            // Navigation temporarily disabled for camera testing
+            // com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
+            //     requireActivity().findViewById(R.id.nav_view);
+            // bottomNav.setSelectedItemId(R.id.navigation_workout);
         });
 
         // Reset bars button logic

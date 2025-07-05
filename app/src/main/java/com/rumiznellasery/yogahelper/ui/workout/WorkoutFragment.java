@@ -105,7 +105,8 @@ public class WorkoutFragment extends Fragment {
                 prefs.edit().putInt("workouts_this_week", workoutsThisWeek).apply();
             }
 
-            Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.camera.CameraActivity.class);
+            // CameraActivity removed, using MainActivity for camera functionality
+            Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.MainActivity.class);
             startActivity(intent);
         };
 
