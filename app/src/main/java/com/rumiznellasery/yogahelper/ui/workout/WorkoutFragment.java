@@ -29,9 +29,6 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 
 public class WorkoutFragment extends Fragment {
 
@@ -52,43 +49,32 @@ public class WorkoutFragment extends Fragment {
             int workouts = prefs.getInt("workouts", 0) + 1;
             int calories = prefs.getInt("calories", 0) + 50;
 
-            // --- Robust Streak logic (UTC) ---
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate today = LocalDate.now(ZoneOffset.UTC);
-            String todayStr = today.format(formatter);
-            String lastWorkoutDateStr = prefs.getString("last_workout_date", "");
+            // --- Streak logic ---
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            String today = sdf.format(new Date());
+            String lastWorkoutDate = prefs.getString("last_workout_date", "");
             int streak = prefs.getInt("streak", 0);
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -1);
+            String yesterday = sdf.format(cal.getTime());
             boolean streakIncreased = false;
-            if (lastWorkoutDateStr.equals(todayStr)) {
+            if (lastWorkoutDate.equals(today)) {
                 // Already logged today, do not increment streak
+            } else if (lastWorkoutDate.equals(yesterday)) {
+                // Consecutive day, increment streak
+                streak += 1;
+                streakIncreased = true;
             } else {
-                LocalDate lastWorkoutDate = null;
-                try {
-                    lastWorkoutDate = LocalDate.parse(lastWorkoutDateStr, formatter);
-                } catch (Exception ignored) {}
-                if (lastWorkoutDate != null) {
-                    long daysBetween = java.time.temporal.ChronoUnit.DAYS.between(lastWorkoutDate, today);
-                    if (daysBetween == 1) {
-                        // Consecutive day, increment streak
-                        streak += 1;
-                        streakIncreased = true;
-                    } else {
-                        // Missed one or more days, reset streak
-                        streak = 1;
-                        streakIncreased = true;
-                    }
-                } else {
-                    // First workout ever
-                    streak = 1;
-                    streakIncreased = true;
-                }
+                // Missed a day or first workout, reset streak
+                streak = 1;
+                streakIncreased = true;
             }
             // Save new stats
             prefs.edit()
                 .putInt("workouts", workouts)
                 .putInt("calories", calories)
                 .putInt("streak", streak)
-                .putString("last_workout_date", todayStr)
+                .putString("last_workout_date", today)
                 .apply();
 
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();

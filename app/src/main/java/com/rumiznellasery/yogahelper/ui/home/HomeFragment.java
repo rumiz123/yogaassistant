@@ -26,18 +26,32 @@ import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.databinding.FragmentHomeBinding;
 import com.rumiznellasery.yogahelper.utils.Logger;
 import com.rumiznellasery.yogahelper.ui.home.SettingsActivity;
-import com.bumptech.glide.Glide;
-import android.content.SharedPreferences;
-import java.io.File;
 
 public class HomeFragment extends Fragment {
 
     private FragmentHomeBinding binding;
+    private ActivityResultLauncher<Intent> pickImageLauncher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Logger.info("HomeFragment onCreate started");
+
+        // prepare the image-picker launcher
+        pickImageLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Uri uri = result.getData().getData();
+                        if (uri != null) {
+                            Logger.info("Profile picture selected in HomeFragment: " + uri.toString());
+                            updateProfilePicture(uri);
+                        }
+                    } else {
+                        Logger.warn("Image picker cancelled in HomeFragment");
+                    }
+                }
+        );
     }
 
     @Override
@@ -55,14 +69,13 @@ public class HomeFragment extends Fragment {
 
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             if (user != null) {
-                // Load profile picture from internal storage
-                SharedPreferences prefs = requireContext().getSharedPreferences("profile", android.content.Context.MODE_PRIVATE);
-                String path = prefs.getString("profile_picture_path", null);
-                if (path != null) {
-                    File file = new File(path);
-                    if (file.exists()) {
-                        binding.imageProfile.setImageURI(android.net.Uri.fromFile(file));
-                    } else {
+                // load existing photo
+                Uri photoUri = user.getPhotoUrl();
+                if (photoUri != null) {
+                    try {
+                        binding.imageProfile.setImageURI(photoUri);
+                    } catch (Exception e) {
+                        Logger.error("Error setting profile image URI in HomeFragment", e);
                         binding.imageProfile.setImageResource(R.drawable.ic_avatar_placeholder);
                     }
                 } else {
@@ -83,7 +96,7 @@ public class HomeFragment extends Fragment {
                         .getInstance(keys.databaseUrl)
                         .getReference(keys.users)
                         .child(user.getUid());
-
+                
                 ref.child(keys.displayName).get().addOnCompleteListener(task -> {
                     try {
                         if (task.isSuccessful() && task.getResult() != null && task.getResult().exists()) {
@@ -132,8 +145,16 @@ public class HomeFragment extends Fragment {
                 binding.textEmail.setText("");
             }
 
-            // Remove tap avatar → pick new image
-            binding.imageProfile.setOnClickListener(null);
+            // tap avatar → pick new image
+            binding.imageProfile.setOnClickListener(v -> {
+                try {
+                    Intent pick = new Intent(Intent.ACTION_GET_CONTENT);
+                    pick.setType("image/*");
+                    pickImageLauncher.launch(pick);
+                } catch (Exception e) {
+                    Logger.error("Error launching image picker in HomeFragment", e);
+                }
+            });
 
             // edit name…
             binding.iconEditName.setOnClickListener(v -> {
@@ -217,6 +238,34 @@ public class HomeFragment extends Fragment {
         // Navigation bar removed for camera functionality
         // View navBar = requireActivity().findViewById(R.id.nav_view);
         // if (navBar != null) navBar.setVisibility(View.VISIBLE);
+    }
+
+    private void updateProfilePicture(Uri uri) {
+        FirebaseUser curr = FirebaseAuth.getInstance().getCurrentUser();
+        if (curr == null) return;
+
+        UserProfileChangeRequest req = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(uri)
+                .build();
+
+        curr.updateProfile(req).addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                binding.imageProfile.setImageURI(uri);
+                // save URL in Realtime DB if you like:
+                DbKeys keys = DbKeys.get(requireContext());
+                DatabaseReference ref = FirebaseDatabase
+                        .getInstance(keys.databaseUrl)
+                        .getReference(keys.users)
+                        .child(curr.getUid());
+                ref.child("photoUrl").setValue(uri.toString());
+
+                Toast.makeText(requireContext(),
+                        "Profile picture updated", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(requireContext(),
+                        "Failed to update profile picture", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
