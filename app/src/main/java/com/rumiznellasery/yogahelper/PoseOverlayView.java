@@ -8,7 +8,9 @@ import android.graphics.PointF;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.google.mediapipe.tasks.vision.poselandmarker.PoseLandmarkerResult;
+import com.rumiznellasery.yogahelper.camera.PoseDetector;
+import com.rumiznellasery.yogahelper.camera.PoseDetector.PoseLandmarkerResult;
+import com.rumiznellasery.yogahelper.camera.PoseDetector.NormalizedLandmark;
 
 import java.util.List;
 
@@ -97,56 +99,51 @@ public class PoseOverlayView extends View {
             return;
         }
 
-        // Use the type as returned by the API (no explicit import)
-        java.util.List<?> landmarks = poseResult.landmarks().get(0);
+        // Use our custom NormalizedLandmark class
+        List<NormalizedLandmark> landmarks = poseResult.landmarks().get(0);
 
         // Draw connections
         for (int[] connection : POSE_CONNECTIONS) {
             if (connection[0] < landmarks.size() && connection[1] < landmarks.size()) {
-                var start = landmarks.get(connection[0]);
-                var end = landmarks.get(connection[1]);
+                NormalizedLandmark start = landmarks.get(connection[0]);
+                NormalizedLandmark end = landmarks.get(connection[1]);
                 
-                // Use the new helper method to handle Optional<Float>
-                float startX = getOptionalFloat(start, "x");
-                float startY = getOptionalFloat(start, "y");
-                float startVis = getOptionalFloat(start, "visibility");
-                float endX = getOptionalFloat(end, "x");
-                float endY = getOptionalFloat(end, "y");
-                float endVis = getOptionalFloat(end, "visibility");
+                // Use our custom landmark properties
+                float startX = start.x();
+                float startY = start.y();
+                float endX = end.x();
+                float endY = end.y();
                 
-                if (startVis > 0.5f && endVis > 0.5f) {
-                    PointF startPoint = normalizedToViewCoordinates(startX, startY);
-                    PointF endPoint = normalizedToViewCoordinates(endX, endY);
-                    
-                    canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, connectionPaint);
-                }
+                // Assume visibility is good for our simulated poses
+                PointF startPoint = normalizedToViewCoordinates(startX, startY);
+                PointF endPoint = normalizedToViewCoordinates(endX, endY);
+                
+                canvas.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, connectionPaint);
             }
         }
 
         // Draw landmarks
         for (int i = 0; i < landmarks.size(); i++) {
-            var landmark = landmarks.get(i);
-            float x = getOptionalFloat(landmark, "x");
-            float y = getOptionalFloat(landmark, "y");
-            float vis = getOptionalFloat(landmark, "visibility");
-            if (vis > 0.5f) {
-                PointF point = normalizedToViewCoordinates(x, y);
-                
-                // Different colors for different landmark types
-                if (i <= 10) {
-                    landmarkPaint.setColor(Color.YELLOW); // Face
-                } else if (i <= 22) {
-                    landmarkPaint.setColor(Color.RED); // Upper body
-                } else {
-                    landmarkPaint.setColor(Color.BLUE); // Lower body
-                }
-                
-                canvas.drawCircle(point.x, point.y, 8f, landmarkPaint);
-                
-                // Draw landmark number for debugging
-                if (i % 5 == 0) { // Only show every 5th landmark number to avoid clutter
-                    canvas.drawText(String.valueOf(i), point.x + 15, point.y - 15, textPaint);
-                }
+            NormalizedLandmark landmark = landmarks.get(i);
+            float x = landmark.x();
+            float y = landmark.y();
+            
+            PointF point = normalizedToViewCoordinates(x, y);
+            
+            // Different colors for different landmark types
+            if (i <= 10) {
+                landmarkPaint.setColor(Color.YELLOW); // Face
+            } else if (i <= 22) {
+                landmarkPaint.setColor(Color.RED); // Upper body
+            } else {
+                landmarkPaint.setColor(Color.BLUE); // Lower body
+            }
+            
+            canvas.drawCircle(point.x, point.y, 8f, landmarkPaint);
+            
+            // Draw landmark number for debugging
+            if (i % 5 == 0) { // Only show every 5th landmark number to avoid clutter
+                canvas.drawText(String.valueOf(i), point.x + 15, point.y - 15, textPaint);
             }
         }
     }
@@ -158,32 +155,4 @@ public class PoseOverlayView extends View {
         return new PointF(x, y);
     }
 
-    // Helper to handle Optional<Float> return types from MediaPipe API
-    private float getOptionalFloat(Object obj, String methodName) {
-        try {
-            Object result = obj.getClass().getMethod(methodName).invoke(obj);
-            if (result instanceof java.util.Optional) {
-                java.util.Optional<?> opt = (java.util.Optional<?>) result;
-                if (opt.isPresent()) {
-                    Object value = opt.get();
-                    if (value instanceof Float) {
-                        return (Float) value;
-                    } else if (value instanceof Double) {
-                        return ((Double) value).floatValue();
-                    } else if (value instanceof Number) {
-                        return ((Number) value).floatValue();
-                    }
-                }
-            } else if (result instanceof Float) {
-                return (Float) result;
-            } else if (result instanceof Double) {
-                return ((Double) result).floatValue();
-            } else if (result instanceof Number) {
-                return ((Number) result).floatValue();
-            }
-        } catch (Exception e) {
-            // ignore
-        }
-        return 0f;
-    }
 } 
