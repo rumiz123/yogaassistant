@@ -1,5 +1,7 @@
 package com.rumiznellasery.yogahelper.camera;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
@@ -31,19 +33,22 @@ public class WorkoutSession {
         void onWorkoutCompleted();
         void onWorkoutPaused();
         void onWorkoutResumed();
+        void onLaunchPosePreparation(Pose pose, int poseIndex, int totalPoses);
     }
     
     private final List<Pose> poses;
     private final WorkoutListener listener;
     private final Handler handler;
     private final Runnable progressRunnable;
+    private final Context context;
     
     private int currentPoseIndex = 0;
     private int currentPoseTimeRemaining = 0;
     private boolean isActive = false;
     private boolean isPaused = false;
     
-    public WorkoutSession(WorkoutListener listener) {
+    public WorkoutSession(Context context, WorkoutListener listener) {
+        this.context = context;
         this.listener = listener;
         this.handler = new Handler(Looper.getMainLooper());
         this.poses = createWorkoutPoses();
@@ -59,80 +64,89 @@ public class WorkoutSession {
     }
     
     private List<Pose> createWorkoutPoses() {
-        List<Pose> workoutPoses = new ArrayList<>();
+        List<Pose> poses = new ArrayList<>();
         
-        // Beginner-friendly yoga sequence
-        workoutPoses.add(new Pose(
+        // 1. Easy Standing Pose - Foundation
+        poses.add(new Pose(
             "Mountain Pose",
             "Stand tall with feet together",
-            30,
-            "Stand with feet together, arms at sides. Breathe deeply and find your balance."
-        ));
-        
-        workoutPoses.add(new Pose(
-            "Forward Fold",
-            "Bend forward from hips",
             25,
-            "From mountain pose, fold forward from your hips. Let your head hang and relax your neck."
+            "Stand with feet together, arms at sides. Take deep breaths and feel grounded. This is your foundation."
         ));
         
-        workoutPoses.add(new Pose(
-            "Half Lift",
-            "Lift halfway up",
+        // 2. Gentle Arm Stretch - Shoulder mobility
+        poses.add(new Pose(
+            "Gentle Arm Stretch",
+            "Raise arms slowly overhead",
             20,
-            "From forward fold, lift your chest halfway up. Keep your back straight and look forward."
+            "Stand with feet hip-width apart. Slowly raise your arms overhead, keeping them shoulder-width apart. Hold and breathe."
         ));
         
-        workoutPoses.add(new Pose(
-            "Plank Pose",
-            "Hold plank position",
-            30,
-            "Step back into plank. Keep your body in a straight line from head to heels."
+        // 3. Easy Side Stretch - Gentle side bend
+        poses.add(new Pose(
+            "Easy Side Stretch",
+            "Gently bend to one side",
+            20,
+            "Stand with feet hip-width apart. Raise your right arm overhead and gently bend to the left. Switch sides halfway through."
         ));
         
-        workoutPoses.add(new Pose(
-            "Downward Dog",
-            "Form an inverted V",
-            35,
-            "From plank, lift your hips up and back. Press your heels toward the ground."
-        ));
-        
-        workoutPoses.add(new Pose(
-            "Warrior I",
-            "Step forward into warrior",
+        // 4. Gentle Forward Fold - Hamstring stretch
+        poses.add(new Pose(
+            "Gentle Forward Fold",
+            "Bend forward with bent knees",
             25,
-            "Step your right foot forward. Raise your arms overhead and bend your front knee."
+            "Stand with feet hip-width apart, knees slightly bent. Fold forward from your hips, letting your arms hang. Don't force the stretch."
         ));
         
-        workoutPoses.add(new Pose(
-            "Warrior II",
-            "Open to the side",
-            30,
-            "Open your hips to the side. Extend your arms parallel to the ground."
-        ));
-        
-        workoutPoses.add(new Pose(
-            "Tree Pose",
-            "Balance on one leg",
+        // 5. Easy Squat - Leg strength
+        poses.add(new Pose(
+            "Easy Squat",
+            "Squat down comfortably",
             20,
-            "Stand on your left leg. Place your right foot on your left thigh or calf."
+            "Stand with feet hip-width apart. Slowly squat down as if sitting in a chair. Keep your heels on the ground."
         ));
         
-        workoutPoses.add(new Pose(
-            "Child's Pose",
-            "Rest in child's pose",
-            15,
-            "Kneel and sit back on your heels. Fold forward and rest your forehead on the ground."
-        ));
-        
-        workoutPoses.add(new Pose(
-            "Corpse Pose",
-            "Final relaxation",
+        // 6. Gentle Knee Stretch - Hip mobility
+        poses.add(new Pose(
+            "Gentle Knee Stretch",
+            "Bring knee toward chest",
             20,
-            "Lie on your back with arms and legs relaxed. Close your eyes and breathe deeply."
+            "Stand with feet hip-width apart. Gently lift your right knee toward your chest, holding it with your hands. Switch legs halfway through."
         ));
         
-        return workoutPoses;
+        // 7. Easy Back Stretch - Spine mobility
+        poses.add(new Pose(
+            "Easy Back Stretch",
+            "Gentle back arch and curl",
+            25,
+            "Stand with feet hip-width apart. Place your hands on your lower back. Gently arch your back, then round it forward."
+        ));
+        
+        // 8. Gentle Neck Stretch - Neck mobility
+        poses.add(new Pose(
+            "Gentle Neck Stretch",
+            "Slowly turn head side to side",
+            20,
+            "Stand with feet hip-width apart. Slowly turn your head to the right, then to the left. Keep your shoulders relaxed."
+        ));
+        
+        // 9. Easy Balance - Simple balance
+        poses.add(new Pose(
+            "Easy Balance",
+            "Stand on one leg briefly",
+            20,
+            "Stand with feet hip-width apart. Gently lift your right foot slightly off the ground. Hold for a few seconds, then switch legs."
+        ));
+        
+        // 10. Relaxation Pose - Final rest
+        poses.add(new Pose(
+            "Relaxation Pose",
+            "Stand and breathe deeply",
+            25,
+            "Stand with feet hip-width apart, arms at sides. Take deep breaths and feel the benefits of your practice."
+        ));
+        
+        return poses;
     }
     
     public void startWorkout() {
@@ -144,7 +158,7 @@ public class WorkoutSession {
         isActive = true;
         isPaused = false;
         currentPoseIndex = 0;
-        startCurrentPose();
+        launchPosePreparation();
     }
     
     public void pauseWorkout() {
@@ -180,7 +194,20 @@ public class WorkoutSession {
         }
     }
     
-    private void startCurrentPose() {
+    public void launchPosePreparation() {
+        if (currentPoseIndex >= poses.size()) {
+            completeWorkout();
+            return;
+        }
+        
+        Pose currentPose = poses.get(currentPoseIndex);
+        
+        if (listener != null) {
+            listener.onLaunchPosePreparation(currentPose, currentPoseIndex + 1, poses.size());
+        }
+    }
+    
+    public void startCurrentPose() {
         if (currentPoseIndex >= poses.size()) {
             completeWorkout();
             return;
@@ -218,7 +245,8 @@ public class WorkoutSession {
             // Move to next pose
             currentPoseIndex++;
             if (currentPoseIndex < poses.size()) {
-                startCurrentPose();
+                // Launch preparation for next pose
+                launchPosePreparation();
             } else {
                 completeWorkout();
             }
@@ -260,6 +288,13 @@ public class WorkoutSession {
     public Pose getCurrentPose() {
         if (currentPoseIndex < poses.size()) {
             return poses.get(currentPoseIndex);
+        }
+        return null;
+    }
+    
+    public Pose getPoseByIndex(int index) {
+        if (index >= 0 && index < poses.size()) {
+            return poses.get(index);
         }
         return null;
     }

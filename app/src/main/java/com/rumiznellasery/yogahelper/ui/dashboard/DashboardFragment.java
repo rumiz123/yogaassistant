@@ -36,13 +36,12 @@ public class DashboardFragment extends Fragment {
         View root = binding.getRoot();
 
         SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
-        int calories = prefs.getInt("calories", 0);
         int streak = prefs.getInt("streak", 0);
         int workoutsThisWeek = getWeeklyWorkouts(prefs);
 
-        updateUI(calories, streak, workoutsThisWeek);
+        updateUI(streak, workoutsThisWeek);
         setupQuickActions();
-        checkAchievements(calories, streak, workoutsThisWeek);
+        // checkAchievements(streak, workoutsThisWeek); // Disabled achievement notifications on launch
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -61,17 +60,14 @@ public class DashboardFragment extends Fragment {
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Integer c = snapshot.child(keys.calories).getValue(Integer.class);
                     Integer s = snapshot.child(keys.streak).getValue(Integer.class);
                     Integer w = snapshot.child(keys.workouts).getValue(Integer.class);
-                    int newCalories = c == null ? calories : c;
                     int newStreak = s == null ? streak : s;
                     int newWorkouts = w == null ? workoutsThisWeek : w;
-                    prefs.edit().putInt("calories", newCalories)
-                            .putInt("streak", newStreak)
+                    prefs.edit().putInt("streak", newStreak)
                             .apply();
-                    updateUI(newCalories, newStreak, getWeeklyWorkouts(prefs));
-                    checkAchievements(newCalories, newStreak, getWeeklyWorkouts(prefs));
+                    updateUI(newStreak, getWeeklyWorkouts(prefs));
+                    // checkAchievements(newStreak, getWeeklyWorkouts(prefs));
                 }
 
                 @Override
@@ -129,7 +125,7 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    private void checkAchievements(int calories, int streak, int workoutsThisWeek) {
+    private void checkAchievements(int streak, int workoutsThisWeek) {
         // Initialize achievement manager
         com.rumiznellasery.yogahelper.utils.AchievementManager achievementManager = 
             com.rumiznellasery.yogahelper.utils.AchievementManager.getInstance(requireContext());
@@ -160,7 +156,6 @@ public class DashboardFragment extends Fragment {
             exportData.append("User Statistics:\n");
             exportData.append("- Total Workouts: ").append(statsPrefs.getInt("workouts", 0)).append("\n");
             exportData.append("- Current Streak: ").append(statsPrefs.getInt("streak", 0)).append("\n");
-            exportData.append("- Total Calories: ").append(statsPrefs.getInt("calories", 0)).append("\n");
             exportData.append("- Last Workout: ").append(statsPrefs.getString("last_workout_date", "Never")).append("\n\n");
 
             // Add achievements
@@ -192,12 +187,7 @@ public class DashboardFragment extends Fragment {
         }
     }
 
-    private void updateUI(int calories, int streak, int workoutsThisWeek) {
-        // Calories circular progress (max 500)
-        binding.circleCalories.setMax(500);
-        binding.circleCalories.setProgressCompat(Math.min(calories, 500), true);
-        binding.textCaloriesCenter.setText(calories + " calories");
-
+    private void updateUI(int streak, int workoutsThisWeek) {
         // Streak number
         binding.textStreakNumber.setText(String.valueOf(streak));
 
@@ -210,10 +200,10 @@ public class DashboardFragment extends Fragment {
         binding.textWorkoutsCount.setText(workoutsThisWeek + "/10 workouts");
         
         // Update motivational message based on progress
-        updateMotivationalMessage(calories, streak, workoutsThisWeek);
+        updateMotivationalMessage(streak, workoutsThisWeek);
     }
     
-    private void updateMotivationalMessage(int calories, int streak, int workoutsThisWeek) {
+    private void updateMotivationalMessage(int streak, int workoutsThisWeek) {
         String title;
         String message;
         
@@ -226,9 +216,6 @@ public class DashboardFragment extends Fragment {
         } else if (workoutsThisWeek >= 5) {
             title = "💪 Strong Week! 💪";
             message = "You're crushing your weekly goals! Keep up this amazing energy!";
-        } else if (calories >= 300) {
-            title = "🔥 Burning Bright! 🔥";
-            message = "Look at those calories burn! Your body is thanking you for this amazing workout!";
         } else {
             title = "🌟 Keep Going! 🌟";
             message = "Every workout brings you closer to your goals. Stay consistent and watch your progress grow!";

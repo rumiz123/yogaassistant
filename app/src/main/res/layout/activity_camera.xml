@@ -38,15 +38,98 @@
         android:layout_height="wrap_content"
         android:text="@string/pose_detection_initializing"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_box"
+        android:padding="20dp"
+        android:layout_margin="20dp"
+        android:maxLines="4"
+        android:ellipsize="end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Circular Timer in Center -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/circular_timer_container"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        app:cardCornerRadius="100dp"
+        app:cardElevation="12dp"
+        app:cardBackgroundColor="@color/black"
+        android:alpha="0.8"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:padding="20dp">
+
+            <!-- Timer Text -->
+            <TextView
+                android:id="@+id/circular_timer_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30"
+                android:textColor="@color/white"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+
+            <!-- Timer Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="seconds"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:alpha="0.8"
+                android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!-- Pose Feedback Text (Bigger) -->
+    <TextView
+        android:id="@+id/pose_feedback_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="@color/white"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:background="@drawable/rounded_box"
         android:padding="16dp"
         android:layout_margin="20dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        app:layout_constraintBottom_toTopOf="@+id/circular_timer_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Tips Section -->
+    <TextView
+        android:id="@+id/tips_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="💡 Tips: Stand tall, feet together, arms at sides"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:background="@drawable/rounded_box"
+        android:padding="12dp"
+        android:layout_margin="20dp"
         android:maxLines="3"
         android:ellipsize="end"
+        android:gravity="center"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Bottom Bar with Back to Instructions Button -->
     <LinearLayout

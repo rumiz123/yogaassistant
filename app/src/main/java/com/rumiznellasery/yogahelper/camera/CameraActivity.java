@@ -3,6 +3,7 @@ package com.rumiznellasery.yogahelper.camera;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.view.WindowManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -11,11 +12,13 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.YuvImage;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -47,15 +50,40 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     private static final int REQUEST_CODE_PERMISSIONS = 10;
     private final String[] REQUIRED_PERMISSIONS = new String[]{ Manifest.permission.CAMERA };
     
+    // Extras for pose information
+    public static final String EXTRA_POSE_INDEX = "pose_index";
+    public static final String EXTRA_TOTAL_POSES = "total_poses";
+    public static final String EXTRA_POSE_NAME = "pose_name";
+    public static final String EXTRA_POSE_DURATION = "pose_duration";
+    
     private PreviewView previewView;
     private ImageView poseOverlayView;
     private TextView poseStatusText;
+    private TextView circularTimerText;
+    private TextView poseFeedbackText;
+    private TextView tipsText;
     private Button backToInstructionsButton;
     private Button backToHomeButton;
     private MediaPipePoseDetector poseDetector;
     private WorkoutSession workoutSession;
     private ExecutorService cameraExecutor;
     private boolean isPoseDetectionEnabled = true; // Always enabled now
+    
+    // Current pose information
+    private int currentPoseIndex = 1;
+    private int totalPoses = 10;
+    private String currentPoseName = "";
+    private int currentPoseDuration = 30;
+    
+    // Pose validation variables
+    private boolean isCorrectPose = false;
+    private int correctPoseTime = 0;
+    private Handler poseTimerHandler;
+    private Runnable poseTimerRunnable;
+    
+    // Tips timer variables
+    private Handler tipsTimerHandler;
+    private Runnable tipsTimerRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,21 +94,33 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
             getSupportActionBar().hide();
         }
         
+        // Keep screen on during workout
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        
         setContentView(R.layout.activity_camera);
         
         // Initialize views
         previewView = findViewById(R.id.view_finder);
         poseOverlayView = findViewById(R.id.pose_overlay);
         poseStatusText = findViewById(R.id.pose_status_text);
+        circularTimerText = findViewById(R.id.circular_timer_text);
+        poseFeedbackText = findViewById(R.id.pose_feedback_text);
+        tipsText = findViewById(R.id.tips_text);
         backToInstructionsButton = findViewById(R.id.btn_back_to_instructions);
         backToHomeButton = findViewById(R.id.btn_back_to_home);
+        
+        // Get pose information from intent
+        currentPoseIndex = getIntent().getIntExtra(EXTRA_POSE_INDEX, 1);
+        totalPoses = getIntent().getIntExtra(EXTRA_TOTAL_POSES, 10);
+        currentPoseName = getIntent().getStringExtra(EXTRA_POSE_NAME);
+        currentPoseDuration = getIntent().getIntExtra(EXTRA_POSE_DURATION, 30);
         
         // Initialize MediaPipe pose detector
         poseDetector = new MediaPipePoseDetector(this, this);
         cameraExecutor = Executors.newSingleThreadExecutor();
 
         // Initialize workout session
-        workoutSession = new WorkoutSession(this);
+        workoutSession = new WorkoutSession(this, this);
 
         // Set up back to instructions button
         backToInstructionsButton.setOnClickListener(v -> {
@@ -96,8 +136,8 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
 
         if (allPermissionsGranted()) {
             startCamera();
-            // Start the guided workout
-            workoutSession.startWorkout();
+            // Start the current pose
+            startCurrentPose();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
@@ -210,9 +250,47 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
                     poseStatusText.setText("No person detected\nMove into camera view");
                 }
                 poseOverlayView.setImageBitmap(null); // Clear overlay
+                // Stop timer if no person detected
+                stopPoseTimer();
+                isCorrectPose = false;
             } else {
                 // Use the YogaPoseAnalyzer for better pose detection
                 YogaPoseAnalyzer.PoseAnalysis analysis = YogaPoseAnalyzer.analyzePose(result);
+                
+                // Update detected pose display
+                String detectedPoseName = analysis.poseName != null ? analysis.poseName : "Unknown";
+                int confidencePercent = (int) (analysis.confidence * 100);
+                String statusText = String.format("Pose %d of %d: %s\nDetected: %s (%d%%)", 
+                    currentPoseIndex, totalPoses, currentPoseName, detectedPoseName, confidencePercent);
+                
+                // Check if the current pose matches the expected pose
+                boolean poseMatches = validateCurrentPose(analysis, currentPoseName);
+                
+                if (poseMatches && !isCorrectPose) {
+                    // Pose just became correct, start timer
+                    isCorrectPose = true;
+                    startPoseTimer();
+                    poseStatusText.setText(statusText);
+                    poseFeedbackText.setText("✅ Correct Pose!");
+                    updateCircularTimer(currentPoseDuration - correctPoseTime);
+                } else if (!poseMatches && isCorrectPose) {
+                    // Pose became incorrect, stop timer
+                    isCorrectPose = false;
+                    stopPoseTimer();
+                    poseStatusText.setText(statusText);
+                    poseFeedbackText.setText("❌ Adjust your pose");
+                    updateCircularTimer(currentPoseDuration - correctPoseTime);
+                } else if (poseMatches && isCorrectPose) {
+                    // Pose still correct, update timer display
+                    poseStatusText.setText(statusText);
+                    poseFeedbackText.setText("✅ Correct Pose!");
+                    updateCircularTimer(currentPoseDuration - correctPoseTime);
+                } else {
+                    // Pose still incorrect
+                    poseStatusText.setText(statusText);
+                    poseFeedbackText.setText("❌ Adjust your pose");
+                    updateCircularTimer(currentPoseDuration - correctPoseTime);
+                }
                 
                 // Show pose feedback as a toast if confidence is low, but don't override workout instructions
                 if (analysis.confidence < 0.5f && !analysis.feedback.isEmpty()) {
@@ -251,6 +329,17 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // Remove screen wake lock
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        
+        // Clean up pose timer
+        stopPoseTimer();
+        
+        // Clean up tips timer
+        if (tipsTimerHandler != null && tipsTimerRunnable != null) {
+            tipsTimerHandler.removeCallbacks(tipsTimerRunnable);
+        }
+        
         if (poseDetector != null) {
             poseDetector.close();
         }
@@ -266,8 +355,8 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     @Override
     public void onPoseStarted(WorkoutSession.Pose pose, int poseIndex, int totalPoses) {
         runOnUiThread(() -> {
-            String statusText = String.format("Pose %d of %d: %s\n\n%s\n\nTime: %d seconds", 
-                poseIndex, totalPoses, pose.name, pose.instructions, pose.durationSeconds);
+            String statusText = String.format("Pose %d of %d: %s\n\nTime: %d seconds", 
+                poseIndex, totalPoses, pose.name, pose.durationSeconds);
             poseStatusText.setText(statusText);
         });
     }
@@ -276,10 +365,9 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     public void onPoseProgress(WorkoutSession.Pose pose, int secondsRemaining) {
         runOnUiThread(() -> {
             String currentText = poseStatusText.getText().toString();
-            // Update the time remaining in the status text
             String[] lines = currentText.split("\n");
-            if (lines.length >= 3) {
-                lines[2] = "Time: " + secondsRemaining + " seconds";
+            if (lines.length >= 2) {
+                lines[1] = "Time: " + secondsRemaining + " seconds";
                 poseStatusText.setText(String.join("\n", lines));
             }
         });
@@ -288,7 +376,7 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     @Override
     public void onPoseCompleted(WorkoutSession.Pose pose, int poseIndex) {
         runOnUiThread(() -> {
-            Toast.makeText(this, "Great job! " + pose.name + " completed!", Toast.LENGTH_SHORT).show();
+            poseStatusText.setText(String.format("Pose %d completed!\n\nGreat job!", poseIndex));
         });
     }
 
@@ -303,17 +391,192 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     @Override
     public void onWorkoutPaused() {
         runOnUiThread(() -> {
-            poseStatusText.setText("Workout Paused\n\nTap 'Resume' to continue.");
+            poseStatusText.setText("Workout Paused\n\nTap to resume");
         });
     }
 
     @Override
     public void onWorkoutResumed() {
+        // Resume the current pose
+        startCurrentPose();
+    }
+    
+    @Override
+    public void onLaunchPosePreparation(WorkoutSession.Pose pose, int poseIndex, int totalPoses) {
+        // This will be handled by the PosePreparationActivity
+        // The CameraActivity will receive the pose data via intent extras
+    }
+
+    private void startCurrentPose() {
+        // Initialize pose validation variables
+        isCorrectPose = false;
+        correctPoseTime = 0;
+        
+        // Set up the initial pose display
+        poseStatusText.setText(String.format("Pose %d of %d: %s", currentPoseIndex, totalPoses, currentPoseName));
+        poseFeedbackText.setText("❌ Get into the correct pose");
+        updateCircularTimer(currentPoseDuration);
+        updateTips(currentPoseName);
+        
+        // Start the pose timer (it will only count when correct pose is detected)
+        startPoseTimer();
+    }
+    
+    private void startPoseTimer() {
+        // Initialize timer variables
+        correctPoseTime = 0;
+        poseTimerHandler = new Handler();
+        
+        poseTimerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (isCorrectPose && correctPoseTime < currentPoseDuration) {
+                    correctPoseTime++;
+                    updatePoseTimer(correctPoseTime);
+                    poseTimerHandler.postDelayed(this, 1000);
+                } else if (correctPoseTime >= currentPoseDuration) {
+                    // Pose completed, launch next pose preparation
+                    launchNextPosePreparation();
+                } else {
+                    // Pose not correct, stop timer
+                    stopPoseTimer();
+                }
+            }
+        };
+        
+        // Start the timer
+        poseTimerHandler.postDelayed(poseTimerRunnable, 1000);
+    }
+    
+    private void updatePoseTimer(int secondsRemaining) {
         runOnUiThread(() -> {
-            WorkoutSession.Pose currentPose = workoutSession.getCurrentPose();
-            if (currentPose != null) {
-                onPoseStarted(currentPose, workoutSession.getCurrentPoseIndex() + 1, workoutSession.getTotalPoses());
+            // Update the circular timer
+            updateCircularTimer(currentPoseDuration - secondsRemaining);
+        });
+    }
+    
+    private void launchNextPosePreparation() {
+        runOnUiThread(() -> {
+            if (currentPoseIndex < totalPoses) {
+                // Launch next pose preparation
+                Intent intent = new Intent(this, PosePreparationActivity.class);
+                intent.putExtra(PosePreparationActivity.EXTRA_POSE_INDEX, currentPoseIndex + 1);
+                intent.putExtra(PosePreparationActivity.EXTRA_TOTAL_POSES, totalPoses);
+                // Get pose data from WorkoutSession
+                WorkoutSession.Pose nextPose = workoutSession.getPoseByIndex(currentPoseIndex);
+                if (nextPose != null) {
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_NAME, nextPose.name);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_DESCRIPTION, nextPose.description);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_INSTRUCTIONS, nextPose.instructions);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_DURATION, nextPose.durationSeconds);
+                }
+                startActivity(intent);
+                finish();
+            } else {
+                // Workout completed
+                poseStatusText.setText("Workout Complete!\n\nGreat job! You've completed all poses.\n\nTap 'Back to Home' to finish.");
+                Toast.makeText(this, "Congratulations! Workout completed!", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private boolean validateCurrentPose(YogaPoseAnalyzer.PoseAnalysis analysis, String expectedPoseName) {
+        // Simple pose validation - check if the detected pose matches the expected pose
+        // and has sufficient confidence
+        if (analysis.confidence < 0.6f) {
+            return false; // Not confident enough
+        }
+        
+        // Check if the detected pose name matches the expected pose
+        String detectedPose = analysis.poseName.toLowerCase();
+        String expectedPose = expectedPoseName.toLowerCase();
+        
+        // Handle different pose name variations
+        if (expectedPose.contains("mountain") && detectedPose.contains("mountain")) {
+            return true;
+        } else if (expectedPose.contains("gentle arm stretch") && detectedPose.contains("arm")) {
+            return true;
+        } else if (expectedPose.contains("easy side stretch") && detectedPose.contains("side")) {
+            return true;
+        } else if (expectedPose.contains("gentle forward fold") && detectedPose.contains("forward")) {
+            return true;
+        } else if (expectedPose.contains("easy squat") && detectedPose.contains("squat")) {
+            return true;
+        } else if (expectedPose.contains("gentle knee stretch") && detectedPose.contains("knee")) {
+            return true;
+        } else if (expectedPose.contains("easy back stretch") && detectedPose.contains("back")) {
+            return true;
+        } else if (expectedPose.contains("gentle neck stretch") && detectedPose.contains("neck")) {
+            return true;
+        } else if (expectedPose.contains("easy balance") && detectedPose.contains("balance")) {
+            return true;
+        } else if (expectedPose.contains("relaxation") && detectedPose.contains("relaxation")) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    private void stopPoseTimer() {
+        if (poseTimerHandler != null && poseTimerRunnable != null) {
+            poseTimerHandler.removeCallbacks(poseTimerRunnable);
+        }
+    }
+
+    private void updateCircularTimer(int secondsRemaining) {
+        runOnUiThread(() -> {
+            circularTimerText.setText(String.valueOf(secondsRemaining));
+        });
+    }
+
+    private void updateTips(String poseName) {
+        String tip = getTipForPose(poseName);
+        tipsText.setText("💡 Tips: " + tip);
+        tipsText.setVisibility(View.VISIBLE);
+        
+        // Hide tips after 2 seconds
+        if (tipsTimerHandler != null && tipsTimerRunnable != null) {
+            tipsTimerHandler.removeCallbacks(tipsTimerRunnable);
+        }
+        
+        tipsTimerHandler = new Handler();
+        tipsTimerRunnable = new Runnable() {
+            @Override
+            public void run() {
+                runOnUiThread(() -> {
+                    tipsText.setVisibility(View.GONE);
+                });
+            }
+        };
+        
+        tipsTimerHandler.postDelayed(tipsTimerRunnable, 2000); // 2 seconds
+    }
+    
+    private String getTipForPose(String poseName) {
+        String poseLower = poseName.toLowerCase();
+        
+        if (poseLower.contains("mountain")) {
+            return "Stand tall, feet together, arms at sides, breathe deeply";
+        } else if (poseLower.contains("gentle arm stretch")) {
+            return "Slowly raise arms overhead, keep shoulders relaxed, breathe deeply";
+        } else if (poseLower.contains("easy side stretch")) {
+            return "Gently bend to the side, don't force the stretch, keep breathing";
+        } else if (poseLower.contains("gentle forward fold")) {
+            return "Bend knees slightly, fold from hips, let arms hang naturally";
+        } else if (poseLower.contains("easy squat")) {
+            return "Squat as if sitting in a chair, keep heels on ground, engage legs";
+        } else if (poseLower.contains("gentle knee stretch")) {
+            return "Gently lift knee toward chest, hold with hands, switch sides";
+        } else if (poseLower.contains("easy back stretch")) {
+            return "Place hands on lower back, gently arch then round your spine";
+        } else if (poseLower.contains("gentle neck stretch")) {
+            return "Slowly turn head side to side, keep shoulders relaxed";
+        } else if (poseLower.contains("easy balance")) {
+            return "Gently lift one foot slightly, find your balance, switch sides";
+        } else if (poseLower.contains("relaxation")) {
+            return "Stand comfortably, take deep breaths, feel the benefits";
+        } else {
+            return "Move slowly and comfortably, don't force any position";
+        }
     }
 }

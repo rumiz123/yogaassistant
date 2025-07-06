@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.rumiznellasery.yogahelper.R;
+import com.rumiznellasery.yogahelper.camera.WorkoutSession;
 
 public class PoseInstructionsActivity extends AppCompatActivity {
 
@@ -62,10 +63,22 @@ public class PoseInstructionsActivity extends AppCompatActivity {
                 currentStep++;
                 updateInstruction();
             } else {
-                // Start camera activity
-                Intent intent = new Intent(this, CameraActivity.class);
+                // Start the pose preparation activity for the first pose
+                Intent intent = new Intent(this, PosePreparationActivity.class);
+                intent.putExtra(PosePreparationActivity.EXTRA_POSE_INDEX, 1);
+                intent.putExtra(PosePreparationActivity.EXTRA_TOTAL_POSES, 10);
+                
+                // Get the first pose data from WorkoutSession
+                WorkoutSession workoutSession = new WorkoutSession(this, null);
+                WorkoutSession.Pose firstPose = workoutSession.getPoseByIndex(0);
+                if (firstPose != null) {
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_NAME, firstPose.name);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_DESCRIPTION, firstPose.description);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_INSTRUCTIONS, firstPose.instructions);
+                    intent.putExtra(PosePreparationActivity.EXTRA_POSE_DURATION, firstPose.durationSeconds);
+                }
+                
                 startActivity(intent);
-                finish();
             }
         });
 

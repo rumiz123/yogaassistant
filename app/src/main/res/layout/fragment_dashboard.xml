@@ -98,58 +98,6 @@
                         android:textSize="32sp"/>
                 </LinearLayout>
 
-                <!-- Calories Section -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:background="@drawable/rounded_box"
-                    android:layout_marginBottom="20dp">
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        android:background="@drawable/circular_button"
-                        android:layout_marginEnd="16dp"/>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Calories Burned"
-                            android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"/>
-
-                        <TextView
-                            android:id="@+id/text_calories_center"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="0 calories"
-                            android:textColor="@color/text_primary"
-                            android:textSize="32sp"
-                            android:textStyle="bold"
-                            android:fontFamily="sans-serif-medium"/>
-                    </LinearLayout>
-
-                    <com.google.android.material.progressindicator.CircularProgressIndicator
-                        android:id="@+id/circle_calories"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
-                        app:indicatorColor="@color/theme_purple"
-                        app:indicatorSize="48dp"
-                        app:showAnimationBehavior="none"
-                        app:trackColor="@color/progress_background"
-                        app:trackThickness="6dp"/>
-                </LinearLayout>
-
                 <!-- Weekly Progress Section -->
                 <LinearLayout
                     android:layout_width="match_parent"
