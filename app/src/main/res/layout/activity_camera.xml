@@ -12,19 +12,20 @@
         android:layout_height="0dp"
         android:background="@drawable/preview_rounded"
         android:clipToOutline="true"
+        android:scaleType="fitCenter"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/bottom_bar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Pose overlay view -->
+    <!-- Pose overlay view - shows the processed camera feed with pose detection -->
     <ImageView
         android:id="@+id/pose_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="fitCenter"
         android:background="@android:color/transparent"
-        android:alpha="0.8"
+        android:alpha="1.0"
         app:layout_constraintTop_toTopOf="@+id/view_finder"
         app:layout_constraintBottom_toBottomOf="@+id/view_finder"
         app:layout_constraintStart_toStartOf="@+id/view_finder"
@@ -37,11 +38,13 @@
         android:layout_height="wrap_content"
         android:text="@string/pose_detection_initializing"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:background="@drawable/rounded_box"
-        android:padding="12dp"
-        android:layout_margin="16dp"
+        android:padding="16dp"
+        android:layout_margin="20dp"
+        android:maxLines="3"
+        android:ellipsize="end"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 

@@ -122,19 +122,26 @@ public class PoseDetector {
         // Create dynamic landmarks that simulate different yoga poses
         // This simulates what the model "paints" as it sees the user
         long currentTime = System.currentTimeMillis();
-        float timeFactor = (currentTime % 5000) / 5000.0f; // 5 second cycle
+        float timeFactor = (currentTime % 8000) / 8000.0f; // 8 second cycle for more realistic transitions
         
-        // Simulate different poses based on time
-        if (timeFactor < 0.2f) {
-            return createStandingPose(timeFactor);
-        } else if (timeFactor < 0.4f) {
-            return createWarriorPose(timeFactor);
+        // Add some randomness to make it feel more like real detection
+        float randomFactor = (float) Math.sin(currentTime / 1000.0) * 0.02f;
+        
+        // Simulate different poses based on time with more realistic transitions
+        if (timeFactor < 0.15f) {
+            return createStandingPose(timeFactor + randomFactor);
+        } else if (timeFactor < 0.3f) {
+            return createWarriorPose(timeFactor + randomFactor);
+        } else if (timeFactor < 0.45f) {
+            return createTreePose(timeFactor + randomFactor);
         } else if (timeFactor < 0.6f) {
-            return createTreePose(timeFactor);
-        } else if (timeFactor < 0.8f) {
-            return createDownwardDog(timeFactor);
+            return createDownwardDog(timeFactor + randomFactor);
+        } else if (timeFactor < 0.75f) {
+            return createChildPose(timeFactor + randomFactor);
+        } else if (timeFactor < 0.9f) {
+            return createCobraPose(timeFactor + randomFactor);
         } else {
-            return createChildPose(timeFactor);
+            return createPlankPose(timeFactor + randomFactor);
         }
     }
     
@@ -335,6 +342,86 @@ public class PoseDetector {
             new NormalizedLandmark(0.7f, 0.95f + breathing, 0.0f),  // right heel
             new NormalizedLandmark(0.35f, 0.95f + breathing, 0.0f), // left foot index
             new NormalizedLandmark(0.65f, 0.95f + breathing, 0.0f)  // right foot index
+        );
+    }
+    
+    private List<NormalizedLandmark> createCobraPose(float timeFactor) {
+        // Cobra pose - lying on stomach with upper body raised
+        float backArch = (float) Math.sin(timeFactor * Math.PI * 2) * 0.03f;
+        return List.of(
+            new NormalizedLandmark(0.5f, 0.2f - backArch, 0.0f),   // nose
+            new NormalizedLandmark(0.45f, 0.2f - backArch, 0.0f),  // left eye inner
+            new NormalizedLandmark(0.42f, 0.2f - backArch, 0.0f),  // left eye
+            new NormalizedLandmark(0.38f, 0.2f - backArch, 0.0f),  // left eye outer
+            new NormalizedLandmark(0.55f, 0.2f - backArch, 0.0f),  // right eye inner
+            new NormalizedLandmark(0.58f, 0.2f - backArch, 0.0f),  // right eye
+            new NormalizedLandmark(0.62f, 0.2f - backArch, 0.0f),  // right eye outer
+            new NormalizedLandmark(0.35f, 0.22f - backArch, 0.0f), // left ear
+            new NormalizedLandmark(0.65f, 0.22f - backArch, 0.0f), // right ear
+            new NormalizedLandmark(0.48f, 0.25f - backArch, 0.0f), // mouth left
+            new NormalizedLandmark(0.52f, 0.25f - backArch, 0.0f), // mouth right
+            new NormalizedLandmark(0.45f, 0.35f - backArch, 0.0f), // left shoulder
+            new NormalizedLandmark(0.55f, 0.35f - backArch, 0.0f), // right shoulder
+            new NormalizedLandmark(0.4f, 0.45f - backArch, 0.0f),  // left elbow
+            new NormalizedLandmark(0.6f, 0.45f - backArch, 0.0f),  // right elbow
+            new NormalizedLandmark(0.35f, 0.55f - backArch, 0.0f), // left wrist
+            new NormalizedLandmark(0.65f, 0.55f - backArch, 0.0f), // right wrist
+            new NormalizedLandmark(0.3f, 0.55f - backArch, 0.0f), // left pinky
+            new NormalizedLandmark(0.7f, 0.55f - backArch, 0.0f), // right pinky
+            new NormalizedLandmark(0.3f, 0.55f - backArch, 0.0f), // left index
+            new NormalizedLandmark(0.7f, 0.55f - backArch, 0.0f), // right index
+            new NormalizedLandmark(0.3f, 0.55f - backArch, 0.0f), // left thumb
+            new NormalizedLandmark(0.7f, 0.55f - backArch, 0.0f), // right thumb
+            new NormalizedLandmark(0.45f, 0.65f, 0.0f), // left hip
+            new NormalizedLandmark(0.55f, 0.65f, 0.0f), // right hip
+            new NormalizedLandmark(0.4f, 0.75f, 0.0f),  // left knee
+            new NormalizedLandmark(0.6f, 0.75f, 0.0f),  // right knee
+            new NormalizedLandmark(0.4f, 0.85f, 0.0f), // left ankle
+            new NormalizedLandmark(0.6f, 0.85f, 0.0f), // right ankle
+            new NormalizedLandmark(0.4f, 0.9f, 0.0f), // left heel
+            new NormalizedLandmark(0.6f, 0.9f, 0.0f), // right heel
+            new NormalizedLandmark(0.4f, 0.95f, 0.0f), // left foot index
+            new NormalizedLandmark(0.6f, 0.95f, 0.0f)  // right foot index
+        );
+    }
+    
+    private List<NormalizedLandmark> createPlankPose(float timeFactor) {
+        // Plank pose - body straight like a plank
+        float bodySway = (float) Math.sin(timeFactor * Math.PI * 2) * 0.01f;
+        return List.of(
+            new NormalizedLandmark(0.5f + bodySway, 0.25f, 0.0f),   // nose
+            new NormalizedLandmark(0.45f + bodySway, 0.25f, 0.0f),  // left eye inner
+            new NormalizedLandmark(0.42f + bodySway, 0.25f, 0.0f),  // left eye
+            new NormalizedLandmark(0.38f + bodySway, 0.25f, 0.0f),  // left eye outer
+            new NormalizedLandmark(0.55f + bodySway, 0.25f, 0.0f),  // right eye inner
+            new NormalizedLandmark(0.58f + bodySway, 0.25f, 0.0f),  // right eye
+            new NormalizedLandmark(0.62f + bodySway, 0.25f, 0.0f),  // right eye outer
+            new NormalizedLandmark(0.35f + bodySway, 0.27f, 0.0f), // left ear
+            new NormalizedLandmark(0.65f + bodySway, 0.27f, 0.0f), // right ear
+            new NormalizedLandmark(0.48f + bodySway, 0.3f, 0.0f), // mouth left
+            new NormalizedLandmark(0.52f + bodySway, 0.3f, 0.0f), // mouth right
+            new NormalizedLandmark(0.45f + bodySway, 0.4f, 0.0f), // left shoulder
+            new NormalizedLandmark(0.55f + bodySway, 0.4f, 0.0f), // right shoulder
+            new NormalizedLandmark(0.4f + bodySway, 0.5f, 0.0f),  // left elbow
+            new NormalizedLandmark(0.6f + bodySway, 0.5f, 0.0f),  // right elbow
+            new NormalizedLandmark(0.35f + bodySway, 0.6f, 0.0f), // left wrist
+            new NormalizedLandmark(0.65f + bodySway, 0.6f, 0.0f), // right wrist
+            new NormalizedLandmark(0.3f + bodySway, 0.6f, 0.0f), // left pinky
+            new NormalizedLandmark(0.7f + bodySway, 0.6f, 0.0f), // right pinky
+            new NormalizedLandmark(0.3f + bodySway, 0.6f, 0.0f), // left index
+            new NormalizedLandmark(0.7f + bodySway, 0.6f, 0.0f), // right index
+            new NormalizedLandmark(0.3f + bodySway, 0.6f, 0.0f), // left thumb
+            new NormalizedLandmark(0.7f + bodySway, 0.6f, 0.0f), // right thumb
+            new NormalizedLandmark(0.45f + bodySway, 0.7f, 0.0f), // left hip
+            new NormalizedLandmark(0.55f + bodySway, 0.7f, 0.0f), // right hip
+            new NormalizedLandmark(0.4f + bodySway, 0.8f, 0.0f),  // left knee
+            new NormalizedLandmark(0.6f + bodySway, 0.8f, 0.0f),  // right knee
+            new NormalizedLandmark(0.4f + bodySway, 0.9f, 0.0f), // left ankle
+            new NormalizedLandmark(0.6f + bodySway, 0.9f, 0.0f), // right ankle
+            new NormalizedLandmark(0.4f + bodySway, 0.95f, 0.0f), // left heel
+            new NormalizedLandmark(0.6f + bodySway, 0.95f, 0.0f), // right heel
+            new NormalizedLandmark(0.4f + bodySway, 0.95f, 0.0f), // left foot index
+            new NormalizedLandmark(0.6f + bodySway, 0.95f, 0.0f)  // right foot index
         );
     }
     

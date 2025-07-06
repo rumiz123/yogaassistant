@@ -38,6 +38,8 @@ public class YogaPoseAnalyzer {
         PoseAnalysis treePose = analyzeTreePose(landmarks);
         PoseAnalysis downwardDog = analyzeDownwardDog(landmarks);
         PoseAnalysis childPose = analyzeChildPose(landmarks);
+        PoseAnalysis cobraPose = analyzeCobraPose(landmarks);
+        PoseAnalysis plankPose = analyzePlankPose(landmarks);
         
         // Return the pose with highest confidence
         PoseAnalysis bestPose = mountainPose;
@@ -45,6 +47,8 @@ public class YogaPoseAnalyzer {
         if (treePose.confidence > bestPose.confidence) bestPose = treePose;
         if (downwardDog.confidence > bestPose.confidence) bestPose = downwardDog;
         if (childPose.confidence > bestPose.confidence) bestPose = childPose;
+        if (cobraPose.confidence > bestPose.confidence) bestPose = cobraPose;
+        if (plankPose.confidence > bestPose.confidence) bestPose = plankPose;
         
         // Add dynamic confidence boost for live visualization
         if (bestPose.confidence > 0.3f) {
@@ -332,5 +336,105 @@ public class YogaPoseAnalyzer {
         cosAngle = Math.max(-1, Math.min(1, cosAngle)); // Clamp to [-1, 1]
         
         return (float) Math.toDegrees(Math.acos(cosAngle));
+    }
+    
+    private static PoseAnalysis analyzeCobraPose(List<NormalizedLandmark> landmarks) {
+        // Cobra Pose (Bhujangasana) - lying on stomach with upper body raised
+        NormalizedLandmark leftShoulder = landmarks.get(11);
+        NormalizedLandmark rightShoulder = landmarks.get(12);
+        NormalizedLandmark leftHip = landmarks.get(23);
+        NormalizedLandmark rightHip = landmarks.get(24);
+        NormalizedLandmark leftElbow = landmarks.get(13);
+        NormalizedLandmark rightElbow = landmarks.get(14);
+        
+        float confidence = 0.0f;
+        String feedback = "";
+        
+        // Check if upper body is raised (shoulders above hips)
+        float avgShoulderHeight = (leftShoulder.y() + rightShoulder.y()) / 2;
+        float avgHipHeight = (leftHip.y() + rightHip.y()) / 2;
+        
+        if (avgShoulderHeight < avgHipHeight) {
+            confidence += 0.4f;
+        } else {
+            feedback += "Lift your upper body higher. ";
+        }
+        
+        // Check if arms are bent (elbows close to body)
+        float leftArmAngle = calculateAngle(leftShoulder, leftElbow, landmarks.get(15));
+        float rightArmAngle = calculateAngle(rightShoulder, rightElbow, landmarks.get(16));
+        
+        if (leftArmAngle < 90 && rightArmAngle < 90) {
+            confidence += 0.3f;
+        } else {
+            feedback += "Keep your elbows close to your body. ";
+        }
+        
+        // Check if hips are on the ground (lower body flat)
+        float leftHipAngle = calculateAngle(leftHip, landmarks.get(25), landmarks.get(27));
+        float rightHipAngle = calculateAngle(rightHip, landmarks.get(26), landmarks.get(28));
+        
+        if (leftHipAngle > 160 && rightHipAngle > 160) {
+            confidence += 0.3f;
+        } else {
+            feedback += "Keep your lower body flat on the ground. ";
+        }
+        
+        if (confidence > 0.7f) {
+            feedback = "Strong Cobra Pose! Feel the stretch.";
+        }
+        
+        return new PoseAnalysis("Cobra Pose (Bhujangasana)", confidence, feedback);
+    }
+    
+    private static PoseAnalysis analyzePlankPose(List<NormalizedLandmark> landmarks) {
+        // Plank Pose - body straight like a plank
+        NormalizedLandmark leftShoulder = landmarks.get(11);
+        NormalizedLandmark rightShoulder = landmarks.get(12);
+        NormalizedLandmark leftHip = landmarks.get(23);
+        NormalizedLandmark rightHip = landmarks.get(24);
+        NormalizedLandmark leftAnkle = landmarks.get(27);
+        NormalizedLandmark rightAnkle = landmarks.get(28);
+        
+        float confidence = 0.0f;
+        String feedback = "";
+        
+        // Check if body is straight (shoulders, hips, ankles in line)
+        float shoulderHeight = (leftShoulder.y() + rightShoulder.y()) / 2;
+        float hipHeight = (leftHip.y() + rightHip.y()) / 2;
+        float ankleHeight = (leftAnkle.y() + rightAnkle.y()) / 2;
+        
+        float heightDiff1 = Math.abs(shoulderHeight - hipHeight);
+        float heightDiff2 = Math.abs(hipHeight - ankleHeight);
+        
+        if (heightDiff1 < 0.05f && heightDiff2 < 0.05f) {
+            confidence += 0.4f;
+        } else {
+            feedback += "Keep your body in a straight line. ";
+        }
+        
+        // Check if arms are straight
+        float leftArmAngle = calculateAngle(leftShoulder, landmarks.get(13), landmarks.get(15));
+        float rightArmAngle = calculateAngle(rightShoulder, landmarks.get(14), landmarks.get(16));
+        
+        if (leftArmAngle > 160 && rightArmAngle > 160) {
+            confidence += 0.3f;
+        } else {
+            feedback += "Straighten your arms. ";
+        }
+        
+        // Check if core is engaged (hips not sagging)
+        float torsoAngle = calculateAngle(leftShoulder, leftHip, leftAnkle);
+        if (torsoAngle > 170) {
+            confidence += 0.3f;
+        } else {
+            feedback += "Engage your core, don't let hips sag. ";
+        }
+        
+        if (confidence > 0.7f) {
+            feedback = "Perfect Plank! Hold the position.";
+        }
+        
+        return new PoseAnalysis("Plank Pose", confidence, feedback);
     }
 } 

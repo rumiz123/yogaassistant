@@ -3,14 +3,19 @@ package com.rumiznellasery.yogahelper.camera;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.YuvImage;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.nio.ByteBuffer;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -84,10 +89,11 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
             isPoseDetectionEnabled = !isPoseDetectionEnabled;
             if (isPoseDetectionEnabled) {
                 togglePoseButton.setText("Disable Pose");
-                poseStatusText.setText(getString(R.string.pose_detection_enabled));
+                poseStatusText.setText("Pose Detection: ON\nAnalyzing your movements...");
             } else {
                 togglePoseButton.setText("Enable Pose");
-                poseStatusText.setText(getString(R.string.pose_detection_disabled));
+                poseStatusText.setText("Pose Detection: OFF\nShowing raw camera feed");
+                // Show raw camera feed when pose detection is disabled
                 poseOverlayView.setImageBitmap(null);
             }
         });
@@ -145,21 +151,66 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
     private void analyzeImage(ImageProxy imageProxy) {
         if (isPoseDetectionEnabled && poseDetector != null) {
             poseDetector.detectPose(imageProxy);
+        } else if (!isPoseDetectionEnabled) {
+            // Show raw camera feed when pose detection is disabled
+            Bitmap bitmap = imageProxyToBitmap(imageProxy);
+            if (bitmap != null) {
+                runOnUiThread(() -> {
+                    poseOverlayView.setImageBitmap(bitmap);
+                });
+            }
         }
         imageProxy.close();
+    }
+    
+    private Bitmap imageProxyToBitmap(ImageProxy imageProxy) {
+        try {
+            ImageProxy.PlaneProxy[] planes = imageProxy.getPlanes();
+            ByteBuffer yBuffer = planes[0].getBuffer();
+            ByteBuffer uBuffer = planes[1].getBuffer();
+            ByteBuffer vBuffer = planes[2].getBuffer();
+            
+            int ySize = yBuffer.remaining();
+            int uSize = uBuffer.remaining();
+            int vSize = vBuffer.remaining();
+            
+            byte[] nv21 = new byte[ySize + uSize + vSize];
+            
+            // U and V are swapped
+            yBuffer.get(nv21, 0, ySize);
+            vBuffer.get(nv21, ySize, vSize);
+            uBuffer.get(nv21, ySize + vSize, uSize);
+            
+            YuvImage yuvImage = new YuvImage(nv21, android.graphics.ImageFormat.NV21, imageProxy.getWidth(), imageProxy.getHeight(), null);
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            yuvImage.compressToJpeg(new android.graphics.Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 100, out);
+            byte[] imageBytes = out.toByteArray();
+            
+            return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+        } catch (Exception e) {
+            Log.e(TAG, "Error converting ImageProxy to Bitmap", e);
+            return null;
+        }
     }
 
     @Override
     public void onPoseDetected(PoseLandmarkerResult result, Bitmap inputBitmap) {
         runOnUiThread(() -> {
             if (result.landmarks().isEmpty()) {
-                poseStatusText.setText(getString(R.string.no_pose_detected));
-                poseOverlayView.setImageBitmap(null);
+                poseStatusText.setText("No person detected\nMove into camera view");
+                poseOverlayView.setImageBitmap(inputBitmap); // Show raw camera feed
             } else {
                 // Use the YogaPoseAnalyzer for better pose detection
                 YogaPoseAnalyzer.PoseAnalysis analysis = YogaPoseAnalyzer.analyzePose(result);
                 
-                String statusText = analysis.poseName + " (" + String.format("%.1f", analysis.confidence * 100) + "%)";
+                // Create detailed status text
+                String statusText = analysis.poseName + "\n" + 
+                                  String.format("Confidence: %.1f%%", analysis.confidence * 100);
+                
+                if (analysis.confidence < 0.7f && !analysis.feedback.isEmpty()) {
+                    statusText += "\n" + analysis.feedback;
+                }
+                
                 poseStatusText.setText(statusText);
                 
                 // Create an enhanced live visualization of what the model sees
@@ -167,7 +218,7 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
                 poseOverlayView.setImageBitmap(liveVisualization);
                 
                 // Show feedback if confidence is low
-                if (analysis.confidence < 0.7f && !analysis.feedback.isEmpty()) {
+                if (analysis.confidence < 0.5f && !analysis.feedback.isEmpty()) {
                     Toast.makeText(this, analysis.feedback, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -175,22 +226,22 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
     }
     
     private Bitmap createLivePoseVisualization(Bitmap inputBitmap, PoseDetector.PoseLandmarkerResult result, YogaPoseAnalyzer.PoseAnalysis analysis) {
-        // Create a bitmap that shows what the model "sees" - a live painted visualization
+        // Create a bitmap that shows the raw camera feed with pose detection overlay
         Bitmap visualizationBitmap = Bitmap.createBitmap(inputBitmap.getWidth(), inputBitmap.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(visualizationBitmap);
         
-        // Start with a semi-transparent overlay to show the live camera feed
+        // Draw the raw camera feed as the background - this is what the camera actually sees
         Paint backgroundPaint = new Paint();
-        backgroundPaint.setColor(Color.argb(50, 0, 0, 0)); // Very light overlay
-        canvas.drawRect(0, 0, inputBitmap.getWidth(), inputBitmap.getHeight(), backgroundPaint);
+        canvas.drawBitmap(inputBitmap, 0, 0, backgroundPaint);
         
         if (result.landmarks().isEmpty()) {
+            // If no pose detected, just show the raw camera feed
             return visualizationBitmap;
         }
         
         List<PoseDetector.NormalizedLandmark> landmarks = result.landmarks().get(0);
         
-        // Draw the live skeleton with confidence-based coloring
+        // Draw the pose skeleton overlay on top of the raw camera feed
         drawLiveSkeleton(canvas, landmarks, analysis, inputBitmap.getWidth(), inputBitmap.getHeight());
         
         // Draw pose analysis information
@@ -230,7 +281,7 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
             Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN
         };
         
-        // Draw connections with confidence-based opacity
+        // Draw connections with confidence-based opacity and thickness
         for (int i = 0; i < connections.length; i++) {
             int[] connection = connections[i];
             if (connection[0] < landmarks.size() && connection[1] < landmarks.size()) {
@@ -241,9 +292,12 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
                 int baseColor = connectionColors[i];
                 int alpha = (int)(analysis.confidence * 255);
                 linePaint.setColor(Color.argb(alpha, Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor)));
-                linePaint.setStrokeWidth(6f);
+                linePaint.setStrokeWidth(8f); // Thicker lines for better visibility
                 linePaint.setStyle(Paint.Style.STROKE);
                 linePaint.setStrokeCap(Paint.Cap.ROUND);
+                
+                // Add shadow for better visibility on camera feed
+                linePaint.setShadowLayer(3f, 2f, 2f, Color.BLACK);
                 
                 float startX = start.x() * width;
                 float startY = start.y() * height;
@@ -274,16 +328,20 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
             landmarkPaint.setStrokeWidth(12f);
             landmarkPaint.setStyle(Paint.Style.FILL);
             
+            // Add shadow for better visibility
+            landmarkPaint.setShadowLayer(2f, 1f, 1f, Color.BLACK);
+            
             float x = landmark.x() * width;
             float y = landmark.y() * height;
-            canvas.drawCircle(x, y, 8f, landmarkPaint);
+            canvas.drawCircle(x, y, 10f, landmarkPaint); // Larger circles
             
             // Add a white border for better visibility
             Paint borderPaint = new Paint();
             borderPaint.setColor(Color.WHITE);
-            borderPaint.setStrokeWidth(2f);
+            borderPaint.setStrokeWidth(3f);
             borderPaint.setStyle(Paint.Style.STROKE);
-            canvas.drawCircle(x, y, 8f, borderPaint);
+            borderPaint.setShadowLayer(1f, 0f, 0f, Color.BLACK);
+            canvas.drawCircle(x, y, 10f, borderPaint);
         }
     }
     
