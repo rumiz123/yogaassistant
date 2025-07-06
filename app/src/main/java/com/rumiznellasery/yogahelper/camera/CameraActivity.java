@@ -1,11 +1,13 @@
 package com.rumiznellasery.yogahelper.camera;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.YuvImage;
 import android.os.Bundle;
@@ -13,6 +15,7 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -30,6 +33,7 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.material.button.MaterialButton;
 import com.rumiznellasery.yogahelper.R;
+import com.rumiznellasery.yogahelper.MainActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.rumiznellasery.yogahelper.camera.PoseDetector.PoseLandmarkerResult;
 
@@ -38,7 +42,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CameraActivity extends AppCompatActivity implements PoseDetector.PoseDetectionCallback {
+public class CameraActivity extends AppCompatActivity implements MediaPipePoseDetector.PoseDetectionCallback, WorkoutSession.WorkoutListener {
     private static final String TAG = "CameraActivity";
     private static final int REQUEST_CODE_PERMISSIONS = 10;
     private final String[] REQUIRED_PERMISSIONS = new String[]{ Manifest.permission.CAMERA };
@@ -46,11 +50,12 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
     private PreviewView previewView;
     private ImageView poseOverlayView;
     private TextView poseStatusText;
-    private MaterialButton togglePoseButton;
-    private MaterialButton captureButton;
-    private PoseDetector poseDetector;
+    private Button backToInstructionsButton;
+    private Button backToHomeButton;
+    private MediaPipePoseDetector poseDetector;
+    private WorkoutSession workoutSession;
     private ExecutorService cameraExecutor;
-    private boolean isPoseDetectionEnabled = true;
+    private boolean isPoseDetectionEnabled = true; // Always enabled now
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,44 +72,37 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
         previewView = findViewById(R.id.view_finder);
         poseOverlayView = findViewById(R.id.pose_overlay);
         poseStatusText = findViewById(R.id.pose_status_text);
-        togglePoseButton = findViewById(R.id.btn_toggle_pose);
-        captureButton = findViewById(R.id.btn_capture);
+        backToInstructionsButton = findViewById(R.id.btn_back_to_instructions);
+        backToHomeButton = findViewById(R.id.btn_back_to_home);
         
-        // Initialize pose detector
-        poseDetector = new PoseDetector(this, this);
+        // Initialize MediaPipe pose detector
+        poseDetector = new MediaPipePoseDetector(this, this);
         cameraExecutor = Executors.newSingleThreadExecutor();
 
-        // Set up button click listeners
-        setupButtonListeners();
+        // Initialize workout session
+        workoutSession = new WorkoutSession(this);
+
+        // Set up back to instructions button
+        backToInstructionsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, PoseInstructionsActivity.class);
+            startActivity(intent);
+        });
+
+        // Set up back to home button
+        backToHomeButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
 
         if (allPermissionsGranted()) {
             startCamera();
+            // Start the guided workout
+            workoutSession.startWorkout();
         } else {
             ActivityCompat.requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS);
         }
     }
     
-    private void setupButtonListeners() {
-        togglePoseButton.setOnClickListener(v -> {
-            isPoseDetectionEnabled = !isPoseDetectionEnabled;
-            if (isPoseDetectionEnabled) {
-                togglePoseButton.setText("Disable Pose");
-                poseStatusText.setText("Pose Detection: ON\nAnalyzing your movements...");
-            } else {
-                togglePoseButton.setText("Enable Pose");
-                poseStatusText.setText("Pose Detection: OFF\nShowing raw camera feed");
-                // Show raw camera feed when pose detection is disabled
-                poseOverlayView.setImageBitmap(null);
-            }
-        });
-        
-        captureButton.setOnClickListener(v -> {
-            // Capture current pose analysis
-            Toast.makeText(this, getString(R.string.pose_captured), Toast.LENGTH_SHORT).show();
-            // Here you could save the current pose analysis or take a screenshot
-        });
-    }
-
     private boolean allPermissionsGranted() {
         for (String permission : REQUIRED_PERMISSIONS) {
             if (ContextCompat.checkSelfPermission(this, permission)
@@ -149,15 +147,12 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
     }
     
     private void analyzeImage(ImageProxy imageProxy) {
-        if (isPoseDetectionEnabled && poseDetector != null) {
-            poseDetector.detectPose(imageProxy);
-        } else if (!isPoseDetectionEnabled) {
-            // Show raw camera feed when pose detection is disabled
+        if (poseDetector != null) {
+            // Convert ImageProxy to Bitmap for MediaPipe pose detection
             Bitmap bitmap = imageProxyToBitmap(imageProxy);
             if (bitmap != null) {
-                runOnUiThread(() -> {
-                    poseOverlayView.setImageBitmap(bitmap);
-                });
+                long timestamp = System.currentTimeMillis();
+                poseDetector.detectPose(bitmap, timestamp);
             }
         }
         imageProxy.close();
@@ -186,7 +181,20 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
             yuvImage.compressToJpeg(new android.graphics.Rect(0, 0, yuvImage.getWidth(), yuvImage.getHeight()), 100, out);
             byte[] imageBytes = out.toByteArray();
             
-            return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+            // Rotate the bitmap to match the device orientation (portrait)
+            int rotationDegrees = imageProxy.getImageInfo().getRotationDegrees();
+            if (rotationDegrees != 0) {
+                Matrix matrix = new Matrix();
+                matrix.postRotate(rotationDegrees);
+                bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            }
+            // Mirror the bitmap horizontally for front camera to fix left/right confusion
+            Matrix mirrorMatrix = new Matrix();
+            mirrorMatrix.setScale(-1, 1); // Flip horizontally
+            mirrorMatrix.postTranslate(bitmap.getWidth(), 0); // Move back to positive coordinates
+            bitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mirrorMatrix, true);
+            return bitmap;
         } catch (Exception e) {
             Log.e(TAG, "Error converting ImageProxy to Bitmap", e);
             return null;
@@ -194,222 +202,29 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
     }
 
     @Override
-    public void onPoseDetected(PoseLandmarkerResult result, Bitmap inputBitmap) {
+    public void onPoseDetected(PoseDetector.PoseLandmarkerResult result, Bitmap poseOverlay) {
         runOnUiThread(() -> {
             if (result.landmarks().isEmpty()) {
-                poseStatusText.setText("No person detected\nMove into camera view");
-                poseOverlayView.setImageBitmap(inputBitmap); // Show raw camera feed
+                // Don't override workout instructions if no person detected
+                if (!workoutSession.isActive()) {
+                    poseStatusText.setText("No person detected\nMove into camera view");
+                }
+                poseOverlayView.setImageBitmap(null); // Clear overlay
             } else {
                 // Use the YogaPoseAnalyzer for better pose detection
                 YogaPoseAnalyzer.PoseAnalysis analysis = YogaPoseAnalyzer.analyzePose(result);
                 
-                // Create detailed status text
-                String statusText = analysis.poseName + "\n" + 
-                                  String.format("Confidence: %.1f%%", analysis.confidence * 100);
-                
-                if (analysis.confidence < 0.7f && !analysis.feedback.isEmpty()) {
-                    statusText += "\n" + analysis.feedback;
-                }
-                
-                poseStatusText.setText(statusText);
-                
-                // Create an enhanced live visualization of what the model sees
-                Bitmap liveVisualization = createLivePoseVisualization(inputBitmap, result, analysis);
-                poseOverlayView.setImageBitmap(liveVisualization);
-                
-                // Show feedback if confidence is low
+                // Show pose feedback as a toast if confidence is low, but don't override workout instructions
                 if (analysis.confidence < 0.5f && !analysis.feedback.isEmpty()) {
-                    Toast.makeText(this, analysis.feedback, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Pose Feedback: " + analysis.feedback, Toast.LENGTH_SHORT).show();
                 }
+                
+                // Set the pose overlay (skeleton only, not the camera frame)
+                poseOverlayView.setImageBitmap(poseOverlay);
             }
         });
     }
     
-    private Bitmap createLivePoseVisualization(Bitmap inputBitmap, PoseDetector.PoseLandmarkerResult result, YogaPoseAnalyzer.PoseAnalysis analysis) {
-        // Create a bitmap that shows the raw camera feed with pose detection overlay
-        Bitmap visualizationBitmap = Bitmap.createBitmap(inputBitmap.getWidth(), inputBitmap.getHeight(), Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(visualizationBitmap);
-        
-        // Draw the raw camera feed as the background - this is what the camera actually sees
-        Paint backgroundPaint = new Paint();
-        canvas.drawBitmap(inputBitmap, 0, 0, backgroundPaint);
-        
-        if (result.landmarks().isEmpty()) {
-            // If no pose detected, just show the raw camera feed
-            return visualizationBitmap;
-        }
-        
-        List<PoseDetector.NormalizedLandmark> landmarks = result.landmarks().get(0);
-        
-        // Draw the pose skeleton overlay on top of the raw camera feed
-        drawLiveSkeleton(canvas, landmarks, analysis, inputBitmap.getWidth(), inputBitmap.getHeight());
-        
-        // Draw pose analysis information
-        drawPoseAnalysisInfo(canvas, analysis, inputBitmap.getWidth(), inputBitmap.getHeight());
-        
-        // Draw confidence indicators
-        drawConfidenceIndicators(canvas, landmarks, analysis, inputBitmap.getWidth(), inputBitmap.getHeight());
-        
-        return visualizationBitmap;
-    }
-    
-    private void drawLiveSkeleton(Canvas canvas, List<PoseDetector.NormalizedLandmark> landmarks, 
-                                YogaPoseAnalyzer.PoseAnalysis analysis, int width, int height) {
-        
-        // Define pose connections with different colors for different body parts
-        int[][] connections = {
-            // Face - Green
-            {0, 1}, {1, 2}, {2, 3}, {3, 7}, {0, 4}, {4, 5}, {5, 6}, {6, 8}, {9, 10}, {11, 12},
-            // Torso - Blue
-            {11, 12}, {11, 23}, {12, 24}, {23, 24},
-            // Left arm - Red
-            {11, 13}, {13, 15}, {15, 17}, {15, 19}, {15, 21}, {17, 19}, {19, 21},
-            // Right arm - Orange
-            {12, 14}, {14, 16}, {16, 18}, {16, 20}, {16, 22}, {18, 20}, {20, 22},
-            // Left leg - Purple
-            {23, 25}, {25, 27}, {27, 29}, {27, 31}, {29, 31},
-            // Right leg - Cyan
-            {24, 26}, {26, 28}, {28, 30}, {28, 32}, {30, 32}
-        };
-        
-        int[] connectionColors = {
-            Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN,
-            Color.BLUE, Color.BLUE, Color.BLUE, Color.BLUE,
-            Color.RED, Color.RED, Color.RED, Color.RED, Color.RED, Color.RED, Color.RED,
-            Color.rgb(255, 165, 0), Color.rgb(255, 165, 0), Color.rgb(255, 165, 0), Color.rgb(255, 165, 0), Color.rgb(255, 165, 0), Color.rgb(255, 165, 0), Color.rgb(255, 165, 0),
-            Color.rgb(128, 0, 128), Color.rgb(128, 0, 128), Color.rgb(128, 0, 128), Color.rgb(128, 0, 128), Color.rgb(128, 0, 128),
-            Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN, Color.CYAN
-        };
-        
-        // Draw connections with confidence-based opacity and thickness
-        for (int i = 0; i < connections.length; i++) {
-            int[] connection = connections[i];
-            if (connection[0] < landmarks.size() && connection[1] < landmarks.size()) {
-                PoseDetector.NormalizedLandmark start = landmarks.get(connection[0]);
-                PoseDetector.NormalizedLandmark end = landmarks.get(connection[1]);
-                
-                Paint linePaint = new Paint();
-                int baseColor = connectionColors[i];
-                int alpha = (int)(analysis.confidence * 255);
-                linePaint.setColor(Color.argb(alpha, Color.red(baseColor), Color.green(baseColor), Color.blue(baseColor)));
-                linePaint.setStrokeWidth(8f); // Thicker lines for better visibility
-                linePaint.setStyle(Paint.Style.STROKE);
-                linePaint.setStrokeCap(Paint.Cap.ROUND);
-                
-                // Add shadow for better visibility on camera feed
-                linePaint.setShadowLayer(3f, 2f, 2f, Color.BLACK);
-                
-                float startX = start.x() * width;
-                float startY = start.y() * height;
-                float endX = end.x() * width;
-                float endY = end.y() * height;
-                
-                canvas.drawLine(startX, startY, endX, endY, linePaint);
-            }
-        }
-        
-        // Draw landmarks with confidence-based coloring
-        for (int i = 0; i < landmarks.size(); i++) {
-            PoseDetector.NormalizedLandmark landmark = landmarks.get(i);
-            
-            Paint landmarkPaint = new Paint();
-            // Color based on confidence: Green (good) -> Yellow -> Red (poor)
-            int color;
-            if (analysis.confidence > 0.8f) {
-                color = Color.GREEN;
-            } else if (analysis.confidence > 0.6f) {
-                color = Color.YELLOW;
-            } else {
-                color = Color.RED;
-            }
-            
-            int alpha = (int)(analysis.confidence * 255);
-            landmarkPaint.setColor(Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color)));
-            landmarkPaint.setStrokeWidth(12f);
-            landmarkPaint.setStyle(Paint.Style.FILL);
-            
-            // Add shadow for better visibility
-            landmarkPaint.setShadowLayer(2f, 1f, 1f, Color.BLACK);
-            
-            float x = landmark.x() * width;
-            float y = landmark.y() * height;
-            canvas.drawCircle(x, y, 10f, landmarkPaint); // Larger circles
-            
-            // Add a white border for better visibility
-            Paint borderPaint = new Paint();
-            borderPaint.setColor(Color.WHITE);
-            borderPaint.setStrokeWidth(3f);
-            borderPaint.setStyle(Paint.Style.STROKE);
-            borderPaint.setShadowLayer(1f, 0f, 0f, Color.BLACK);
-            canvas.drawCircle(x, y, 10f, borderPaint);
-        }
-    }
-    
-    private void drawPoseAnalysisInfo(Canvas canvas, YogaPoseAnalyzer.PoseAnalysis analysis, int width, int height) {
-        // Draw pose name and confidence at the top
-        Paint textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(24f);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setShadowLayer(3f, 2f, 2f, Color.BLACK);
-        
-        String poseText = analysis.poseName;
-        String confidenceText = String.format("%.1f%%", analysis.confidence * 100);
-        
-        float textX = 20f;
-        float textY = 50f;
-        
-        canvas.drawText("Pose: " + poseText, textX, textY, textPaint);
-        canvas.drawText("Confidence: " + confidenceText, textX, textY + 30f, textPaint);
-        
-        // Draw feedback if confidence is low
-        if (analysis.confidence < 0.7f && !analysis.feedback.isEmpty()) {
-            textPaint.setColor(Color.YELLOW);
-            textPaint.setTextSize(18f);
-            canvas.drawText("Feedback: " + analysis.feedback, textX, textY + 60f, textPaint);
-        }
-    }
-    
-    private void drawConfidenceIndicators(Canvas canvas, List<PoseDetector.NormalizedLandmark> landmarks, 
-                                        YogaPoseAnalyzer.PoseAnalysis analysis, int width, int height) {
-        // Draw a confidence bar at the bottom
-        Paint barPaint = new Paint();
-        barPaint.setStyle(Paint.Style.FILL);
-        
-        float barWidth = width * 0.8f;
-        float barHeight = 20f;
-        float barX = (width - barWidth) / 2f;
-        float barY = height - 50f;
-        
-        // Background bar
-        barPaint.setColor(Color.GRAY);
-        canvas.drawRect(barX, barY, barX + barWidth, barY + barHeight, barPaint);
-        
-        // Confidence level bar
-        if (analysis.confidence > 0.8f) {
-            barPaint.setColor(Color.GREEN);
-        } else if (analysis.confidence > 0.6f) {
-            barPaint.setColor(Color.YELLOW);
-        } else {
-            barPaint.setColor(Color.RED);
-        }
-        
-        float confidenceWidth = barWidth * analysis.confidence;
-        canvas.drawRect(barX, barY, barX + confidenceWidth, barY + barHeight, barPaint);
-        
-        // Draw confidence text
-        Paint textPaint = new Paint();
-        textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(16f);
-        textPaint.setStyle(Paint.Style.FILL);
-        textPaint.setShadowLayer(2f, 1f, 1f, Color.BLACK);
-        
-        String confidenceText = "Model Confidence: " + String.format("%.1f%%", analysis.confidence * 100);
-        float textX = barX;
-        float textY = barY - 10f;
-        canvas.drawText(confidenceText, textX, textY, textPaint);
-    }
-
     @Override
     public void onError(String error) {
         runOnUiThread(() -> {
@@ -439,8 +254,66 @@ public class CameraActivity extends AppCompatActivity implements PoseDetector.Po
         if (poseDetector != null) {
             poseDetector.close();
         }
+        if (workoutSession != null) {
+            workoutSession.stopWorkout();
+        }
         if (cameraExecutor != null) {
             cameraExecutor.shutdown();
         }
+    }
+
+    // WorkoutSession.WorkoutListener implementation
+    @Override
+    public void onPoseStarted(WorkoutSession.Pose pose, int poseIndex, int totalPoses) {
+        runOnUiThread(() -> {
+            String statusText = String.format("Pose %d of %d: %s\n\n%s\n\nTime: %d seconds", 
+                poseIndex, totalPoses, pose.name, pose.instructions, pose.durationSeconds);
+            poseStatusText.setText(statusText);
+        });
+    }
+
+    @Override
+    public void onPoseProgress(WorkoutSession.Pose pose, int secondsRemaining) {
+        runOnUiThread(() -> {
+            String currentText = poseStatusText.getText().toString();
+            // Update the time remaining in the status text
+            String[] lines = currentText.split("\n");
+            if (lines.length >= 3) {
+                lines[2] = "Time: " + secondsRemaining + " seconds";
+                poseStatusText.setText(String.join("\n", lines));
+            }
+        });
+    }
+
+    @Override
+    public void onPoseCompleted(WorkoutSession.Pose pose, int poseIndex) {
+        runOnUiThread(() -> {
+            Toast.makeText(this, "Great job! " + pose.name + " completed!", Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    @Override
+    public void onWorkoutCompleted() {
+        runOnUiThread(() -> {
+            poseStatusText.setText("Workout Complete!\n\nGreat job! You've completed all poses.\n\nTap 'Back to Home' to finish.");
+            Toast.makeText(this, "Congratulations! Workout completed!", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    @Override
+    public void onWorkoutPaused() {
+        runOnUiThread(() -> {
+            poseStatusText.setText("Workout Paused\n\nTap 'Resume' to continue.");
+        });
+    }
+
+    @Override
+    public void onWorkoutResumed() {
+        runOnUiThread(() -> {
+            WorkoutSession.Pose currentPose = workoutSession.getCurrentPose();
+            if (currentPose != null) {
+                onPoseStarted(currentPose, workoutSession.getCurrentPoseIndex() + 1, workoutSession.getTotalPoses());
+            }
+        });
     }
 }

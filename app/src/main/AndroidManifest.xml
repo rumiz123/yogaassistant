@@ -16,6 +16,7 @@
         android:theme="@style/Theme.YogaHelper">
         <activity android:name=".temp.TempActivity" />
         <activity android:name=".camera.CameraActivity" android:screenOrientation="portrait" />
+        <activity android:name=".camera.PoseInstructionsActivity" android:screenOrientation="portrait" />
         <activity
             android:name=".AuthActivity"
             android:exported="true"
