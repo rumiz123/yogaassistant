@@ -65,87 +65,77 @@ public class WorkoutSession {
     
     private List<Pose> createWorkoutPoses() {
         List<Pose> poses = new ArrayList<>();
-        
+        int defaultDuration = 10; // Shorter, achievable hold time
         // 1. Easy Standing Pose - Foundation
         poses.add(new Pose(
             "Mountain Pose",
             "Stand tall with feet together",
-            25,
+            defaultDuration,
             "Stand with feet together, arms at sides. Take deep breaths and feel grounded. This is your foundation."
         ));
-        
         // 2. Cobra Pose - Back strength and flexibility
         poses.add(new Pose(
             "Cobra Pose",
             "Lie on stomach and lift chest",
-            25,
+            defaultDuration,
             "Lie on your stomach with legs extended. Place your hands under your shoulders. Gently lift your chest off the ground, keeping your pelvis on the floor. Breathe deeply."
         ));
-        
         // 3. Tree Pose - Balance and focus
         poses.add(new Pose(
             "Tree Pose",
             "Stand on one leg with foot on thigh",
-            25,
+            defaultDuration,
             "Stand with feet hip-width apart. Shift weight to your left foot. Place your right foot on your left thigh or calf (not knee). Bring your hands to prayer position or raise them overhead."
         ));
-        
         // 4. Gentle Forward Fold - Hamstring stretch
         poses.add(new Pose(
             "Gentle Forward Fold",
             "Bend forward with bent knees",
-            25,
+            defaultDuration,
             "Stand with feet hip-width apart, knees slightly bent. Fold forward from your hips, letting your arms hang. Don't force the stretch."
         ));
-        
         // 5. Easy Squat - Leg strength
         poses.add(new Pose(
             "Easy Squat",
             "Squat down comfortably",
-            20,
+            defaultDuration,
             "Stand with feet hip-width apart. Slowly squat down as if sitting in a chair. Keep your heels on the ground."
         ));
-        
         // 6. Gentle Knee Stretch - Hip mobility
         poses.add(new Pose(
             "Gentle Knee Stretch",
             "Bring knee toward chest",
-            20,
+            defaultDuration,
             "Stand with feet hip-width apart. Gently lift your right knee toward your chest, holding it with your hands. Switch legs halfway through."
         ));
-        
         // 7. Easy Back Stretch - Spine mobility
         poses.add(new Pose(
             "Easy Back Stretch",
             "Gentle back arch and curl",
-            25,
+            defaultDuration,
             "Stand with feet hip-width apart. Place your hands on your lower back. Gently arch your back, then round it forward."
         ));
-        
         // 8. Gentle Neck Stretch - Neck mobility
         poses.add(new Pose(
             "Gentle Neck Stretch",
             "Slowly turn head side to side",
-            20,
+            defaultDuration,
             "Stand with feet hip-width apart. Slowly turn your head to the right, then to the left. Keep your shoulders relaxed."
         ));
-        
         // 9. Easy Balance - Simple balance
         poses.add(new Pose(
             "Easy Balance",
             "Stand on one leg briefly",
-            20,
+            defaultDuration,
             "Stand with feet hip-width apart. Gently lift your right foot slightly off the ground. Hold for a few seconds, then switch legs."
         ));
-        
         // 10. Relaxation Pose - Final rest
         poses.add(new Pose(
             "Relaxation Pose",
             "Stand and breathe deeply",
-            25,
+            defaultDuration,
             "Stand with feet hip-width apart, arms at sides. Take deep breaths and feel the benefits of your practice."
         ));
-        
         return poses;
     }
     
