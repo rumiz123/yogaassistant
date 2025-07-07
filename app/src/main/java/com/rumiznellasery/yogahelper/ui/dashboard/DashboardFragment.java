@@ -26,7 +26,8 @@ import androidx.navigation.Navigation;
 import com.rumiznellasery.yogahelper.databinding.FragmentDashboardBinding;
 import com.rumiznellasery.yogahelper.R;
 import android.widget.TextView;
-    
+import android.widget.LinearLayout;
+
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
@@ -127,8 +128,6 @@ public class DashboardFragment extends Fragment {
             bottomNav.setSelectedItemId(R.id.navigation_leaderboard);
         });
 
-
-
         // Quick Timer button
         binding.buttonQuickTimer.setOnClickListener(v -> {
             showQuickTimerDialog();
@@ -148,6 +147,133 @@ public class DashboardFragment extends Fragment {
         binding.buttonQuickSettings.setOnClickListener(v -> {
             showQuickSettingsDialog();
         });
+
+        // Add new quick actions
+        setupAdditionalQuickActions();
+    }
+
+    private void setupAdditionalQuickActions() {
+        // Add weekly calendar view
+        setupWeeklyCalendar();
+        
+        // Add achievement notifications
+        checkAndShowAchievements();
+        
+        // Add personalized recommendations
+        showPersonalizedRecommendations();
+    }
+
+    private void setupWeeklyCalendar() {
+        // Create a simple weekly calendar view
+        LinearLayout calendarContainer = new LinearLayout(requireContext());
+        calendarContainer.setOrientation(LinearLayout.HORIZONTAL);
+        calendarContainer.setPadding(16, 16, 16, 16);
+        
+        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+        
+        for (int i = 0; i < days.length; i++) {
+            LinearLayout dayView = new LinearLayout(requireContext());
+            dayView.setOrientation(LinearLayout.VERTICAL);
+            dayView.setGravity(android.view.Gravity.CENTER);
+            dayView.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+            
+            TextView dayText = new TextView(requireContext());
+            dayText.setText(days[i]);
+            dayText.setTextColor(getResources().getColor(R.color.text_secondary));
+            dayText.setTextSize(12);
+            dayText.setGravity(android.view.Gravity.CENTER);
+            
+            View dayIndicator = new View(requireContext());
+            dayIndicator.setLayoutParams(new LinearLayout.LayoutParams(24, 24));
+            dayIndicator.setBackgroundResource(R.drawable.rounded_box);
+            
+            // Check if workout was done on this day (simplified logic)
+            boolean hasWorkout = prefs.getBoolean("workout_day_" + i, false);
+            if (hasWorkout) {
+                dayIndicator.setBackgroundColor(getResources().getColor(R.color.theme_purple));
+            } else {
+                dayIndicator.setBackgroundColor(getResources().getColor(R.color.progress_background));
+            }
+            
+            dayView.addView(dayText);
+            dayView.addView(dayIndicator);
+            calendarContainer.addView(dayView);
+        }
+        
+        // Add calendar to the main stats card
+        if (binding.cardMainStats != null) {
+            LinearLayout cardContent = (LinearLayout) binding.cardMainStats.getChildAt(0);
+            if (cardContent != null) {
+                cardContent.addView(calendarContainer);
+            }
+        }
+    }
+
+    private void checkAndShowAchievements() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+        int totalWorkouts = prefs.getInt("workouts", 0);
+        int streak = prefs.getInt("streak", 0);
+        
+        // Check for new achievements
+        if (totalWorkouts == 1 && !prefs.getBoolean("achievement_first_workout_shown", false)) {
+            showAchievementNotification("🎉 First Workout!", "You completed your first yoga session!");
+            prefs.edit().putBoolean("achievement_first_workout_shown", true).apply();
+        }
+        
+        if (streak == 7 && !prefs.getBoolean("achievement_week_streak_shown", false)) {
+            showAchievementNotification("🔥 Week Warrior!", "You've maintained a 7-day streak!");
+            prefs.edit().putBoolean("achievement_week_streak_shown", true).apply();
+        }
+        
+        if (totalWorkouts == 10 && !prefs.getBoolean("achievement_10_workouts_shown", false)) {
+            showAchievementNotification("🌟 Dedicated Yogi!", "You've completed 10 workouts!");
+            prefs.edit().putBoolean("achievement_10_workouts_shown", true).apply();
+        }
+    }
+
+    private void showAchievementNotification(String title, String message) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton("Awesome!", null);
+        builder.setCancelable(false);
+        
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
+        
+        // Auto-dismiss after 3 seconds
+        new android.os.Handler().postDelayed(() -> {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }, 3000);
+    }
+
+    private void showPersonalizedRecommendations() {
+        SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+        int totalWorkouts = prefs.getInt("workouts", 0);
+        int streak = prefs.getInt("streak", 0);
+        
+        String recommendation = "";
+        String recommendationTitle = "💡 Personalized Tip";
+        
+        if (totalWorkouts == 0) {
+            recommendation = "Start with a beginner-friendly workout to build your foundation!";
+        } else if (streak == 0) {
+            recommendation = "Ready to start a new streak? Try a quick 10-minute session!";
+        } else if (streak >= 7) {
+            recommendation = "Amazing streak! Consider trying an intermediate pose to challenge yourself.";
+        } else if (totalWorkouts < 5) {
+            recommendation = "Great start! Consistency is key - try to practice 3 times this week.";
+        } else {
+            recommendation = "You're doing great! Consider inviting a friend to join your yoga journey.";
+        }
+        
+        // Show recommendation in a subtle way
+        if (binding.textMotivationMessage != null) {
+            binding.textMotivationMessage.setText(recommendation);
+        }
     }
 
     private void setupAnimations() {

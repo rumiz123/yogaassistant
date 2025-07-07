@@ -287,7 +287,7 @@ public class HomeFragment extends Fragment {
             binding.accountInfoContainer.postDelayed(() -> {
                 try {
                     android.view.animation.Animation scaleIn = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
-                    View quickStatsCard = requireActivity().findViewById(R.id.quick_stats_card);
+                    View quickStatsCard = requireActivity().findViewById(R.id.card_quick_stats);
                     if (quickStatsCard != null) {
                         quickStatsCard.startAnimation(scaleIn);
                     }
@@ -372,7 +372,8 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         Logger.info("HomeFragment onCreateView started");
-        new ViewModelProvider(this).get(HomeViewModel.class);
+        HomeViewModel homeViewModel =
+                new ViewModelProvider(this).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -547,8 +548,21 @@ public class HomeFragment extends Fragment {
             // Setup badges section
             setupBadgesSection();
             
+            // Setup quick stats
+            setupQuickStats();
+            
+            // Setup daily motivation
+            setupDailyMotivation();
+            
+            // Setup weather widget placeholder
+            setupWeatherWidget();
+            
+            // Setup quick actions
+            setupQuickActions();
+            
             // Add entrance animations
             addEntranceAnimations();
+            addButtonPressAnimations();
 
             Logger.info("HomeFragment onCreateView completed successfully");
         } catch (Exception e) {
@@ -572,5 +586,227 @@ public class HomeFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+    }
+
+    private void setupQuickStats() {
+        try {
+            SharedPreferences prefs = requireContext().getSharedPreferences("stats", android.content.Context.MODE_PRIVATE);
+            int totalWorkouts = prefs.getInt("workouts", 0);
+            int currentStreak = prefs.getInt("streak", 0);
+            int totalCalories = prefs.getInt("calories", 0);
+            
+            // Update stats
+            binding.textTotalWorkouts.setText(String.valueOf(totalWorkouts));
+            binding.textCurrentStreak.setText(String.valueOf(currentStreak));
+            binding.textTotalCalories.setText(String.valueOf(totalCalories));
+            
+            // Add click listeners for detailed stats
+            binding.cardQuickStats.setOnClickListener(v -> {
+                showDetailedStatsDialog(totalWorkouts, currentStreak, totalCalories);
+            });
+        } catch (Exception e) {
+            Logger.error("Error in setupQuickStats", e);
+        }
+    }
+
+    private void setupDailyMotivation() {
+        try {
+            String[] motivationalQuotes = {
+                "Every pose is a step toward inner peace. 🌸",
+                "Breathe in strength, exhale doubt. 💪",
+                "Your body can do amazing things. Trust it. ✨",
+                "Today's practice is tomorrow's progress. 🌟",
+                "Find your balance, find your center. 🧘‍♀️",
+                "Small steps lead to big transformations. 🌈",
+                "You are stronger than you think. 💫",
+                "Embrace the journey, not just the destination. 🎯"
+            };
+            
+            // Get a quote based on current day for consistency
+            int dayOfYear = java.time.LocalDate.now().getDayOfYear();
+            String quote = motivationalQuotes[dayOfYear % motivationalQuotes.length];
+            
+            binding.textDailyMotivation.setText(quote);
+            
+            // Add refresh button functionality
+            binding.buttonRefreshMotivation.setOnClickListener(v -> {
+                String newQuote = motivationalQuotes[(int)(Math.random() * motivationalQuotes.length)];
+                binding.textDailyMotivation.setText(newQuote);
+                
+                // Add a small animation
+                android.view.animation.Animation fadeOut = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out);
+                android.view.animation.Animation fadeIn = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+                
+                fadeOut.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(android.view.animation.Animation animation) {}
+                    
+                    @Override
+                    public void onAnimationEnd(android.view.animation.Animation animation) {
+                        binding.textDailyMotivation.startAnimation(fadeIn);
+                    }
+                    
+                    @Override
+                    public void onAnimationRepeat(android.view.animation.Animation animation) {}
+                });
+                
+                binding.textDailyMotivation.startAnimation(fadeOut);
+            });
+        } catch (Exception e) {
+            Logger.error("Error in setupDailyMotivation", e);
+        }
+    }
+
+    private void setupWeatherWidget() {
+        try {
+            // This is a placeholder for a weather widget
+            // In a real app, you'd integrate with a weather API
+            binding.textWeatherLocation.setText("📍 Your Location");
+            binding.textWeatherTemp.setText("22°C");
+            binding.textWeatherCondition.setText("☀️ Perfect for Yoga!");
+            
+            // Add click listener to refresh weather (placeholder)
+            binding.cardWeather.setOnClickListener(v -> {
+                Toast.makeText(requireContext(), "Weather feature coming soon! 🌤️", Toast.LENGTH_SHORT).show();
+            });
+        } catch (Exception e) {
+            Logger.error("Error in setupWeatherWidget", e);
+        }
+    }
+
+    private void setupQuickActions() {
+        try {
+            // Quick workout button
+            binding.buttonQuickWorkout.setOnClickListener(v -> {
+                // Navigate to workout tab
+                com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
+                    requireActivity().findViewById(R.id.nav_view);
+                bottomNav.setSelectedItemId(R.id.navigation_workout);
+            });
+            
+            // Quick meditation button
+            binding.buttonQuickMeditation.setOnClickListener(v -> {
+                showMeditationTimerDialog();
+            });
+            
+            // Quick stretch button
+            binding.buttonQuickStretch.setOnClickListener(v -> {
+                showStretchGuideDialog();
+            });
+        } catch (Exception e) {
+            Logger.error("Error in setupQuickActions", e);
+        }
+    }
+
+    private void showDetailedStatsDialog(int totalWorkouts, int currentStreak, int totalCalories) {
+        try {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+            builder.setTitle("📊 Your Detailed Stats");
+            
+            String statsText = String.format(
+                "🏃‍♀️ Total Workouts: %d\n\n" +
+                "🔥 Current Streak: %d days\n\n" +
+                "🔥 Longest Streak: %d days\n\n" +
+                "⚡ Calories Burned: %d\n\n" +
+                "⏱️ Total Time: %d minutes\n\n" +
+                "🏆 Level: %d",
+                totalWorkouts,
+                currentStreak,
+                Math.max(currentStreak, requireContext().getSharedPreferences("stats", android.content.Context.MODE_PRIVATE).getInt("longest_streak", 0)),
+                totalCalories,
+                totalWorkouts * 15, // Assuming 15 minutes per workout
+                (totalWorkouts / 10) + 1 // Simple level calculation
+            );
+            
+            builder.setMessage(statsText);
+            builder.setPositiveButton("Close", null);
+            builder.setNegativeButton("Share", (dialog, which) -> {
+                shareStats(totalWorkouts, currentStreak, totalCalories);
+            });
+            
+            builder.show();
+        } catch (Exception e) {
+            Logger.error("Error in showDetailedStatsDialog", e);
+        }
+    }
+
+    private void showMeditationTimerDialog() {
+        try {
+            String[] meditationOptions = {"5 minutes", "10 minutes", "15 minutes", "20 minutes"};
+            
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+            builder.setTitle("🧘‍♀️ Quick Meditation");
+            builder.setItems(meditationOptions, (dialog, which) -> {
+                int minutes = (which + 1) * 5;
+                startMeditationTimer(minutes);
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        } catch (Exception e) {
+            Logger.error("Error in showMeditationTimerDialog", e);
+        }
+    }
+
+    private void showStretchGuideDialog() {
+        try {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+            builder.setTitle("🤸‍♀️ Quick Stretch Guide");
+            
+            String stretchText = 
+                "1. 🦵 Hamstring Stretch (30s each leg)\n\n" +
+                "2. 🦵 Quad Stretch (30s each leg)\n\n" +
+                "3. 🦵 Calf Stretch (30s each leg)\n\n" +
+                "4. 🦵 Hip Flexor Stretch (30s each side)\n\n" +
+                "5. 🦵 Shoulder Stretch (30s each arm)\n\n" +
+                "6. 🦵 Tricep Stretch (30s each arm)\n\n" +
+                "Total Time: ~5 minutes";
+            
+            builder.setMessage(stretchText);
+            builder.setPositiveButton("Start Timer", (dialog, which) -> {
+                startStretchTimer();
+            });
+            builder.setNegativeButton("Close", null);
+            builder.show();
+        } catch (Exception e) {
+            Logger.error("Error in showStretchGuideDialog", e);
+        }
+    }
+
+    private void startMeditationTimer(int minutes) {
+        try {
+            Toast.makeText(requireContext(), "Meditation timer started for " + minutes + " minutes 🧘‍♀️", Toast.LENGTH_SHORT).show();
+            // TODO: Implement actual meditation timer with background service
+        } catch (Exception e) {
+            Logger.error("Error in startMeditationTimer", e);
+        }
+    }
+
+    private void startStretchTimer() {
+        try {
+            Toast.makeText(requireContext(), "Stretch timer started! 5 minutes of guided stretching 🤸‍♀️", Toast.LENGTH_SHORT).show();
+            // TODO: Implement actual stretch timer with guided instructions
+        } catch (Exception e) {
+            Logger.error("Error in startStretchTimer", e);
+        }
+    }
+
+    private void shareStats(int totalWorkouts, int currentStreak, int totalCalories) {
+        try {
+            String shareText = String.format(
+                "Check out my yoga progress! 🧘‍♀️\n\n" +
+                "🏃‍♀️ Total Workouts: %d\n" +
+                "🔥 Current Streak: %d days\n" +
+                "⚡ Calories Burned: %d\n\n" +
+                "Join me on YogaHelper!",
+                totalWorkouts, currentStreak, totalCalories
+            );
+            
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            startActivity(Intent.createChooser(shareIntent, "Share your progress"));
+        } catch (Exception e) {
+            Logger.error("Error in shareStats", e);
+        }
     }
 }

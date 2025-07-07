@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.TextView;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -131,6 +132,9 @@ public class WorkoutFragment extends Fragment {
 
         // Setup animations
         setupAnimations();
+        
+        // Setup workout enhancements
+        setupWorkoutEnhancements();
 
         // Fetch yogaLevel from Firebase and highlight recommended workout
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -160,6 +164,7 @@ public class WorkoutFragment extends Fragment {
                         }
                     }
                     highlightRecommendedWorkout(recommended);
+                    updateWorkoutRecommendations(yogaLevel);
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {}
@@ -240,6 +245,178 @@ public class WorkoutFragment extends Fragment {
                     if (label != null) label.setVisibility(View.GONE);
                 }
             }
+        }
+    }
+
+    private void setupWorkoutEnhancements() {
+        // Add workout tips
+        showWorkoutTips();
+        
+        // Add recent activity
+        showRecentActivity();
+    }
+
+    private void showWorkoutTips() {
+        try {
+            // Show helpful tips for better workouts
+            String[] tips = {
+                "💡 Tip: Warm up for 5 minutes before starting",
+                "💡 Tip: Focus on your breath throughout the session",
+                "💡 Tip: Don't push beyond your comfort zone",
+                "💡 Tip: Stay hydrated during your practice"
+            };
+            
+            // Create a tips card
+            androidx.cardview.widget.CardView tipsCard = new androidx.cardview.widget.CardView(requireContext());
+            tipsCard.setRadius(20);
+            tipsCard.setElevation(8);
+            tipsCard.setCardBackgroundColor(getResources().getColor(R.color.card_background));
+            
+            LinearLayout tipsLayout = new LinearLayout(requireContext());
+            tipsLayout.setOrientation(LinearLayout.VERTICAL);
+            tipsLayout.setPadding(24, 24, 24, 24);
+            
+            TextView tipsTitle = new TextView(requireContext());
+            tipsTitle.setText("💡 Workout Tips");
+            tipsTitle.setTextColor(getResources().getColor(R.color.text_primary));
+            tipsTitle.setTextSize(18);
+            tipsTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+            tipsTitle.setLayoutParams(new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            tipsTitle.setPadding(0, 0, 0, 16);
+            
+            tipsLayout.addView(tipsTitle);
+            
+            // Add random tip
+            String randomTip = tips[(int)(Math.random() * tips.length)];
+            TextView tipText = new TextView(requireContext());
+            tipText.setText(randomTip);
+            tipText.setTextColor(getResources().getColor(R.color.text_secondary));
+            tipText.setTextSize(14);
+            tipText.setLineSpacing(4, 1);
+            
+            tipsLayout.addView(tipText);
+            tipsCard.addView(tipsLayout);
+            
+            // Add to the main layout safely
+            if (getView() != null) {
+                View scrollView = getView().findViewById(R.id.scrollView);
+                if (scrollView instanceof android.widget.ScrollView) {
+                    android.widget.ScrollView sv = (android.widget.ScrollView) scrollView;
+                    if (sv.getChildCount() > 0) {
+                        View child = sv.getChildAt(0);
+                        if (child instanceof LinearLayout) {
+                            LinearLayout mainLayout = (LinearLayout) child;
+                            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                LinearLayout.LayoutParams.MATCH_PARENT,
+                                LinearLayout.LayoutParams.WRAP_CONTENT
+                            );
+                            params.setMargins(12, 12, 12, 12);
+                            tipsCard.setLayoutParams(params);
+                            mainLayout.addView(tipsCard);
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Log error but don't crash
+            android.util.Log.e("WorkoutFragment", "Error showing workout tips", e);
+        }
+    }
+
+    private void showRecentActivity() {
+        try {
+            SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+            int totalWorkouts = prefs.getInt("workouts", 0);
+            
+            if (totalWorkouts > 0) {
+                // Show recent activity summary
+                String lastWorkoutDate = prefs.getString("last_workout_date", "");
+                if (!lastWorkoutDate.isEmpty()) {
+                    // Create recent activity card
+                    androidx.cardview.widget.CardView activityCard = new androidx.cardview.widget.CardView(requireContext());
+                    activityCard.setRadius(20);
+                    activityCard.setElevation(8);
+                    activityCard.setCardBackgroundColor(getResources().getColor(R.color.theme_purple));
+                    
+                    LinearLayout activityLayout = new LinearLayout(requireContext());
+                    activityLayout.setOrientation(LinearLayout.VERTICAL);
+                    activityLayout.setPadding(24, 24, 24, 24);
+                    
+                    TextView activityTitle = new TextView(requireContext());
+                    activityTitle.setText("🎯 Recent Activity");
+                    activityTitle.setTextColor(getResources().getColor(android.R.color.white));
+                    activityTitle.setTextSize(18);
+                    activityTitle.setTypeface(null, android.graphics.Typeface.BOLD);
+                    activityTitle.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT, 
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                    ));
+                    activityTitle.setPadding(0, 0, 0, 8);
+                    
+                    TextView activityText = new TextView(requireContext());
+                    activityText.setText("Last workout: " + lastWorkoutDate + "\nTotal workouts: " + totalWorkouts);
+                    activityText.setTextColor(getResources().getColor(android.R.color.white));
+                    activityText.setTextSize(14);
+                    activityText.setAlpha(0.9f);
+                    
+                    activityLayout.addView(activityTitle);
+                    activityLayout.addView(activityText);
+                    activityCard.addView(activityLayout);
+                    
+                    // Add to the main layout safely
+                    if (getView() != null) {
+                        View scrollView = getView().findViewById(R.id.scrollView);
+                        if (scrollView instanceof android.widget.ScrollView) {
+                            android.widget.ScrollView sv = (android.widget.ScrollView) scrollView;
+                            if (sv.getChildCount() > 0) {
+                                View child = sv.getChildAt(0);
+                                if (child instanceof LinearLayout) {
+                                    LinearLayout mainLayout = (LinearLayout) child;
+                                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.MATCH_PARENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                    );
+                                    params.setMargins(12, 12, 12, 12);
+                                    activityCard.setLayoutParams(params);
+                                    mainLayout.addView(activityCard);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // Log error but don't crash
+            android.util.Log.e("WorkoutFragment", "Error showing recent activity", e);
+        }
+    }
+
+    private void updateWorkoutRecommendations(String yogaLevel) {
+        try {
+            String recommendation = "";
+            
+            if (yogaLevel == null || yogaLevel.equals("Brand New") || yogaLevel.equals("Beginner")) {
+                recommendation = "Start with Workout 1 - it's perfect for beginners!";
+            } else if (yogaLevel.equals("Average")) {
+                recommendation = "Try Workout 2 to challenge yourself with intermediate poses.";
+            } else if (yogaLevel.equals("Expert") || yogaLevel.equals("Professional")) {
+                recommendation = "Workout 3 will push your limits with advanced sequences.";
+            }
+            
+            // Show recommendation safely
+            if (getView() != null) {
+                TextView recommendationText = getView().findViewById(R.id.text_workout_header);
+                if (recommendationText != null) {
+                    recommendationText.setText("Available Workouts\n" + recommendation);
+                    recommendationText.setTextSize(16);
+                }
+            }
+        } catch (Exception e) {
+            // Log error but don't crash
+            android.util.Log.e("WorkoutFragment", "Error updating workout recommendations", e);
         }
     }
 
