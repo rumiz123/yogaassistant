@@ -41,6 +41,7 @@ import com.rumiznellasery.yogahelper.R;
 import com.rumiznellasery.yogahelper.MainActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.rumiznellasery.yogahelper.camera.PoseDetector.PoseLandmarkerResult;
+import com.rumiznellasery.yogahelper.utils.DeveloperMode;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -66,6 +67,7 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     private TextView tipsText;
     private Button backToInstructionsButton;
     private Button backToHomeButton;
+    private Button skipPoseButton;
     private MediaPipePoseDetector poseDetector;
     private WorkoutSession workoutSession;
     private ExecutorService cameraExecutor;
@@ -135,6 +137,7 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         tipsText = findViewById(R.id.tips_text);
         backToInstructionsButton = findViewById(R.id.btn_back_to_instructions);
         backToHomeButton = findViewById(R.id.btn_back_to_home);
+        skipPoseButton = findViewById(R.id.btn_skip_pose);
         
         // Get pose information from intent
         currentPoseIndex = getIntent().getIntExtra(EXTRA_POSE_INDEX, 1);
@@ -162,6 +165,13 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         backToHomeButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+        });
+
+        // Set up skip pose button (now visible for everyone)
+        skipPoseButton.setVisibility(View.VISIBLE);
+        skipPoseButton.setOnClickListener(v -> {
+            // Immediately advance to the next pose
+            navigateToNextPose();
         });
 
         if (allPermissionsGranted()) {
