@@ -3,6 +3,8 @@ package com.rumiznellasery.yogahelper.camera;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -56,6 +58,7 @@ public class PosePreparationActivity extends AppCompatActivity {
         // Set up the UI
         setupUI(poseIndex, totalPoses, poseName, poseDescription, poseInstructions, poseDuration);
         setupButtons();
+        setupAnimations();
     }
 
     private void setupUI(int poseIndex, int totalPoses, String poseName, String poseDescription, 
@@ -86,6 +89,70 @@ public class PosePreparationActivity extends AppCompatActivity {
             Intent intent = new Intent(this, com.rumiznellasery.yogahelper.MainActivity.class);
             startActivity(intent);
             finish();
+        });
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // Progress indicator
+        poseProgressText.startAnimation(bounceIn);
+        
+        // Pose name
+        poseNameText.startAnimation(fadeIn);
+        poseNameText.getAnimation().setStartOffset(200);
+        
+        // Pose description
+        poseDescriptionText.startAnimation(slideUp);
+        poseDescriptionText.getAnimation().setStartOffset(400);
+        
+        // Pose instructions
+        poseInstructionsText.startAnimation(slideUp);
+        poseInstructionsText.getAnimation().setStartOffset(600);
+        
+        // Buttons
+        backToHomeButton.startAnimation(slideUp);
+        backToHomeButton.getAnimation().setStartOffset(800);
+        
+        startWorkoutButton.startAnimation(slideUp);
+        startWorkoutButton.getAnimation().setStartOffset(1000);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Back to home button
+        backToHomeButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Start workout button
+        startWorkoutButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
         });
     }
 } 

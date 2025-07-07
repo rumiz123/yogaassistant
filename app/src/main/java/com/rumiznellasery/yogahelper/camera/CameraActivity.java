@@ -19,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Button;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
@@ -121,6 +123,9 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
 
         // Initialize workout session
         workoutSession = new WorkoutSession(this, this);
+
+        // Setup animations
+        setupAnimations();
 
         // Set up back to instructions button
         backToInstructionsButton.setOnClickListener(v -> {
@@ -578,5 +583,65 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         } else {
             return "Move slowly and comfortably, don't force any position";
         }
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // UI elements
+        poseStatusText.startAnimation(fadeIn);
+        circularTimerText.startAnimation(bounceIn);
+        circularTimerText.getAnimation().setStartOffset(200);
+        
+        poseFeedbackText.startAnimation(slideUp);
+        poseFeedbackText.getAnimation().setStartOffset(400);
+        
+        tipsText.startAnimation(slideUp);
+        tipsText.getAnimation().setStartOffset(600);
+
+        // Buttons
+        backToInstructionsButton.startAnimation(slideUp);
+        backToInstructionsButton.getAnimation().setStartOffset(800);
+        
+        backToHomeButton.startAnimation(slideUp);
+        backToHomeButton.getAnimation().setStartOffset(1000);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Back to instructions button
+        backToInstructionsButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Back to home button
+        backToHomeButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
     }
 }

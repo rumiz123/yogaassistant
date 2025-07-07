@@ -2,6 +2,8 @@ package com.rumiznellasery.yogahelper;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -45,9 +47,73 @@ public class AuthActivity extends AppCompatActivity {
         Button signInButton = findViewById(R.id.buttonSignIn);
         Button signUpButton = findViewById(R.id.buttonSignUp);
 
+        // Setup animations
+        setupAnimations();
+
         signInButton.setOnClickListener(v -> signIn());
         signUpButton.setOnClickListener(v -> signUp());
         Logger.info("AuthActivity onCreate completed");
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // Email field
+        emailEditText.startAnimation(slideUp);
+        
+        // Password field
+        passwordEditText.startAnimation(slideUp);
+        passwordEditText.getAnimation().setStartOffset(200);
+        
+        // Sign in button
+        Button signInButton = findViewById(R.id.buttonSignIn);
+        signInButton.startAnimation(slideUp);
+        signInButton.getAnimation().setStartOffset(400);
+        
+        // Sign up button
+        Button signUpButton = findViewById(R.id.buttonSignUp);
+        signUpButton.startAnimation(slideUp);
+        signUpButton.getAnimation().setStartOffset(600);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Sign in button
+        Button signInButton = findViewById(R.id.buttonSignIn);
+        signInButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Sign up button
+        Button signUpButton = findViewById(R.id.buttonSignUp);
+        signUpButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
     }
 
     @Override

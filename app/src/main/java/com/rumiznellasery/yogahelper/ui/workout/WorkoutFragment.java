@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -127,6 +129,9 @@ public class WorkoutFragment extends Fragment {
         binding.buttonPlaceholder2.setOnClickListener(startWorkoutListener);
         binding.buttonPlaceholder3.setOnClickListener(startWorkoutListener);
 
+        // Setup animations
+        setupAnimations();
+
         // Fetch yogaLevel from Firebase and highlight recommended workout
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
@@ -162,6 +167,61 @@ public class WorkoutFragment extends Fragment {
         }
 
         return root;
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+
+        // Animate header (Available Workouts title)
+        if (getView() != null) {
+            TextView header = getView().findViewById(R.id.text_workout_header);
+            if (header != null) {
+                header.startAnimation(fadeIn);
+            }
+        }
+
+        // Animate workout cards with staggered timing
+        int[] cardIds = {R.id.card_workout1, R.id.card_workout2, R.id.card_workout3};
+        for (int i = 0; i < cardIds.length; i++) {
+            if (getView() != null) {
+                View card = getView().findViewById(cardIds[i]);
+                if (card != null) {
+                    card.startAnimation(slideUp);
+                    card.getAnimation().setStartOffset(200 + (i * 200));
+                }
+            }
+        }
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Start buttons
+        View[] startButtons = {
+            binding.buttonPlaceholder1,
+            binding.buttonPlaceholder2,
+            binding.buttonPlaceholder3
+        };
+
+        for (View button : startButtons) {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                    scaleOut.setDuration(100);
+                    v.startAnimation(scaleOut);
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                    scaleIn.setDuration(100);
+                    v.startAnimation(scaleIn);
+                }
+                return false;
+            });
+        }
     }
 
     private void highlightRecommendedWorkout(int recommended) {

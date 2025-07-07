@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -33,6 +35,7 @@ public class BadgesFragment extends Fragment {
         setupRecyclerView();
         setupSwipeRefresh();
         setupBackButton();
+        setupAnimations();
 
         // Setup Test Badges button
         binding.buttonTestBadges.setEnabled(true);
@@ -107,6 +110,69 @@ public class BadgesFragment extends Fragment {
                     }, 125);
                 }
             }
+        });
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // Header
+        View header = (View) binding.buttonBack.getParent();
+        if (header != null) {
+            header.startAnimation(fadeIn);
+        }
+
+        // Progress overview card
+        View progressCard = (View) binding.getRoot().findViewById(R.id.progress_badges).getParent().getParent();
+        if (progressCard != null) {
+            progressCard.startAnimation(slideUp);
+            progressCard.getAnimation().setStartOffset(200);
+        }
+
+        // Test badges button
+        binding.buttonTestBadges.startAnimation(slideUp);
+        binding.buttonTestBadges.getAnimation().setStartOffset(400);
+
+        // Swipe refresh layout
+        binding.swipeRefresh.startAnimation(slideUp);
+        binding.swipeRefresh.getAnimation().setStartOffset(600);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Back button
+        binding.buttonBack.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Test badges button
+        binding.buttonTestBadges.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
         });
     }
 

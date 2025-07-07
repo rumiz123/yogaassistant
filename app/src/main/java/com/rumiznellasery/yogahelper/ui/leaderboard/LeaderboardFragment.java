@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,9 +55,24 @@ public class LeaderboardFragment extends Fragment {
         // Check for developer mode
         DeveloperMode.checkAndEnableDeveloperMode(requireContext());
         
+        // Setup animations
+        setupAnimations();
+        
         loadData();
 
         return binding.getRoot();
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+        Animation bounceIn = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+
+        // Apply entrance animations
+        binding.textLeaderboardTitle.startAnimation(fadeIn);
+        binding.swipeRefresh.startAnimation(slideUp);
+        binding.swipeRefresh.getAnimation().setStartOffset(200);
     }
 
     private void loadData() {

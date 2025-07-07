@@ -3,6 +3,8 @@ package com.rumiznellasery.yogahelper.camera;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -53,8 +55,68 @@ public class PoseInstructionsActivity extends AppCompatActivity {
         nextButton = findViewById(R.id.next_button);
         backButton = findViewById(R.id.back_button);
         
+        // Setup animations
+        setupAnimations();
+        
         updateInstruction();
         setupButtons();
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // Title
+        TextView titleText = findViewById(R.id.title_text);
+        titleText.startAnimation(fadeIn);
+        
+        // Instruction text
+        instructionText.startAnimation(slideUp);
+        instructionText.getAnimation().setStartOffset(200);
+        
+        // Buttons
+        backButton.startAnimation(slideUp);
+        backButton.getAnimation().setStartOffset(400);
+        
+        nextButton.startAnimation(slideUp);
+        nextButton.getAnimation().setStartOffset(600);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Back button
+        backButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Next button
+        nextButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
     }
 
     private void setupButtons() {

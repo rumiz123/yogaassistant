@@ -7,8 +7,11 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -42,6 +45,7 @@ public class FriendsFragment extends Fragment {
         setupSearchFunctionality();
         setupTabButtons();
         setupCompetitionButton();
+        setupAnimations();
         loadFriends();
 
         return binding.getRoot();
@@ -255,6 +259,68 @@ public class FriendsFragment extends Fragment {
         // This would open the competition creation dialog
         // For now, just show a simple message
         Toast.makeText(requireContext(), "Competition feature coming soon! You have " + acceptedFriends.size() + " friends to challenge.", Toast.LENGTH_LONG).show();
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+
+        // Animate header (Friends title)
+        TextView header = null;
+        if (getView() != null) {
+            header = getView().findViewById(R.id.text_friends_header);
+        }
+        if (header != null) {
+            header.startAnimation(fadeIn);
+        }
+
+        // Animate tab card (MaterialCardView)
+        if (binding != null && binding.getRoot() != null) {
+            View tabCard = binding.getRoot().findViewById(R.id.btnFriends);
+            if (tabCard != null) {
+                tabCard.startAnimation(slideUp);
+                tabCard.getAnimation().setStartOffset(200);
+            }
+        }
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Tab buttons
+        View[] tabButtons = {binding.btnFriends, binding.btnAddFriends};
+        for (View button : tabButtons) {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                    scaleOut.setDuration(100);
+                    v.startAnimation(scaleOut);
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                    scaleIn.setDuration(100);
+                    v.startAnimation(scaleIn);
+                }
+                return false;
+            });
+        }
+
+        // Competition button
+        binding.btnCompetition.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
     }
 
     @Override

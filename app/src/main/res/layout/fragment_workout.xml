@@ -16,6 +16,7 @@
 
         <!-- Header -->
         <TextView
+            android:id="@+id/text_workout_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Available Workouts"

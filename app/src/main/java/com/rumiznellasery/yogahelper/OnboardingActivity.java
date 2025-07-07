@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -82,9 +84,68 @@ public class OnboardingActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         viewPager.setUserInputEnabled(false); // Disable swipe
 
+        // Setup animations
+        setupAnimations();
+
         updateStepIndicator();
         setupButtons();
         Logger.info("OnboardingActivity onCreate completed");
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(this, R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(this, R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        // Step indicator
+        stepIndicator.startAnimation(bounceIn);
+        
+        // ViewPager
+        viewPager.startAnimation(slideUp);
+        viewPager.getAnimation().setStartOffset(200);
+        
+        // Buttons
+        skipButton.startAnimation(slideUp);
+        skipButton.getAnimation().setStartOffset(400);
+        
+        nextButton.startAnimation(slideUp);
+        nextButton.getAnimation().setStartOffset(600);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Skip button
+        skipButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Next button
+        nextButton.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
+                scaleOut.setDuration(100);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
+                scaleIn.setDuration(100);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
     }
 
     private void setupButtons() {

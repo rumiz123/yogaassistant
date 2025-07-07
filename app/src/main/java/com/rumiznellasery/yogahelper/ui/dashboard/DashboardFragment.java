@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.Calendar;
@@ -41,6 +43,7 @@ public class DashboardFragment extends Fragment {
 
         updateUI(streak, workoutsThisWeek);
         setupQuickActions();
+        setupAnimations();
         // checkAchievements(streak, workoutsThisWeek); // Disabled achievement notifications on launch
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -145,6 +148,69 @@ public class DashboardFragment extends Fragment {
         binding.buttonQuickSettings.setOnClickListener(v -> {
             showQuickSettingsDialog();
         });
+    }
+
+    private void setupAnimations() {
+        // Load animations
+        Animation fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+        Animation slideUp = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+        Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+        Animation bounceIn = AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+
+        // Apply entrance animations with staggered timing
+        binding.textWelcome.startAnimation(fadeIn);
+        
+        binding.cardMainStats.startAnimation(slideUp);
+        binding.cardMainStats.getAnimation().setStartOffset(200);
+        
+        binding.cardMotivation.startAnimation(slideUp);
+        binding.cardMotivation.getAnimation().setStartOffset(400);
+        
+        binding.layoutQuickActions.startAnimation(slideUp);
+        binding.layoutQuickActions.getAnimation().setStartOffset(600);
+
+        // Add button press animations
+        setupButtonAnimations();
+    }
+
+    private void setupButtonAnimations() {
+        // Primary action button
+        binding.buttonStartWorkout.setOnTouchListener((v, event) -> {
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                v.startAnimation(scaleOut);
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                v.startAnimation(scaleIn);
+            }
+            return false;
+        });
+
+        // Secondary action buttons
+        View[] secondaryButtons = {
+            binding.buttonViewAchievements,
+            binding.buttonViewFriends,
+            binding.buttonViewLeaderboard,
+            binding.buttonQuickTimer,
+            binding.buttonPoseGuide,
+            binding.buttonWorkoutHistory,
+            binding.buttonQuickSettings
+        };
+
+        for (View button : secondaryButtons) {
+            button.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
+                    scaleOut.setDuration(100);
+                    v.startAnimation(scaleOut);
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                    Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                    scaleIn.setDuration(100);
+                    v.startAnimation(scaleIn);
+                }
+                return false;
+            });
+        }
     }
 
     private void checkBadges(int streak, int workoutsThisWeek) {
