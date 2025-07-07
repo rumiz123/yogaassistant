@@ -25,6 +25,8 @@ import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.databinding.FragmentSettingsBinding;
 import com.rumiznellasery.yogahelper.utils.DeveloperMode;
 import com.rumiznellasery.yogahelper.utils.Logger;
+import com.rumiznellasery.yogahelper.utils.BadgeManager;
+import com.rumiznellasery.yogahelper.ui.badges.BadgesShowcaseAdapter;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -32,25 +34,103 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.io.InputStream;
 
 public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
     private SharedPreferences prefs;
+    private BadgeManager badgeManager;
+    private BadgesShowcaseAdapter showcaseAdapter;
+    private boolean badgesAreUnlocked = false;
+
+    // Adapter for profile badge row
+    private class ProfileBadgesAdapter extends androidx.recyclerview.widget.RecyclerView.Adapter<ProfileBadgesAdapter.BadgeViewHolder> {
+        private final java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges;
+        ProfileBadgesAdapter(java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges) {
+            this.badges = badges;
+        }
+        @NonNull
+        @Override
+        public BadgeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            android.view.View view = android.view.LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_badge_profile_icon, parent, false);
+            return new BadgeViewHolder(view);
+        }
+        @Override
+        public void onBindViewHolder(@NonNull BadgeViewHolder holder, int position) {
+            holder.bind(badges.get(position));
+        }
+        @Override
+        public int getItemCount() { return badges.size(); }
+        class BadgeViewHolder extends androidx.recyclerview.widget.RecyclerView.ViewHolder {
+            private final android.widget.ImageView imageBadge;
+            BadgeViewHolder(@NonNull android.view.View itemView) {
+                super(itemView);
+                imageBadge = itemView.findViewById(R.id.image_badge_profile);
+            }
+            void bind(com.rumiznellasery.yogahelper.data.Badge badge) {
+                // Set icon based on badge type (reuse logic from showcase adapter)
+                int iconRes = getBadgeIcon(badge.type);
+                imageBadge.setImageResource(iconRes);
+                imageBadge.setAlpha(1.0f);
+            }
+            int getBadgeIcon(com.rumiznellasery.yogahelper.data.Badge.BadgeType type) {
+                if (type == null) return R.drawable.ic_prize_black_24dp;
+                switch (type) {
+                    case WORKOUT_COUNT: return R.drawable.ic_prize_black_24dp;
+                    case STREAK_DAYS: return R.drawable.ic_fire;
+                    case CALORIES_BURNED: return R.drawable.ic_fire;
+                    case FRIENDS_COUNT: return R.drawable.ic_friend_tab;
+                    case COMPETITION_WINS: return R.drawable.ic_prize_black_24dp;
+                    case PERFECT_WEEK: return R.drawable.ic_fire;
+                    case POSE_MASTERY: return R.drawable.ic_prize_black_24dp;
+                    case WORKOUT_TIME: return R.drawable.ic_notifications_black_24dp;
+                    case CHALLENGE_COMPLETION: return R.drawable.ic_prize_black_24dp;
+                    default: return R.drawable.ic_prize_black_24dp;
+                }
+            }
+        }
+    }
+
+    private void setupProfileBadgesRow() {
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> unlocked = badgeManager.getUnlockedBadges();
+        if (unlocked.isEmpty()) {
+            binding.recyclerProfileBadges.setVisibility(android.view.View.GONE);
+            return;
+        }
+        binding.recyclerProfileBadges.setVisibility(android.view.View.VISIBLE);
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> toShow = unlocked.size() > 5 ? unlocked.subList(0, 5) : unlocked;
+        ProfileBadgesAdapter adapter = new ProfileBadgesAdapter(toShow);
+        binding.recyclerProfileBadges.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireContext(), androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
+        binding.recyclerProfileBadges.setAdapter(adapter);
+    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSettingsBinding.inflate(inflater, container, false);
         prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
+        badgeManager = com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
         
         setupProfilePicture();
         setupThemeSettings();
         setupNotificationSettings();
         setupAccessibilitySettings();
         setupPrivacyDataSettings();
+        setupBadgesShowcase();
+        setupProfileBadgesRow();
         setupDeveloperMode();
         setupLogout();
         
         return binding.getRoot();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (badgeManager == null) {
+            badgeManager = com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
+        }
+        setupProfileBadgesRow();
     }
 
     private void setupProfilePicture() {
@@ -118,13 +198,13 @@ public class SettingsFragment extends Fragment {
                 Toast.LENGTH_SHORT).show();
         });
 
-        // Achievement notifications
-        boolean achievementNotifications = prefs.getBoolean("achievement_notifications", true);
-        binding.switchAchievementNotifications.setChecked(achievementNotifications);
+        // Badge notifications
+        boolean badgeNotifications = prefs.getBoolean("badge_notifications", true);
+        binding.switchAchievementNotifications.setChecked(badgeNotifications);
         binding.switchAchievementNotifications.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            prefs.edit().putBoolean("achievement_notifications", isChecked).apply();
+            prefs.edit().putBoolean("badge_notifications", isChecked).apply();
             Toast.makeText(requireContext(), 
-                isChecked ? "Achievement notifications enabled" : "Achievement notifications disabled", 
+                isChecked ? "Badge notifications enabled" : "Badge notifications disabled", 
                 Toast.LENGTH_SHORT).show();
         });
 
@@ -172,6 +252,105 @@ public class SettingsFragment extends Fragment {
 
         // Delete account
         binding.layoutDeleteAccount.setOnClickListener(v -> showDeleteAccountDialog());
+    }
+
+    private void setupBadgesShowcase() {
+        badgeManager = BadgeManager.getInstance(requireContext());
+        
+        // Force badge initialization and loading
+        badgeManager.loadBadgesFromLocal();
+        badgeManager.loadBadgesFromFirebase();
+        
+        // Debug: Show badge count
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> debugBadges = badgeManager.getBadges();
+        Toast.makeText(requireContext(), "Badges loaded: " + debugBadges.size(), Toast.LENGTH_LONG).show();
+
+        // Setup RecyclerView
+        showcaseAdapter = new BadgesShowcaseAdapter();
+        binding.recyclerBadgesShowcase.setLayoutManager(
+            new androidx.recyclerview.widget.GridLayoutManager(requireContext(), 4)
+        );
+        binding.recyclerBadgesShowcase.setAdapter(showcaseAdapter);
+        
+        // Load badges
+        updateBadgesShowcase();
+        
+        // Ensure test button is enabled and visible
+        binding.buttonTestBadges.setEnabled(true);
+        binding.buttonTestBadges.setVisibility(View.VISIBLE);
+        binding.buttonTestBadges.setAlpha(1.0f);
+        binding.buttonTestBadges.setClickable(true);
+        
+        // Setup Test Badges button
+        binding.buttonTestBadges.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Test Badges button pressed", Toast.LENGTH_SHORT).show();
+            java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges = badgeManager.getBadges();
+            if (!badgesAreUnlocked) {
+                // Unlock all badges
+                for (com.rumiznellasery.yogahelper.data.Badge badge : badges) {
+                    badge.unlocked = true;
+                    badge.currentProgress = badge.requirement;
+                    badge.unlockedDate = System.currentTimeMillis();
+                    badgeManager.saveBadgeLocally(badge);
+                }
+                badgesAreUnlocked = true;
+                Toast.makeText(requireContext(), "All badges unlocked!", Toast.LENGTH_SHORT).show();
+            } else {
+                // Reset all badges
+                for (com.rumiznellasery.yogahelper.data.Badge badge : badges) {
+                    badge.unlocked = false;
+                    badge.currentProgress = 0;
+                    badge.unlockedDate = 0;
+                    badgeManager.saveBadgeLocally(badge);
+                }
+                badgesAreUnlocked = false;
+                Toast.makeText(requireContext(), "All badges reset!", Toast.LENGTH_SHORT).show();
+            }
+            updateBadgesShowcase();
+        });
+
+        // Setup "View All Badges" button
+        binding.buttonViewAllBadges.setOnClickListener(v -> {
+            // Navigate to badges fragment
+            if (getActivity() != null) {
+                android.view.View overlayContainer = getActivity().findViewById(R.id.overlay_container);
+                if (overlayContainer != null) {
+                    overlayContainer.setVisibility(android.view.View.VISIBLE);
+                    getActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.overlay_container, new com.rumiznellasery.yogahelper.ui.badges.BadgesFragment())
+                        .addToBackStack("badges")
+                        .commit();
+                }
+            }
+        });
+    }
+
+    private void loadBadgesShowcase() {
+        // Load from local storage first
+        badgeManager.loadBadgesFromLocal();
+        
+        // Then load from Firebase
+        badgeManager.loadBadgesFromFirebase();
+        
+        // Update showcase
+        updateBadgesShowcase();
+    }
+
+    private void updateBadgesShowcase() {
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges = badgeManager.getBadges();
+        
+        // Show only first 8 badges in showcase
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> showcaseBadges = badges.size() > 8 
+            ? badges.subList(0, 8) 
+            : badges;
+        
+        showcaseAdapter.setBadges(showcaseBadges);
+        
+        // Update count
+        int unlockedCount = badgeManager.getUnlockedCount();
+        int totalCount = badgeManager.getTotalCount();
+        binding.textBadgesCount.setText(unlockedCount + "/" + totalCount);
     }
 
     private void exportData() {
@@ -344,8 +523,13 @@ public class SettingsFragment extends Fragment {
                     
                     File profileFile = new File(profileDir, "profile_picture.jpg");
                     FileOutputStream fos = new FileOutputStream(profileFile);
-                    requireContext().getContentResolver().openInputStream(selectedImage).transferTo(fos);
-                    fos.close();
+                    InputStream in = requireContext().getContentResolver().openInputStream(selectedImage);
+                    byte[] buffer = new byte[4096];
+                    int bytesRead;
+                    while ((bytesRead = in.read(buffer)) != -1) {
+                        fos.write(buffer, 0, bytesRead);
+                    }
+                    in.close();
                     
                     // Save path to SharedPreferences
                     SharedPreferences profilePrefs = requireContext().getSharedPreferences("profile", Context.MODE_PRIVATE);

@@ -48,8 +48,8 @@ public class AccessibilityHelper {
         return areNotificationsEnabled(context, "workout_reminders");
     }
     
-    public static boolean areAchievementNotificationsEnabled(Context context) {
-        return areNotificationsEnabled(context, "achievement_notifications");
+    public static boolean areBadgeNotificationsEnabled(Context context) {
+        return areNotificationsEnabled(context, "badge_notifications");
     }
     
     public static boolean areFriendActivityNotificationsEnabled(Context context) {

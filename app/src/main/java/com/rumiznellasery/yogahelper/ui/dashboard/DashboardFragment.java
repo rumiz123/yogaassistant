@@ -90,14 +90,21 @@ public class DashboardFragment extends Fragment {
             bottomNav.setSelectedItemId(R.id.navigation_workout);
         });
 
-        // View Achievements button
+        // View Badges button
         binding.buttonViewAchievements.setOnClickListener(v -> {
-            // Navigate to achievements fragment
+            // Navigate to badges fragment using overlay container
             if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.nav_host_fragment_activity_main, new com.rumiznellasery.yogahelper.ui.achievements.AchievementsFragment())
-                    .addToBackStack(null)
-                    .commit();
+                // Show the overlay container
+                android.view.View overlayContainer = getActivity().findViewById(R.id.overlay_container);
+                if (overlayContainer != null) {
+                    overlayContainer.setVisibility(android.view.View.VISIBLE);
+                    
+                    // Add badges fragment to overlay container
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.overlay_container, new com.rumiznellasery.yogahelper.ui.badges.BadgesFragment())
+                        .addToBackStack("badges")
+                        .commit();
+                }
             }
         });
 
@@ -125,23 +132,23 @@ public class DashboardFragment extends Fragment {
         });
     }
 
-    private void checkAchievements(int streak, int workoutsThisWeek) {
-        // Initialize achievement manager
-        com.rumiznellasery.yogahelper.utils.AchievementManager achievementManager = 
-            com.rumiznellasery.yogahelper.utils.AchievementManager.getInstance(requireContext());
+    private void checkBadges(int streak, int workoutsThisWeek) {
+        // Initialize badge manager
+        com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
+            com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
         
-        // Load achievements from Firebase
-        achievementManager.loadAchievementsFromFirebase();
+        // Load badges from Firebase
+        badgeManager.loadBadgesFromFirebase();
         
-        // Check workout achievements
+        // Check workout badges
         SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
         int totalWorkouts = prefs.getInt("workouts", 0);
-        achievementManager.checkWorkoutAchievements(totalWorkouts);
+        badgeManager.checkWorkoutBadges(totalWorkouts);
         
-        // Check streak achievements
-        achievementManager.checkStreakAchievements(streak);
+        // Check streak badges
+        badgeManager.checkStreakBadges(streak);
         
-        // TODO: Check other achievement types as they become available
+        // TODO: Check other badge types as they become available
     }
 
     private void exportUserData() {
@@ -158,12 +165,12 @@ public class DashboardFragment extends Fragment {
             exportData.append("- Current Streak: ").append(statsPrefs.getInt("streak", 0)).append("\n");
             exportData.append("- Last Workout: ").append(statsPrefs.getString("last_workout_date", "Never")).append("\n\n");
 
-            // Add achievements
-            com.rumiznellasery.yogahelper.utils.AchievementManager achievementManager = 
-                com.rumiznellasery.yogahelper.utils.AchievementManager.getInstance(requireContext());
-            exportData.append("Achievements:\n");
-            exportData.append("- Unlocked: ").append(achievementManager.getUnlockedCount()).append("/").append(achievementManager.getTotalCount()).append("\n");
-            exportData.append("- Completion: ").append(String.format("%.0f%%", achievementManager.getCompletionPercentage())).append("\n\n");
+            // Add badges
+            com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
+                com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
+            exportData.append("Badges:\n");
+            exportData.append("- Unlocked: ").append(badgeManager.getUnlockedCount()).append("/").append(badgeManager.getTotalCount()).append("\n");
+            exportData.append("- Completion: ").append(String.format("%.0f%%", badgeManager.getCompletionPercentage())).append("\n\n");
 
             // Save to file
             String fileName = "yoga_assistant_export_" + new java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault()).format(new java.util.Date()) + ".txt";

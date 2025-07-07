@@ -95,6 +95,97 @@
     </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Profile Badges Row -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_profile_badges"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginBottom="16dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:orientation="horizontal" />
+
+        <!-- Badges Showcase Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="12dp"
+            app:cardBackgroundColor="@color/card_background"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/card_background_accent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/badges"
+                        android:textColor="@color/text_primary"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/text_badges_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0/0"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Badges Grid -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_badges_showcase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="320dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <!-- Test Badges Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_test_badges"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="Test Badges"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_secondary_gradient"
+                    app:cornerRadius="24dp"
+                    app:elevation="4dp" />
+
+                <!-- View All Badges Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_view_all_badges"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/view_all_badges"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_secondary_gradient"
+                    app:cornerRadius="24dp"
+                    app:elevation="4dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Appearance Section -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -269,14 +360,14 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/achievement_notifications"
+                            android:text="@string/badge_notifications"
                             android:textColor="@color/text_primary"
                             android:textSize="16sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/achievement_notifications_description"
+                            android:text="@string/badge_notifications_description"
                             android:textColor="@color/text_secondary"
                             android:textSize="14sp"
                             android:layout_marginTop="2dp" />

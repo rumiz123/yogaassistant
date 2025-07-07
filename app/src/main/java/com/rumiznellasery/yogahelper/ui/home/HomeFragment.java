@@ -40,6 +40,70 @@ public class HomeFragment extends Fragment {
         Logger.info("HomeFragment onCreate started");
     }
 
+    // Adapter for profile badge row
+    private class ProfileBadgesAdapter extends androidx.recyclerview.widget.RecyclerView.Adapter<ProfileBadgesAdapter.BadgeViewHolder> {
+        private final java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges;
+        ProfileBadgesAdapter(java.util.List<com.rumiznellasery.yogahelper.data.Badge> badges) {
+            this.badges = badges;
+        }
+        @NonNull
+        @Override
+        public BadgeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            android.view.View view = android.view.LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_badge_profile_icon, parent, false);
+            return new BadgeViewHolder(view);
+        }
+        @Override
+        public void onBindViewHolder(@NonNull BadgeViewHolder holder, int position) {
+            holder.bind(badges.get(position));
+        }
+        @Override
+        public int getItemCount() { return badges.size(); }
+        class BadgeViewHolder extends androidx.recyclerview.widget.RecyclerView.ViewHolder {
+            private final android.widget.ImageView imageBadge;
+            BadgeViewHolder(@NonNull android.view.View itemView) {
+                super(itemView);
+                imageBadge = itemView.findViewById(R.id.image_badge_profile);
+            }
+            void bind(com.rumiznellasery.yogahelper.data.Badge badge) {
+                int iconRes = getBadgeIcon(badge.type);
+                imageBadge.setImageResource(iconRes);
+                imageBadge.setAlpha(1.0f);
+            }
+            int getBadgeIcon(com.rumiznellasery.yogahelper.data.Badge.BadgeType type) {
+                if (type == null) return R.drawable.ic_prize_black_24dp;
+                switch (type) {
+                    case WORKOUT_COUNT: return R.drawable.ic_prize_black_24dp;
+                    case STREAK_DAYS: return R.drawable.ic_fire;
+                    case CALORIES_BURNED: return R.drawable.ic_fire;
+                    case FRIENDS_COUNT: return R.drawable.ic_friend_tab;
+                    case COMPETITION_WINS: return R.drawable.ic_prize_black_24dp;
+                    case PERFECT_WEEK: return R.drawable.ic_fire;
+                    case POSE_MASTERY: return R.drawable.ic_prize_black_24dp;
+                    case WORKOUT_TIME: return R.drawable.ic_notifications_black_24dp;
+                    case CHALLENGE_COMPLETION: return R.drawable.ic_prize_black_24dp;
+                    default: return R.drawable.ic_prize_black_24dp;
+                }
+            }
+        }
+    }
+
+    private com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager;
+
+    private void setupProfileBadgesRow() {
+        if (badgeManager == null) badgeManager = com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> unlocked = badgeManager.getUnlockedBadges();
+        if (unlocked.isEmpty()) {
+            binding.recyclerProfileBadges.setVisibility(android.view.View.GONE);
+            return;
+        }
+        binding.recyclerProfileBadges.setVisibility(android.view.View.VISIBLE);
+        java.util.List<com.rumiznellasery.yogahelper.data.Badge> toShow = unlocked.size() > 5 ? unlocked.subList(0, 5) : unlocked;
+        ProfileBadgesAdapter adapter = new ProfileBadgesAdapter(toShow);
+        binding.recyclerProfileBadges.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireContext(), androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
+        binding.recyclerProfileBadges.setAdapter(adapter);
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -201,6 +265,9 @@ public class HomeFragment extends Fragment {
                 }
             });
 
+            // Setup profile badges row
+            setupProfileBadgesRow();
+
             Logger.info("HomeFragment onCreateView completed successfully");
         } catch (Exception e) {
             Logger.error("Critical error in HomeFragment onCreateView", e);
@@ -216,6 +283,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         View navBar = requireActivity().findViewById(R.id.nav_view);
         if (navBar != null) navBar.setVisibility(View.VISIBLE);
+        setupProfileBadgesRow();
     }
 
     @Override

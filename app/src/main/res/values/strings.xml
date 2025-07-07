@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name"></string>
+    <string name="app_name">AI Yoga</string>
     <string name="title_home">Settings</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_workout">Workout</string>
@@ -58,8 +58,10 @@
     <string name="workout_reminders_description">Get reminded to do your daily yoga practice</string>
     <string name="reminder_time">Reminder Time</string>
     <string name="reminder_time_description">Set when you want to be reminded</string>
-    <string name="achievement_notifications">Achievement Notifications</string>
-    <string name="achievement_notifications_description">Get notified when you unlock achievements</string>
+    <string name="badge_notifications">Badge Notifications</string>
+    <string name="badge_notifications_description">Get notified when you unlock badges</string>
+    <string name="badges">Badges</string>
+    <string name="view_all_badges">View All Badges</string>
     <string name="friend_activity">Friend Activity</string>
     <string name="friend_activity_description">Get notified about your friends\' progress</string>
     
@@ -137,18 +139,23 @@
     <string name="active_competitions">Active Competitions</string>
     <string name="no_active_competitions">No active competitions</string>
     
-    <!-- Achievements -->
-    <string name="achievements">Achievements</string>
-    <string name="first_workout">First Workout</string>
-    <string name="first_workout_description">Complete your first yoga workout</string>
-    <string name="week_streak">Week Warrior</string>
-    <string name="week_streak_description">Maintain a 7-day workout streak</string>
-    <string name="month_streak">Monthly Master</string>
-    <string name="month_streak_description">Maintain a 30-day workout streak</string>
-    <string name="hundred_workouts">Century Club</string>
-    <string name="hundred_workouts_description">Complete 100 workouts</string>
-    <string name="social_butterfly">Social Butterfly</string>
-    <string name="social_butterfly_description">Add 10 friends</string>
-    <string name="competition_winner">Champion</string>
-    <string name="competition_winner_description">Win your first competition</string>
+    <!-- Badges -->
+    <string name="badge_first_workout">First Steps</string>
+    <string name="badge_first_workout_description">Complete your first yoga workout</string>
+    <string name="badge_week_warrior">Week Warrior</string>
+    <string name="badge_week_warrior_description">Maintain a 7-day workout streak</string>
+    <string name="badge_monthly_master">Monthly Master</string>
+    <string name="badge_monthly_master_description">Maintain a 30-day workout streak</string>
+    <string name="badge_century_club">Century Club</string>
+    <string name="badge_century_club_description">Complete 100 workouts</string>
+    <string name="badge_social_butterfly">Social Butterfly</string>
+    <string name="badge_social_butterfly_description">Add 10 friends</string>
+    <string name="badge_champion">Champion</string>
+    <string name="badge_champion_description">Win your first competition</string>
+    <string name="badge_pose_master">Pose Master</string>
+    <string name="badge_pose_master_description">Perfect 50 yoga poses</string>
+    <string name="badge_time_master">Time Master</string>
+    <string name="badge_time_master_description">Complete 60 minutes of yoga</string>
+    <string name="badge_perfect_week">Perfect Week</string>
+    <string name="badge_perfect_week_description">Complete workouts for 7 consecutive days</string>
 </resources>

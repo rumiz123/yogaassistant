@@ -29,7 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/achievements"
+            android:text="@string/badges"
             android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold"
@@ -58,7 +58,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Achievement Progress"
+                android:text="Badge Collection"
                 android:textColor="@color/text_primary"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -72,11 +72,11 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
-                    android:id="@+id/text_achievement_count"
+                    android:id="@+id/text_badge_count"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="0/6 Unlocked"
+                    android:text="0/9 Unlocked"
                     android:textColor="@color/text_primary"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -92,7 +92,7 @@
             </LinearLayout>
 
             <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/progress_achievements"
+                android:id="@+id/progress_badges"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
@@ -103,7 +103,20 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Achievements List -->
+    <!-- Test Badges Button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_test_badges"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="12dp"
+        android:text="Test Badges"
+        android:textColor="@color/white"
+        android:background="@drawable/button_secondary_gradient"
+        app:cornerRadius="24dp"
+        app:elevation="4dp" />
+
+    <!-- Badges List -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh"
         android:layout_width="match_parent"
@@ -111,7 +124,7 @@
         android:layout_weight="1">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_achievements"
+            android:id="@+id/recycler_badges"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingHorizontal="24dp"

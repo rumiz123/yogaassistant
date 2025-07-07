@@ -42,6 +42,82 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
         Logger.info("MainActivity onCreate completed - Navigation setup finished");
+
+        // Show flat grey overlay immediately and handle navigation
+        navView.setOnItemSelectedListener(item -> {
+            android.view.View overlayContainer = findViewById(R.id.overlay_container);
+            android.view.View loadingOverlay = findViewById(R.id.loading_overlay);
+            
+            // Show flat grey overlay immediately
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisibility(android.view.View.VISIBLE);
+            }
+            
+            // Hide badges overlay if visible
+            if (overlayContainer != null && overlayContainer.getVisibility() == android.view.View.VISIBLE) {
+                overlayContainer.setVisibility(android.view.View.GONE);
+                // Remove the badges fragment from the overlay container
+                getSupportFragmentManager().popBackStack("badges", androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+            
+            // Let the navigation controller handle the tab switch
+            boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+            
+            // Hide loading overlay after navigation completes
+            if (loadingOverlay != null) {
+                loadingOverlay.postDelayed(() -> {
+                    loadingOverlay.setVisibility(android.view.View.GONE);
+                }, 125); // Shorter delay for faster response
+            }
+            
+            return handled;
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        // Check if overlay container is visible
+        android.view.View overlayContainer = findViewById(R.id.overlay_container);
+        android.view.View loadingOverlay = findViewById(R.id.loading_overlay);
+        
+        if (overlayContainer != null && overlayContainer.getVisibility() == android.view.View.VISIBLE) {
+            // Show loading overlay immediately with fade-in animation
+            if (loadingOverlay != null) {
+                loadingOverlay.setVisibility(android.view.View.VISIBLE);
+                android.view.animation.Animation fadeIn = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_in);
+                loadingOverlay.startAnimation(fadeIn);
+            }
+            
+            // Hide overlay container
+            overlayContainer.setVisibility(android.view.View.GONE);
+            
+            // Delay back navigation slightly to ensure loading overlay is visible
+            loadingOverlay.post(() -> {
+                super.onBackPressed();
+                
+                // Hide loading overlay with fade-out animation after navigation
+                if (loadingOverlay != null) {
+                    loadingOverlay.postDelayed(() -> {
+                        android.view.animation.Animation fadeOut = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_out);
+                        fadeOut.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+                            @Override
+                            public void onAnimationStart(android.view.animation.Animation animation) {}
+                            
+                            @Override
+                            public void onAnimationEnd(android.view.animation.Animation animation) {
+                                loadingOverlay.setVisibility(android.view.View.GONE);
+                            }
+                            
+                            @Override
+                            public void onAnimationRepeat(android.view.animation.Animation animation) {}
+                        });
+                        loadingOverlay.startAnimation(fadeOut);
+                    }, 200);
+                }
+            });
+        } else {
+            super.onBackPressed();
+        }
     }
 
 }

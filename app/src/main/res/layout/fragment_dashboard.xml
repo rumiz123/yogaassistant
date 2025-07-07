@@ -234,7 +234,7 @@
                     android:layout_width="0dp"
                     android:layout_height="48dp"
                     android:layout_weight="1"
-                    android:text="🏆 Achievements"
+                    android:text="🏅 Badges"
                     android:textSize="14sp"
                     android:background="@drawable/button_secondary_gradient"
                     android:textColor="@color/text_primary"
