@@ -28,7 +28,7 @@ import com.rumiznellasery.yogahelper.R;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import com.rumiznellasery.yogahelper.utils.Logger;
-
+    
 public class DashboardFragment extends Fragment {
 
     private FragmentDashboardBinding binding;
@@ -107,10 +107,10 @@ public class DashboardFragment extends Fragment {
                     overlayContainer.setVisibility(android.view.View.VISIBLE);
                     
                     // Add badges fragment to overlay container
-                    getActivity().getSupportFragmentManager().beginTransaction()
+                getActivity().getSupportFragmentManager().beginTransaction()
                         .replace(R.id.overlay_container, new com.rumiznellasery.yogahelper.ui.badges.BadgesFragment())
                         .addToBackStack("badges")
-                        .commit();
+                    .commit();
                 }
             }
         });

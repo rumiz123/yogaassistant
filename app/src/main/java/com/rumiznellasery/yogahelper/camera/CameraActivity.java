@@ -41,7 +41,6 @@ import com.rumiznellasery.yogahelper.R;
 import com.rumiznellasery.yogahelper.MainActivity;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.rumiznellasery.yogahelper.camera.PoseDetector.PoseLandmarkerResult;
-import com.rumiznellasery.yogahelper.utils.DeveloperMode;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -67,7 +66,6 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
     private TextView tipsText;
     private Button backToInstructionsButton;
     private Button backToHomeButton;
-    private Button skipPoseButton;
     private MediaPipePoseDetector poseDetector;
     private WorkoutSession workoutSession;
     private ExecutorService cameraExecutor;
@@ -137,7 +135,6 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         tipsText = findViewById(R.id.tips_text);
         backToInstructionsButton = findViewById(R.id.btn_back_to_instructions);
         backToHomeButton = findViewById(R.id.btn_back_to_home);
-        skipPoseButton = findViewById(R.id.btn_skip_pose);
         
         // Get pose information from intent
         currentPoseIndex = getIntent().getIntExtra(EXTRA_POSE_INDEX, 1);
@@ -165,13 +162,6 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         backToHomeButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
-        });
-
-        // Set up skip pose button (now visible for everyone)
-        skipPoseButton.setVisibility(View.VISIBLE);
-        skipPoseButton.setOnClickListener(v -> {
-            // Immediately advance to the next pose
-            navigateToNextPose();
         });
 
         if (allPermissionsGranted()) {
@@ -328,7 +318,6 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
                     poseStatusText.setText(statusText);
                     poseFeedbackText.setText(getPositiveFeedback(smoothedConfidence));
                     updateCircularTimer(currentPoseDuration - correctPoseTime);
-                    updateAdaptiveDifficulty(true); // Pose completed successfully
                 } else if (!poseMatches && isCorrectPose) {
                     // Pose became incorrect, start grace period if not already in it
                     if (!isInGracePeriod) {
@@ -352,7 +341,6 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
                     poseStatusText.setText(statusText);
                     poseFeedbackText.setText(getNegativeFeedback(smoothedConfidence, analysis.feedback));
                     updateCircularTimer(currentPoseDuration - correctPoseTime);
-                    updateAdaptiveDifficulty(false); // Pose completed unsuccessfully
                 }
                 
                 // Show pose feedback as a toast if confidence is low, but don't override workout instructions
@@ -561,7 +549,8 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
                     updatePoseTimer(correctPoseTime);
                     poseTimerHandler.postDelayed(this, 1000);
                 } else if (correctPoseTime >= currentPoseDuration) {
-                    // Pose completed, start cooldown
+                    // Pose completed, update adaptive difficulty and start cooldown
+                    updateAdaptiveDifficulty(true); // Pose completed successfully
                     launchNextPosePreparation();
                 } else {
                     // Pose not correct, stop timer
@@ -673,14 +662,16 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
             currentStreak = 0;
             
             // Decrease difficulty if user is struggling
-            float successRate = (float) successfulPoses / totalPosesAttempted;
-            if (successRate < 0.5f) {
-                difficultyMultiplier = Math.max(MIN_DIFFICULTY, difficultyMultiplier - 0.05f);
+            if (totalPosesAttempted > 0) { // Safety check to prevent division by zero
+                float successRate = (float) successfulPoses / totalPosesAttempted;
+                if (successRate < 0.5f) {
+                    difficultyMultiplier = Math.max(MIN_DIFFICULTY, difficultyMultiplier - 0.05f);
+                }
             }
         }
         
         Log.d(TAG, "Difficulty: " + difficultyMultiplier + ", Streak: " + currentStreak + 
-              ", Success Rate: " + (float) successfulPoses / totalPosesAttempted);
+              ", Success Rate: " + (totalPosesAttempted > 0 ? (float) successfulPoses / totalPosesAttempted : 0));
     }
 
     private void stopPoseTimer() {
@@ -819,6 +810,7 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
                 isCorrectPose = false;
                 isInGracePeriod = false;
                 stopPoseTimer();
+                updateAdaptiveDifficulty(false); // Pose failed
                 poseFeedbackText.setText("❌ Adjust your pose");
                 poseStatusText.setText(statusText + "\n(Lost pose)");
             }
