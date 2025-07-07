@@ -235,15 +235,54 @@ public class BadgeManager {
             DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
                 .getReference(keys.users)
                 .child(user.getUid())
-                .child("badges")
+                .child(keys.badges)
                 .child(badge.id);
 
             Map<String, Object> badgeData = new HashMap<>();
+            badgeData.put("id", badge.id);
+            badgeData.put("title", badge.title);
+            badgeData.put("description", badge.description);
+            badgeData.put("icon", badge.icon);
+            badgeData.put("requirement", badge.requirement);
             badgeData.put("unlocked", badge.unlocked);
             badgeData.put("unlockedDate", badge.unlockedDate);
             badgeData.put("currentProgress", badge.currentProgress);
+            badgeData.put("type", badge.type.name());
+            badgeData.put("rarity", badge.rarity.name());
 
-            ref.updateChildren(badgeData);
+            ref.setValue(badgeData).addOnSuccessListener(aVoid -> {
+                Logger.info("Badge " + badge.id + " saved to Firebase successfully");
+            }).addOnFailureListener(e -> {
+                Logger.error("Failed to save badge " + badge.id + " to Firebase", e);
+            });
+        }
+    }
+
+    public void saveAllBadgesToFirebase() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            DbKeys keys = DbKeys.get(context);
+            DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
+                .getReference(keys.users)
+                .child(user.getUid())
+                .child(keys.badges);
+
+            for (Badge badge : badges) {
+                Map<String, Object> badgeData = new HashMap<>();
+                badgeData.put("id", badge.id);
+                badgeData.put("title", badge.title);
+                badgeData.put("description", badge.description);
+                badgeData.put("icon", badge.icon);
+                badgeData.put("requirement", badge.requirement);
+                badgeData.put("unlocked", badge.unlocked);
+                badgeData.put("unlockedDate", badge.unlockedDate);
+                badgeData.put("currentProgress", badge.currentProgress);
+                badgeData.put("type", badge.type.name());
+                badgeData.put("rarity", badge.rarity.name());
+
+                ref.child(badge.id).setValue(badgeData);
+            }
+            Logger.info("All badges saved to Firebase");
         }
     }
 
@@ -263,7 +302,7 @@ public class BadgeManager {
             DatabaseReference ref = FirebaseDatabase.getInstance(keys.databaseUrl)
                 .getReference(keys.users)
                 .child(user.getUid())
-                .child("badges");
+                .child(keys.badges);
 
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -280,8 +319,12 @@ public class BadgeManager {
                             if (unlocked != null) badge.unlocked = unlocked;
                             if (unlockedDate != null) badge.unlockedDate = unlockedDate;
                             if (progress != null) badge.currentProgress = progress;
+                            
+                            // Also save locally for offline access
+                            saveBadgeLocally(badge);
                         }
                     }
+                    Logger.info("Loaded " + snapshot.getChildrenCount() + " badges from Firebase");
                 }
 
                 @Override

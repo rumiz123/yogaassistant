@@ -159,6 +159,9 @@ public class FriendsManager {
         ref.updateChildren(updates)
             .addOnSuccessListener(aVoid -> {
                 Toast.makeText(context, "Friend request accepted", Toast.LENGTH_SHORT).show();
+                
+                // Check for social badges after accepting friend request
+                checkSocialBadges(context, currentUserId);
             })
             .addOnFailureListener(e -> {
                 Toast.makeText(context, "Failed to accept friend request: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -239,6 +242,42 @@ public class FriendsManager {
             @Override
             public void onCancelled(DatabaseError error) {
                 callback.onError("Failed to load friends: " + error.getMessage());
+            }
+        });
+    }
+    
+    private static void checkSocialBadges(Context context, String userId) {
+        // Load friends to count them
+        DatabaseReference ref = FirebaseDatabase.getInstance(DbKeys.get(context).databaseUrl)
+            .getReference("friends")
+            .child(userId);
+        
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                int acceptedFriends = 0;
+                for (DataSnapshot friendSnapshot : snapshot.getChildren()) {
+                    String status = friendSnapshot.child("status").getValue(String.class);
+                    if ("accepted".equals(status)) {
+                        acceptedFriends++;
+                    }
+                }
+                
+                // Check for social badges
+                com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
+                    com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(context);
+                
+                badgeManager.checkFriendsBadges(acceptedFriends);
+                
+                // Save badges to Firebase
+                badgeManager.saveAllBadgesToFirebase();
+                
+                com.rumiznellasery.yogahelper.utils.Logger.info("Social badge check completed. Friends: " + acceptedFriends);
+            }
+            
+            @Override
+            public void onCancelled(DatabaseError error) {
+                com.rumiznellasery.yogahelper.utils.Logger.error("Error checking social badges", error.toException());
             }
         });
     }

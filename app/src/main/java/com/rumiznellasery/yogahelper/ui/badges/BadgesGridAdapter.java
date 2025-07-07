@@ -39,8 +39,8 @@ public class BadgesGridAdapter extends RecyclerView.Adapter<BadgesGridAdapter.Ba
         holder.itemView.setAlpha(0f);
         holder.itemView.animate()
             .alpha(1f)
-            .setDuration(300)
-            .setStartDelay(position * 50L)
+            .setDuration(200)
+            .setStartDelay(position * 30L)
             .setInterpolator(new android.view.animation.DecelerateInterpolator())
             .start();
     }

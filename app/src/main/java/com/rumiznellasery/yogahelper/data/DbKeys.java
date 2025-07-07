@@ -21,6 +21,7 @@ public class DbKeys {
 
     // moved declaration here, will be initialized in ctor
     public final String emailVerified;
+    public final String badges;
 
     private DbKeys(Context context) {
         try {
@@ -46,6 +47,9 @@ public class DbKeys {
 
             // read emailVerified key (default to "emailVerified")
             emailVerified = obj.optString("emailVerified", "emailVerified");
+            
+            // read badges key (default to "badges")
+            badges = obj.optString("badges", "badges");
 
         } catch (Exception e) {
             throw new RuntimeException("Failed to load db keys", e);

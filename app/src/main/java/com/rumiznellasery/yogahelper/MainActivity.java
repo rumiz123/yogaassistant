@@ -44,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
         Logger.info("MainActivity onCreate completed - Navigation setup finished");
 
+        // Initialize badges
+        initializeBadges();
+
         // Show flat grey overlay immediately and handle navigation
         navView.setOnItemSelectedListener(item -> {
             android.view.View overlayContainer = findViewById(R.id.overlay_container);
@@ -131,6 +134,25 @@ public class MainActivity extends AppCompatActivity {
             });
         } else {
             super.onBackPressed();
+        }
+    }
+
+    private void initializeBadges() {
+        try {
+            // Initialize badge manager
+            com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
+                com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(this);
+            
+            // Load badges from Firebase first
+            badgeManager.loadBadgesFromFirebase();
+            
+            // Save all badges to Firebase to ensure they're stored
+            badgeManager.saveAllBadgesToFirebase();
+            
+            Logger.info("Badge initialization completed in MainActivity");
+            
+        } catch (Exception e) {
+            Logger.error("Error initializing badges in MainActivity", e);
         }
     }
 

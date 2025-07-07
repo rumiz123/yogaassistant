@@ -35,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import com.rumiznellasery.yogahelper.utils.BadgeManager;
+import com.rumiznellasery.yogahelper.utils.Logger;
 
 public class WorkoutFragment extends Fragment {
 
@@ -121,6 +123,9 @@ public class WorkoutFragment extends Fragment {
                 workoutsThisWeek += 1;
                 prefs.edit().putInt("workouts_this_week", workoutsThisWeek).apply();
             }
+
+            // Check for badges after updating stats
+            checkAndAwardBadges(workouts, streak, calories);
 
             Intent intent = new Intent(requireContext(), com.rumiznellasery.yogahelper.camera.PoseInstructionsActivity.class);
             startActivity(intent);
@@ -217,11 +222,11 @@ public class WorkoutFragment extends Fragment {
             button.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                     Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
-                    scaleOut.setDuration(100);
+                    scaleOut.setDuration(75);
                     v.startAnimation(scaleOut);
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                     Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
-                    scaleIn.setDuration(100);
+                    scaleIn.setDuration(75);
                     v.startAnimation(scaleIn);
                 }
                 return false;
@@ -417,6 +422,41 @@ public class WorkoutFragment extends Fragment {
         } catch (Exception e) {
             // Log error but don't crash
             android.util.Log.e("WorkoutFragment", "Error updating workout recommendations", e);
+        }
+    }
+
+    private void checkAndAwardBadges(int workouts, int streak, int calories) {
+        try {
+            // Initialize badge manager
+            BadgeManager badgeManager = BadgeManager.getInstance(requireContext());
+            
+            // Load existing badges from Firebase first
+            badgeManager.loadBadgesFromFirebase();
+            
+            // Check workout count badges
+            badgeManager.checkWorkoutBadges(workouts);
+            
+            // Check streak badges
+            badgeManager.checkStreakBadges(streak);
+            
+            // Check time master badges (assuming 15 minutes per workout)
+            int totalMinutes = workouts * 15;
+            badgeManager.checkTimeMasterBadges(totalMinutes);
+            
+            // Check perfect week badges (if workouts this week = 7)
+            SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+            int workoutsThisWeek = prefs.getInt("workouts_this_week", 0);
+            if (workoutsThisWeek >= 7) {
+                badgeManager.checkPerfectWeekBadges(workoutsThisWeek);
+            }
+            
+            // Save all badges to Firebase to ensure they're stored
+            badgeManager.saveAllBadgesToFirebase();
+            
+            Logger.info("Badge checking completed for workout. Total workouts: " + workouts + ", Streak: " + streak);
+            
+        } catch (Exception e) {
+            Logger.error("Error checking badges in WorkoutFragment", e);
         }
     }
 

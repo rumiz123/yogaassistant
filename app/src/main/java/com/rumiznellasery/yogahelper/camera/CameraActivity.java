@@ -620,11 +620,11 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         backToInstructionsButton.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                 Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
-                scaleOut.setDuration(100);
+                scaleOut.setDuration(75);
                 v.startAnimation(scaleOut);
             } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
-                scaleIn.setDuration(100);
+                scaleIn.setDuration(75);
                 v.startAnimation(scaleIn);
             }
             return false;
@@ -634,11 +634,11 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         backToHomeButton.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                 Animation scaleOut = AnimationUtils.loadAnimation(this, R.anim.scale_out);
-                scaleOut.setDuration(100);
+                scaleOut.setDuration(75);
                 v.startAnimation(scaleOut);
             } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 Animation scaleIn = AnimationUtils.loadAnimation(this, R.anim.scale_in);
-                scaleIn.setDuration(100);
+                scaleIn.setDuration(75);
                 v.startAnimation(scaleIn);
             }
             return false;

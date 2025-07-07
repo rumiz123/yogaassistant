@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment {
             
             // Animate height expansion
             android.animation.ValueAnimator heightAnimator = android.animation.ValueAnimator.ofInt(300, targetHeight);
-            heightAnimator.setDuration(400);
+            heightAnimator.setDuration(250);
             heightAnimator.setInterpolator(new android.view.animation.DecelerateInterpolator());
             
             heightAnimator.addUpdateListener(animation -> {
@@ -241,7 +241,7 @@ public class HomeFragment extends Fragment {
             
             // Animate height collapse
             android.animation.ValueAnimator heightAnimator = android.animation.ValueAnimator.ofInt(currentHeight, 300);
-            heightAnimator.setDuration(400);
+            heightAnimator.setDuration(250);
             heightAnimator.setInterpolator(new android.view.animation.AccelerateInterpolator());
             
             heightAnimator.addUpdateListener(animation -> {
@@ -333,10 +333,10 @@ public class HomeFragment extends Fragment {
             // Add press animation to start workout button
             binding.buttonStartWorkout.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(75).start();
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
                            event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(75).start();
                 }
                 return false;
             });
@@ -344,10 +344,10 @@ public class HomeFragment extends Fragment {
             // Add press animation to view progress button
             binding.buttonViewProgress.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(75).start();
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
                            event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(75).start();
                 }
                 return false;
             });
@@ -355,10 +355,10 @@ public class HomeFragment extends Fragment {
             // Add press animation to view all badges button
             binding.buttonViewAllBadges.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(75).start();
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
                            event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
-                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(75).start();
                 }
                 return false;
             });
@@ -527,12 +527,12 @@ public class HomeFragment extends Fragment {
                     v.animate()
                         .scaleX(0.95f)
                         .scaleY(0.95f)
-                        .setDuration(100)
+                        .setDuration(75)
                         .withEndAction(() -> {
                             v.animate()
                                 .scaleX(1f)
                                 .scaleY(1f)
-                                .setDuration(100)
+                                .setDuration(75)
                                 .withEndAction(() -> {
                                     Intent intent = new Intent(requireContext(), SettingsActivity.class);
                                     startActivity(intent);

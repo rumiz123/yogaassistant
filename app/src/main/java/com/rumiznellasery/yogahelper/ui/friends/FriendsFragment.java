@@ -297,11 +297,11 @@ public class FriendsFragment extends Fragment {
             button.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                     Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
-                    scaleOut.setDuration(100);
+                    scaleOut.setDuration(75);
                     v.startAnimation(scaleOut);
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                     Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
-                    scaleIn.setDuration(100);
+                    scaleIn.setDuration(75);
                     v.startAnimation(scaleIn);
                 }
                 return false;
@@ -312,11 +312,11 @@ public class FriendsFragment extends Fragment {
         binding.btnCompetition.setOnTouchListener((v, event) -> {
             if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                 Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
-                scaleOut.setDuration(100);
+                scaleOut.setDuration(75);
                 v.startAnimation(scaleOut);
             } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                 Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
-                scaleIn.setDuration(100);
+                scaleIn.setDuration(75);
                 v.startAnimation(scaleIn);
             }
             return false;

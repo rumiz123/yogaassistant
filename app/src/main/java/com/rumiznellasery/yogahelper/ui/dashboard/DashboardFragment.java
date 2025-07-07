@@ -27,6 +27,7 @@ import com.rumiznellasery.yogahelper.databinding.FragmentDashboardBinding;
 import com.rumiznellasery.yogahelper.R;
 import android.widget.TextView;
 import android.widget.LinearLayout;
+import com.rumiznellasery.yogahelper.utils.Logger;
 
 public class DashboardFragment extends Fragment {
 
@@ -71,7 +72,9 @@ public class DashboardFragment extends Fragment {
                     prefs.edit().putInt("streak", newStreak)
                             .apply();
                     updateUI(newStreak, getWeeklyWorkouts(prefs));
-                    // checkAchievements(newStreak, getWeeklyWorkouts(prefs));
+                    
+                    // Check for badges after loading user data
+                    checkBadges(newStreak, getWeeklyWorkouts(prefs));
                 }
 
                 @Override
@@ -327,11 +330,11 @@ public class DashboardFragment extends Fragment {
             button.setOnTouchListener((v, event) -> {
                 if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                     Animation scaleOut = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_out);
-                    scaleOut.setDuration(100);
+                    scaleOut.setDuration(75);
                     v.startAnimation(scaleOut);
                 } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
                     Animation scaleIn = AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
-                    scaleIn.setDuration(100);
+                    scaleIn.setDuration(75);
                     v.startAnimation(scaleIn);
                 }
                 return false;
@@ -340,22 +343,41 @@ public class DashboardFragment extends Fragment {
     }
 
     private void checkBadges(int streak, int workoutsThisWeek) {
-        // Initialize badge manager
-        com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
-            com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
-        
-        // Load badges from Firebase
-        badgeManager.loadBadgesFromFirebase();
-        
-        // Check workout badges
-        SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
-        int totalWorkouts = prefs.getInt("workouts", 0);
-        badgeManager.checkWorkoutBadges(totalWorkouts);
-        
-        // Check streak badges
-        badgeManager.checkStreakBadges(streak);
-        
-        // TODO: Check other badge types as they become available
+        try {
+            // Initialize badge manager
+            com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager = 
+                com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
+            
+            // Load badges from Firebase first
+            badgeManager.loadBadgesFromFirebase();
+            
+            // Check workout badges
+            SharedPreferences prefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
+            int totalWorkouts = prefs.getInt("workouts", 0);
+            int totalCalories = prefs.getInt("calories", 0);
+            
+            badgeManager.checkWorkoutBadges(totalWorkouts);
+            
+            // Check streak badges
+            badgeManager.checkStreakBadges(streak);
+            
+            // Check time master badges (assuming 15 minutes per workout)
+            int totalMinutes = totalWorkouts * 15;
+            badgeManager.checkTimeMasterBadges(totalMinutes);
+            
+            // Check perfect week badges
+            if (workoutsThisWeek >= 7) {
+                badgeManager.checkPerfectWeekBadges(workoutsThisWeek);
+            }
+            
+            // Save all badges to Firebase to ensure they're stored
+            badgeManager.saveAllBadgesToFirebase();
+            
+            Logger.info("Badge checking completed in Dashboard. Total workouts: " + totalWorkouts + ", Streak: " + streak);
+            
+        } catch (Exception e) {
+            Logger.error("Error checking badges in DashboardFragment", e);
+        }
     }
 
     private void showQuickTimerDialog() {
