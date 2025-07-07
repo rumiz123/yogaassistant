@@ -91,6 +91,10 @@
     <string name="view_progress">View Progress</string>
     <string name="add_friend">Add Friend</string>
     <string name="view_leaderboard">View Leaderboard</string>
+    <string name="quick_timer">Quick Timer</string>
+    <string name="pose_guide">Pose Guide</string>
+    <string name="workout_history">Workout History</string>
+    <string name="quick_settings">Quick Settings</string>
     
     <!-- Statistics -->
     <string name="statistics">Statistics</string>

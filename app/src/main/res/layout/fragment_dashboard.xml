@@ -270,7 +270,7 @@
                 android:elevation="4dp"/>
             </LinearLayout>
 
-            <!-- Export Data Row -->
+            <!-- Quick Actions Row -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -278,15 +278,64 @@
                 android:layout_marginTop="8dp">
 
                 <com.google.android.material.button.MaterialButton
-                    android:id="@+id/button_export_data"
-                    android:layout_width="match_parent"
+                    android:id="@+id/button_quick_timer"
+                    android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:text="📊 Export Data"
+                    android:layout_weight="1"
+                    android:text="⏱️ Quick Timer"
                     android:textSize="12sp"
                     android:background="@drawable/rounded_button"
                     android:textColor="@color/text_secondary"
                     android:fontFamily="sans-serif-medium"
-                    android:elevation="2dp"/>
+                    android:elevation="2dp"
+                    android:layout_marginEnd="4dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_pose_guide"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="🧘 Pose Guide"
+                    android:textSize="12sp"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/text_secondary"
+                    android:fontFamily="sans-serif-medium"
+                    android:elevation="2dp"
+                    android:layout_marginStart="4dp"/>
+            </LinearLayout>
+
+            <!-- Additional Quick Actions Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_workout_history"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="📈 History"
+                    android:textSize="12sp"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/text_secondary"
+                    android:fontFamily="sans-serif-medium"
+                    android:elevation="2dp"
+                    android:layout_marginEnd="4dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_quick_settings"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="1"
+                    android:text="⚙️ Settings"
+                    android:textSize="12sp"
+                    android:background="@drawable/rounded_button"
+                    android:textColor="@color/text_secondary"
+                    android:fontFamily="sans-serif-medium"
+                    android:elevation="2dp"
+                    android:layout_marginStart="4dp"/>
             </LinearLayout>
         </LinearLayout>
 

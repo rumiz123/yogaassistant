@@ -244,9 +244,6 @@ public class SettingsFragment extends Fragment {
     }
 
     private void setupPrivacyDataSettings() {
-        // Data export
-        binding.layoutDataExport.setOnClickListener(v -> exportData());
-
         // Data backup
         binding.layoutDataBackup.setOnClickListener(v -> backupData());
 
@@ -353,42 +350,7 @@ public class SettingsFragment extends Fragment {
         binding.textBadgesCount.setText(unlockedCount + "/" + totalCount);
     }
 
-    private void exportData() {
-        try {
-            // Create data export
-            StringBuilder exportData = new StringBuilder();
-            exportData.append("Yoga Assistant - Data Export\n");
-            exportData.append("Generated: ").append(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date())).append("\n\n");
-            
-            // Add user stats
-            SharedPreferences statsPrefs = requireContext().getSharedPreferences("stats", Context.MODE_PRIVATE);
-            exportData.append("User Statistics:\n");
-            exportData.append("- Total Workouts: ").append(statsPrefs.getInt("workouts", 0)).append("\n");
-            exportData.append("- Current Streak: ").append(statsPrefs.getInt("streak", 0)).append("\n");
-            exportData.append("- Total Calories: ").append(statsPrefs.getInt("calories", 0)).append("\n");
-            exportData.append("- Last Workout: ").append(statsPrefs.getString("last_workout_date", "Never")).append("\n\n");
 
-            // Save to file
-            String fileName = "yoga_assistant_export_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date()) + ".txt";
-            File exportFile = new File(requireContext().getExternalFilesDir(null), fileName);
-            
-            FileOutputStream fos = new FileOutputStream(exportFile);
-            fos.write(exportData.toString().getBytes());
-            fos.close();
-
-            // Share file
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(exportFile));
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Yoga Assistant Data Export");
-            startActivity(Intent.createChooser(shareIntent, "Share Data Export"));
-
-            Toast.makeText(requireContext(), "Data exported successfully", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            Logger.error("Error exporting data", e);
-            Toast.makeText(requireContext(), "Error exporting data", Toast.LENGTH_SHORT).show();
-        }
-    }
 
     private void backupData() {
         // TODO: Implement cloud backup functionality

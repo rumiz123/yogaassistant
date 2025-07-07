@@ -494,9 +494,9 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         // Handle different pose name variations
         if (expectedPose.contains("mountain") && detectedPose.contains("mountain")) {
             return true;
-        } else if (expectedPose.contains("gentle arm stretch") && detectedPose.contains("arm")) {
+        } else if (expectedPose.contains("cobra") && detectedPose.contains("cobra")) {
             return true;
-        } else if (expectedPose.contains("easy side stretch") && detectedPose.contains("side")) {
+        } else if (expectedPose.contains("tree") && detectedPose.contains("tree")) {
             return true;
         } else if (expectedPose.contains("gentle forward fold") && detectedPose.contains("forward")) {
             return true;
@@ -557,10 +557,10 @@ public class CameraActivity extends AppCompatActivity implements MediaPipePoseDe
         
         if (poseLower.contains("mountain")) {
             return "Stand tall, feet together, arms at sides, breathe deeply";
-        } else if (poseLower.contains("gentle arm stretch")) {
-            return "Slowly raise arms overhead, keep shoulders relaxed, breathe deeply";
-        } else if (poseLower.contains("easy side stretch")) {
-            return "Gently bend to the side, don't force the stretch, keep breathing";
+        } else if (poseLower.contains("cobra")) {
+            return "Keep pelvis on ground, lift chest gently, engage back muscles";
+        } else if (poseLower.contains("tree")) {
+            return "Find your balance, place foot on thigh or calf, focus on a point";
         } else if (poseLower.contains("gentle forward fold")) {
             return "Bend knees slightly, fold from hips, let arms hang naturally";
         } else if (poseLower.contains("easy squat")) {

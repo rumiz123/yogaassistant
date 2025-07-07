@@ -74,20 +74,20 @@ public class WorkoutSession {
             "Stand with feet together, arms at sides. Take deep breaths and feel grounded. This is your foundation."
         ));
         
-        // 2. Gentle Arm Stretch - Shoulder mobility
+        // 2. Cobra Pose - Back strength and flexibility
         poses.add(new Pose(
-            "Gentle Arm Stretch",
-            "Raise arms slowly overhead",
-            20,
-            "Stand with feet hip-width apart. Slowly raise your arms overhead, keeping them shoulder-width apart. Hold and breathe."
+            "Cobra Pose",
+            "Lie on stomach and lift chest",
+            25,
+            "Lie on your stomach with legs extended. Place your hands under your shoulders. Gently lift your chest off the ground, keeping your pelvis on the floor. Breathe deeply."
         ));
         
-        // 3. Easy Side Stretch - Gentle side bend
+        // 3. Tree Pose - Balance and focus
         poses.add(new Pose(
-            "Easy Side Stretch",
-            "Gently bend to one side",
-            20,
-            "Stand with feet hip-width apart. Raise your right arm overhead and gently bend to the left. Switch sides halfway through."
+            "Tree Pose",
+            "Stand on one leg with foot on thigh",
+            25,
+            "Stand with feet hip-width apart. Shift weight to your left foot. Place your right foot on your left thigh or calf (not knee). Bring your hands to prayer position or raise them overhead."
         ));
         
         // 4. Gentle Forward Fold - Hamstring stretch
