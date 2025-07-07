@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
                 R.id.navigation_home,
                 R.id.navigation_dashboard,
                 R.id.navigation_workout,
-                R.id.navigation_leaderboard)
+                R.id.navigation_leaderboard,
+                R.id.navigation_friends)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
@@ -63,10 +64,23 @@ public class MainActivity extends AppCompatActivity {
             // Let the navigation controller handle the tab switch
             boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
             
-            // Hide loading overlay after navigation completes
+            // Hide loading overlay after navigation completes with smooth animation
             if (loadingOverlay != null) {
                 loadingOverlay.postDelayed(() -> {
-                    loadingOverlay.setVisibility(android.view.View.GONE);
+                    android.view.animation.Animation fadeOut = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.fade_out);
+                    fadeOut.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(android.view.animation.Animation animation) {}
+                        
+                        @Override
+                        public void onAnimationEnd(android.view.animation.Animation animation) {
+                            loadingOverlay.setVisibility(android.view.View.GONE);
+                        }
+                        
+                        @Override
+                        public void onAnimationRepeat(android.view.animation.Animation animation) {}
+                    });
+                    loadingOverlay.startAnimation(fadeOut);
                 }, 125); // Shorter delay for faster response
             }
             

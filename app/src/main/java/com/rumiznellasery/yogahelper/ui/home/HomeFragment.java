@@ -14,6 +14,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,6 +28,7 @@ import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.databinding.FragmentHomeBinding;
 import com.rumiznellasery.yogahelper.utils.Logger;
 import com.rumiznellasery.yogahelper.ui.home.SettingsActivity;
+import com.rumiznellasery.yogahelper.ui.badges.BadgesGridAdapter;
 import com.bumptech.glide.Glide;
 import android.content.SharedPreferences;
 import java.io.File;
@@ -66,42 +69,303 @@ public class HomeFragment extends Fragment {
                 imageBadge = itemView.findViewById(R.id.image_badge_profile);
             }
             void bind(com.rumiznellasery.yogahelper.data.Badge badge) {
-                int iconRes = getBadgeIcon(badge.type);
+                int iconRes = getBadgeIconById(badge.id);
                 imageBadge.setImageResource(iconRes);
                 imageBadge.setAlpha(1.0f);
             }
+            int getBadgeIconById(String badgeId) {
+                if (badgeId == null) return R.drawable.ic_badge_first_workout;
+                
+                switch (badgeId) {
+                    case "first_workout":
+                        return R.drawable.ic_badge_first_workout;
+                    case "week_streak":
+                        return R.drawable.ic_badge_week_warrior;
+                    case "month_streak":
+                        return R.drawable.ic_badge_monthly_master;
+                    case "hundred_workouts":
+                        return R.drawable.ic_badge_century_club;
+                    case "social_butterfly":
+                        return R.drawable.ic_badge_social_butterfly;
+                    case "competition_winner":
+                        return R.drawable.ic_badge_champion;
+                    case "pose_master":
+                        return R.drawable.ic_badge_pose_master;
+                    case "time_master":
+                        return R.drawable.ic_badge_time_master;
+                    case "perfect_week":
+                        return R.drawable.ic_badge_perfect_week;
+                    default:
+                        return R.drawable.ic_badge_first_workout;
+                }
+            }
             int getBadgeIcon(com.rumiznellasery.yogahelper.data.Badge.BadgeType type) {
-                if (type == null) return R.drawable.ic_prize_black_24dp;
+                if (type == null) return R.drawable.ic_badge_first_workout;
                 switch (type) {
-                    case WORKOUT_COUNT: return R.drawable.ic_prize_black_24dp;
-                    case STREAK_DAYS: return R.drawable.ic_fire;
-                    case CALORIES_BURNED: return R.drawable.ic_fire;
-                    case FRIENDS_COUNT: return R.drawable.ic_friend_tab;
-                    case COMPETITION_WINS: return R.drawable.ic_prize_black_24dp;
-                    case PERFECT_WEEK: return R.drawable.ic_fire;
-                    case POSE_MASTERY: return R.drawable.ic_prize_black_24dp;
-                    case WORKOUT_TIME: return R.drawable.ic_notifications_black_24dp;
-                    case CHALLENGE_COMPLETION: return R.drawable.ic_prize_black_24dp;
-                    default: return R.drawable.ic_prize_black_24dp;
+                    case WORKOUT_COUNT: return R.drawable.ic_badge_first_workout;
+                    case STREAK_DAYS: return R.drawable.ic_badge_week_warrior;
+                    case CALORIES_BURNED: return R.drawable.ic_badge_week_warrior;
+                    case FRIENDS_COUNT: return R.drawable.ic_badge_social_butterfly;
+                    case COMPETITION_WINS: return R.drawable.ic_badge_champion;
+                    case PERFECT_WEEK: return R.drawable.ic_badge_perfect_week;
+                    case POSE_MASTERY: return R.drawable.ic_badge_pose_master;
+                    case WORKOUT_TIME: return R.drawable.ic_badge_time_master;
+                    case CHALLENGE_COMPLETION: return R.drawable.ic_badge_champion;
+                    default: return R.drawable.ic_badge_first_workout;
                 }
             }
         }
     }
 
     private com.rumiznellasery.yogahelper.utils.BadgeManager badgeManager;
+    private BadgesGridAdapter badgesAdapter;
+    private boolean isBadgesExpanded = false;
 
-    private void setupProfileBadgesRow() {
-        if (badgeManager == null) badgeManager = com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
-        java.util.List<com.rumiznellasery.yogahelper.data.Badge> unlocked = badgeManager.getUnlockedBadges();
-        if (unlocked.isEmpty()) {
-            binding.recyclerProfileBadges.setVisibility(android.view.View.GONE);
-            return;
+    private void setupBadgesSection() {
+        try {
+            if (badgeManager == null) {
+                badgeManager = com.rumiznellasery.yogahelper.utils.BadgeManager.getInstance(requireContext());
+            }
+            
+            java.util.List<com.rumiznellasery.yogahelper.data.Badge> allBadges = badgeManager.getBadges();
+            java.util.List<com.rumiznellasery.yogahelper.data.Badge> unlockedBadges = badgeManager.getUnlockedBadges();
+            
+            // Update badge count
+            binding.textBadgesCount.setText(unlockedBadges.size() + "/" + allBadges.size());
+            
+            // Setup badges grid
+            badgesAdapter = new BadgesGridAdapter();
+            badgesAdapter.setBadges(allBadges);
+            binding.recyclerBadgesGrid.setLayoutManager(new GridLayoutManager(requireContext(), 4));
+            binding.recyclerBadgesGrid.setAdapter(badgesAdapter);
+            
+            // Add spacing between items
+            binding.recyclerBadgesGrid.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(android.graphics.Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+                    int spacing = 8;
+                    outRect.left = spacing;
+                    outRect.right = spacing;
+                    outRect.top = spacing;
+                    outRect.bottom = spacing;
+                }
+            });
+            
+            // Setup view all badges button
+            binding.buttonViewAllBadges.setOnClickListener(v -> {
+                try {
+                    toggleBadgesExpansion();
+                } catch (Exception e) {
+                    Logger.error("Error toggling badges expansion", e);
+                }
+            });
+        } catch (Exception e) {
+            Logger.error("Error in setupBadgesSection", e);
+            if (binding != null) {
+                binding.textBadgesCount.setText("0/0");
+            }
         }
-        binding.recyclerProfileBadges.setVisibility(android.view.View.VISIBLE);
-        java.util.List<com.rumiznellasery.yogahelper.data.Badge> toShow = unlocked.size() > 5 ? unlocked.subList(0, 5) : unlocked;
-        ProfileBadgesAdapter adapter = new ProfileBadgesAdapter(toShow);
-        binding.recyclerProfileBadges.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(requireContext(), androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
-        binding.recyclerProfileBadges.setAdapter(adapter);
+    }
+
+    private void toggleBadgesExpansion() {
+        try {
+            if (isBadgesExpanded) {
+                // Collapse the badges section
+                collapseBadgesSection();
+            } else {
+                // Expand the badges section
+                expandBadgesSection();
+            }
+        } catch (Exception e) {
+            Logger.error("Error in toggleBadgesExpansion", e);
+        }
+    }
+
+    private void expandBadgesSection() {
+        try {
+            // Change button text
+            binding.buttonViewAllBadges.setText("Show Less");
+            
+            // Get current height and target height
+            binding.recyclerBadgesGrid.measure(
+                android.view.View.MeasureSpec.makeMeasureSpec(binding.recyclerBadgesGrid.getWidth(), android.view.View.MeasureSpec.EXACTLY),
+                android.view.View.MeasureSpec.makeMeasureSpec(0, android.view.View.MeasureSpec.UNSPECIFIED)
+            );
+            int targetHeight = binding.recyclerBadgesGrid.getMeasuredHeight();
+            
+            // Animate height expansion
+            android.animation.ValueAnimator heightAnimator = android.animation.ValueAnimator.ofInt(300, targetHeight);
+            heightAnimator.setDuration(400);
+            heightAnimator.setInterpolator(new android.view.animation.DecelerateInterpolator());
+            
+            heightAnimator.addUpdateListener(animation -> {
+                int height = (int) animation.getAnimatedValue();
+                android.view.ViewGroup.LayoutParams params = binding.recyclerBadgesGrid.getLayoutParams();
+                params.height = height;
+                binding.recyclerBadgesGrid.setLayoutParams(params);
+            });
+            
+            heightAnimator.addListener(new android.animation.Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(android.animation.Animator animation) {
+                    binding.recyclerBadgesGrid.setAlpha(0.9f);
+                }
+                
+                @Override
+                public void onAnimationEnd(android.animation.Animator animation) {
+                    binding.recyclerBadgesGrid.setAlpha(1f);
+                    isBadgesExpanded = true;
+                }
+                
+                @Override
+                public void onAnimationCancel(android.animation.Animator animation) {}
+                
+                @Override
+                public void onAnimationRepeat(android.animation.Animator animation) {}
+            });
+            
+            heightAnimator.start();
+                
+        } catch (Exception e) {
+            Logger.error("Error in expandBadgesSection", e);
+        }
+    }
+
+    private void collapseBadgesSection() {
+        try {
+            // Change button text back
+            binding.buttonViewAllBadges.setText(requireContext().getString(R.string.view_all_badges));
+            
+            // Get current height
+            int currentHeight = binding.recyclerBadgesGrid.getHeight();
+            
+            // Animate height collapse
+            android.animation.ValueAnimator heightAnimator = android.animation.ValueAnimator.ofInt(currentHeight, 300);
+            heightAnimator.setDuration(400);
+            heightAnimator.setInterpolator(new android.view.animation.AccelerateInterpolator());
+            
+            heightAnimator.addUpdateListener(animation -> {
+                int height = (int) animation.getAnimatedValue();
+                android.view.ViewGroup.LayoutParams params = binding.recyclerBadgesGrid.getLayoutParams();
+                params.height = height;
+                binding.recyclerBadgesGrid.setLayoutParams(params);
+            });
+            
+            heightAnimator.addListener(new android.animation.Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(android.animation.Animator animation) {
+                    binding.recyclerBadgesGrid.setAlpha(1f);
+                }
+                
+                @Override
+                public void onAnimationEnd(android.animation.Animator animation) {
+                    binding.recyclerBadgesGrid.setAlpha(1f);
+                    isBadgesExpanded = false;
+                }
+                
+                @Override
+                public void onAnimationCancel(android.animation.Animator animation) {}
+                
+                @Override
+                public void onAnimationRepeat(android.animation.Animator animation) {}
+            });
+            
+            heightAnimator.start();
+                
+        } catch (Exception e) {
+            Logger.error("Error in collapseBadgesSection", e);
+        }
+    }
+    
+    private void addEntranceAnimations() {
+        try {
+            // Animate the account info card
+            android.view.animation.Animation slideUp = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.slide_up);
+            binding.accountInfoContainer.startAnimation(slideUp);
+            
+            // Animate the quick stats card with delay
+            binding.accountInfoContainer.postDelayed(() -> {
+                try {
+                    android.view.animation.Animation scaleIn = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.scale_in);
+                    View quickStatsCard = requireActivity().findViewById(R.id.quick_stats_card);
+                    if (quickStatsCard != null) {
+                        quickStatsCard.startAnimation(scaleIn);
+                    }
+                } catch (Exception e) {
+                    Logger.error("Error animating quick stats card", e);
+                }
+            }, 200);
+            
+            // Animate the badges section with delay
+            binding.accountInfoContainer.postDelayed(() -> {
+                try {
+                    android.view.animation.Animation bounceIn = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.bounce_in);
+                    View badgesCard = requireActivity().findViewById(R.id.badges_card);
+                    if (badgesCard != null) {
+                        badgesCard.startAnimation(bounceIn);
+                    }
+                } catch (Exception e) {
+                    Logger.error("Error animating badges card", e);
+                }
+            }, 400);
+            
+            // Animate action buttons with delay
+            binding.accountInfoContainer.postDelayed(() -> {
+                try {
+                    android.view.animation.Animation fadeIn = android.view.animation.AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in);
+                    binding.buttonStartWorkout.startAnimation(fadeIn);
+                    binding.buttonViewProgress.startAnimation(fadeIn);
+                    
+                    // Add button press animations
+                    addButtonPressAnimations();
+                } catch (Exception e) {
+                    Logger.error("Error animating action buttons", e);
+                }
+            }, 600);
+            
+        } catch (Exception e) {
+            Logger.error("Error in addEntranceAnimations", e);
+        }
+    }
+    
+    private void addButtonPressAnimations() {
+        try {
+            // Add press animation to start workout button
+            binding.buttonStartWorkout.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
+                           event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                }
+                return false;
+            });
+            
+            // Add press animation to view progress button
+            binding.buttonViewProgress.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
+                           event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                }
+                return false;
+            });
+            
+            // Add press animation to view all badges button
+            binding.buttonViewAllBadges.setOnTouchListener((v, event) -> {
+                if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                    v.animate().scaleX(0.95f).scaleY(0.95f).setDuration(100).start();
+                } else if (event.getAction() == android.view.MotionEvent.ACTION_UP || 
+                           event.getAction() == android.view.MotionEvent.ACTION_CANCEL) {
+                    v.animate().scaleX(1f).scaleY(1f).setDuration(100).start();
+                }
+                return false;
+            });
+            
+        } catch (Exception e) {
+            Logger.error("Error in addButtonPressAnimations", e);
+        }
     }
 
     @Override
@@ -258,15 +522,33 @@ public class HomeFragment extends Fragment {
             // Add this after binding = FragmentHomeBinding.inflate(...)
             binding.buttonSettings.setOnClickListener(v -> {
                 try {
-                    Intent intent = new Intent(requireContext(), SettingsActivity.class);
-                    startActivity(intent);
+                    // Add button press animation
+                    v.animate()
+                        .scaleX(0.95f)
+                        .scaleY(0.95f)
+                        .setDuration(100)
+                        .withEndAction(() -> {
+                            v.animate()
+                                .scaleX(1f)
+                                .scaleY(1f)
+                                .setDuration(100)
+                                .withEndAction(() -> {
+                                    Intent intent = new Intent(requireContext(), SettingsActivity.class);
+                                    startActivity(intent);
+                                })
+                                .start();
+                        })
+                        .start();
                 } catch (Exception e) {
                     Logger.error("Error opening SettingsActivity from HomeFragment", e);
                 }
             });
 
-            // Setup profile badges row
-            setupProfileBadgesRow();
+            // Setup badges section
+            setupBadgesSection();
+            
+            // Add entrance animations
+            addEntranceAnimations();
 
             Logger.info("HomeFragment onCreateView completed successfully");
         } catch (Exception e) {
@@ -283,7 +565,7 @@ public class HomeFragment extends Fragment {
         super.onResume();
         View navBar = requireActivity().findViewById(R.id.nav_view);
         if (navBar != null) navBar.setVisibility(View.VISIBLE);
-        setupProfileBadgesRow();
+        setupBadgesSection();
     }
 
     @Override

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M12,12m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0"/>
+    
+    <!-- Clock face -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,6c-3,0 -6,3 -6,6s3,6 6,6s6,-3 6,-6S15,6 12,6z"/>
+    
+    <!-- Clock outline -->
+    <path
+        android:strokeColor="#2196F3"
+        android:strokeWidth="1"
+        android:pathData="M12,6c-3,0 -6,3 -6,6s3,6 6,6s6,-3 6,-6S15,6 12,6z"
+        android:fillColor="#00000000"/>
+    
+    <!-- Clock hands -->
+    <path
+        android:strokeColor="#2196F3"
+        android:strokeWidth="2"
+        android:pathData="M12,12l0,-4"/>
+    
+    <path
+        android:strokeColor="#2196F3"
+        android:strokeWidth="1"
+        android:pathData="M12,12l3,3"/>
+    
+    <!-- Number 60 -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M8,4h1v2h-1V4zM10,4h1v2h-1V4zM12,4h1v2h-1V4zM8,6h1v2h-1V6zM10,6h1v2h-1V6zM12,6h1v2h-1V6z"/>
+</vector> 

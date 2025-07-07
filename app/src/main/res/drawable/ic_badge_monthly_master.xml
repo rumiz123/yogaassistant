@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    
+    <!-- Background circle -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M12,12m-10,0a10,10 0,1 1,20 0a10,10 0,1 1,-20 0"/>
+    
+    <!-- Crown base -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M6,14h12v2H6z"/>
+    
+    <!-- Crown jewels -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M8,10l2,-4l2,4l2,-4l2,4v4H8z"/>
+    
+    <!-- Crown points -->
+    <path
+        android:fillColor="#FFD700"
+        android:pathData="M7,10l1,-2l1,2M9,10l1,-2l1,2M11,10l1,-2l1,2M13,10l1,-2l1,2"/>
+    
+    <!-- Number 30 -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9,6h2v2h-2V6zM13,6h2v2h-2V6zM9,8h2v2h-2V8zM13,8h2v2h-2V8zM9,10h2v2h-2V10zM13,10h2v2h-2V10z"/>
+</vector> 

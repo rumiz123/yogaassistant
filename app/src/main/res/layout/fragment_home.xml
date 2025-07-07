@@ -161,21 +161,9 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Profile Badges Row -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_profile_badges"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginBottom="24dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:overScrollMode="never"
-            android:scrollbars="none"
-            android:clipToPadding="false"
-            android:orientation="horizontal" />
-
         <!-- Quick Stats Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/quick_stats_card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
@@ -286,6 +274,71 @@
                             android:fontFamily="sans-serif" />
                     </LinearLayout>
                 </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Badges Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/badges_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="8dp"
+            app:cardBackgroundColor="@color/card_background">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/badges"
+                        android:textColor="@color/text_primary"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium" />
+
+                    <TextView
+                        android:id="@+id/text_badges_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0/0"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Badges Grid -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_badges_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="300dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <!-- View All Badges Button -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/button_view_all_badges"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/view_all_badges"
+                    android:textColor="@color/white"
+                    android:background="@drawable/button_secondary_gradient"
+                    app:cornerRadius="24dp"
+                    app:elevation="4dp" />
+
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

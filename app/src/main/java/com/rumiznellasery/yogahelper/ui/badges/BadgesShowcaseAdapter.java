@@ -73,8 +73,8 @@ public class BadgesShowcaseAdapter extends RecyclerView.Adapter<BadgesShowcaseAd
         public void bind(Badge badge) {
             textBadgeName.setText(badge.title);
             
-            // Set badge icon based on type
-            int iconRes = getBadgeIcon(badge.type);
+            // Set badge icon based on badge ID for more specific mapping
+            int iconRes = getBadgeIconById(badge.id);
             imageBadge.setImageResource(iconRes);
             
             // Set alpha based on unlock status
@@ -85,30 +85,57 @@ public class BadgesShowcaseAdapter extends RecyclerView.Adapter<BadgesShowcaseAd
             // Show/hide locked overlay
             overlayLocked.setVisibility(badge.unlocked ? View.GONE : View.VISIBLE);
         }
+        
+        private int getBadgeIconById(String badgeId) {
+            if (badgeId == null) return R.drawable.ic_badge_first_workout;
+            
+            switch (badgeId) {
+                case "first_workout":
+                    return R.drawable.ic_badge_first_workout;
+                case "week_streak":
+                    return R.drawable.ic_badge_week_warrior;
+                case "month_streak":
+                    return R.drawable.ic_badge_monthly_master;
+                case "hundred_workouts":
+                    return R.drawable.ic_badge_century_club;
+                case "social_butterfly":
+                    return R.drawable.ic_badge_social_butterfly;
+                case "competition_winner":
+                    return R.drawable.ic_badge_champion;
+                case "pose_master":
+                    return R.drawable.ic_badge_pose_master;
+                case "time_master":
+                    return R.drawable.ic_badge_time_master;
+                case "perfect_week":
+                    return R.drawable.ic_badge_perfect_week;
+                default:
+                    return R.drawable.ic_badge_first_workout;
+            }
+        }
 
         private int getBadgeIcon(Badge.BadgeType type) {
-            if (type == null) return R.drawable.ic_prize_black_24dp;
+            if (type == null) return R.drawable.ic_badge_first_workout;
             switch (type) {
                 case WORKOUT_COUNT:
-                    return R.drawable.ic_prize_black_24dp;
+                    return R.drawable.ic_badge_first_workout;
                 case STREAK_DAYS:
-                    return R.drawable.ic_fire;
+                    return R.drawable.ic_badge_week_warrior;
                 case CALORIES_BURNED:
-                    return R.drawable.ic_fire;
+                    return R.drawable.ic_badge_week_warrior;
                 case FRIENDS_COUNT:
-                    return R.drawable.ic_friend_tab;
+                    return R.drawable.ic_badge_social_butterfly;
                 case COMPETITION_WINS:
-                    return R.drawable.ic_prize_black_24dp;
+                    return R.drawable.ic_badge_champion;
                 case PERFECT_WEEK:
-                    return R.drawable.ic_fire;
+                    return R.drawable.ic_badge_perfect_week;
                 case POSE_MASTERY:
-                    return R.drawable.ic_prize_black_24dp;
+                    return R.drawable.ic_badge_pose_master;
                 case WORKOUT_TIME:
-                    return R.drawable.ic_notifications_black_24dp;
+                    return R.drawable.ic_badge_time_master;
                 case CHALLENGE_COMPLETION:
-                    return R.drawable.ic_prize_black_24dp;
+                    return R.drawable.ic_badge_champion;
                 default:
-                    return R.drawable.ic_prize_black_24dp;
+                    return R.drawable.ic_badge_first_workout;
             }
         }
     }

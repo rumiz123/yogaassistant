@@ -60,7 +60,23 @@ public class SettingsActivity extends AppCompatActivity {
         // Back button
         ImageView backButton = findViewById(R.id.button_back);
         if (backButton != null) {
-            backButton.setOnClickListener(v -> finish());
+            backButton.setOnClickListener(v -> {
+                // Add exit animation
+                android.view.animation.Animation slideDown = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.slide_down);
+                slideDown.setAnimationListener(new android.view.animation.Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(android.view.animation.Animation animation) {}
+                    
+                    @Override
+                    public void onAnimationEnd(android.view.animation.Animation animation) {
+                        finish();
+                    }
+                    
+                    @Override
+                    public void onAnimationRepeat(android.view.animation.Animation animation) {}
+                });
+                findViewById(android.R.id.content).startAnimation(slideDown);
+            });
         }
 
         // Profile picture
@@ -88,6 +104,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         // Setup developer mode
         setupDeveloperMode();
+
+        // Add entrance animation
+        addEntranceAnimation();
 
         // Logout button
         View logoutButton = findViewById(R.id.button_logout);
@@ -185,6 +204,16 @@ public class SettingsActivity extends AppCompatActivity {
             });
         } else {
             developerSection.setVisibility(View.GONE);
+        }
+    }
+    
+    private void addEntranceAnimation() {
+        try {
+            // Animate the entire content with slide up
+            android.view.animation.Animation slideUp = android.view.animation.AnimationUtils.loadAnimation(this, R.anim.slide_up);
+            findViewById(android.R.id.content).startAnimation(slideUp);
+        } catch (Exception e) {
+            Logger.error("Error in addEntranceAnimation", e);
         }
     }
 } 
