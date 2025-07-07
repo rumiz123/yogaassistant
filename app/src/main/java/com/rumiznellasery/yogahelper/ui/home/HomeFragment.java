@@ -32,6 +32,7 @@ import com.rumiznellasery.yogahelper.ui.badges.BadgesGridAdapter;
 import com.bumptech.glide.Glide;
 import android.content.SharedPreferences;
 import java.io.File;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 public class HomeFragment extends Fragment {
 
@@ -467,8 +468,8 @@ public class HomeFragment extends Fragment {
             // edit name…
             binding.iconEditName.setOnClickListener(v -> {
                 try {
-                    android.app.AlertDialog.Builder builder =
-                            new android.app.AlertDialog.Builder(requireContext());
+                    MaterialAlertDialogBuilder builder =
+                            new MaterialAlertDialogBuilder(requireContext());
                     builder.setTitle("Edit Name");
                     final android.widget.EditText input =
                             new android.widget.EditText(requireContext());

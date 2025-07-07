@@ -23,6 +23,7 @@ import com.rumiznellasery.yogahelper.data.Friend;
 import com.rumiznellasery.yogahelper.databinding.FragmentFriendsBinding;
 import com.rumiznellasery.yogahelper.utils.FriendsManager;
 import com.rumiznellasery.yogahelper.utils.CompetitionManager;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -225,12 +226,12 @@ public class FriendsFragment extends Fragment {
     }
 
     private void showRemoveFriendDialog(Friend friend) {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
             .setTitle("Remove Friend")
             .setMessage("Are you sure you want to remove " + friend.displayName + " from your friends?")
             .setPositiveButton("Remove", (dialog, which) -> {
                 FriendsManager.removeFriend(requireContext(), friend.userId);
-                loadFriends(); // Reload friends list
+                loadFriends();
             })
             .setNegativeButton("Cancel", null)
             .show();

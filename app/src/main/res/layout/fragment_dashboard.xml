@@ -10,7 +10,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="@dimen/spacing_large">
 
         <!-- Welcome Message -->
         <TextView
@@ -19,23 +19,23 @@
             android:layout_height="wrap_content"
             android:text="Welcome back!"
             android:textColor="@color/text_primary"
-            android:textSize="28sp"
+            android:textSize="@dimen/text_size_xxlarge"
             android:textStyle="bold"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="@dimen/spacing_large"/>
 
         <!-- Main Stats Card -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_main_stats"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="12dp"
+            android:layout_marginTop="@dimen/spacing_xlarge"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="@dimen/card_elevation"
             app:cardBackgroundColor="@color/card_background"
             app:layout_constraintTop_toBottomOf="@id/text_welcome"
             app:layout_constraintStart_toStartOf="parent"
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="@dimen/card_padding">
 
                 <!-- Streak Section -->
                 <LinearLayout
@@ -53,17 +53,17 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp"
+                    android:padding="@dimen/spacing_medium"
                     android:background="@drawable/rounded_box"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="@dimen/spacing_large">
 
                     <ImageView
                         android:id="@+id/icon_fire"
-                        android:layout_width="48dp"
-                        android:layout_height="48dp"
+                        android:layout_width="@dimen/icon_size_large"
+                        android:layout_height="@dimen/icon_size_large"
                         android:src="@drawable/ic_fire"
                         android:contentDescription="Streak"
-                        android:layout_marginEnd="16dp"
+                        android:layout_marginEnd="@dimen/spacing_medium"
                         android:tint="@color/theme_purple"/>
 
                     <LinearLayout
@@ -77,7 +77,7 @@
                             android:layout_height="wrap_content"
                             android:text="Current Streak"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_small"
                             android:fontFamily="sans-serif"/>
 
                         <TextView
@@ -86,7 +86,7 @@
                             android:layout_height="wrap_content"
                             android:text="0"
                             android:textColor="@color/text_primary"
-                            android:textSize="32sp"
+                            android:textSize="@dimen/text_size_xxlarge"
                             android:textStyle="bold"
                             android:fontFamily="sans-serif-medium"/>
                     </LinearLayout>
@@ -95,7 +95,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="🔥"
-                        android:textSize="32sp"/>
+                        android:textSize="@dimen/text_size_xxlarge"/>
                 </LinearLayout>
 
                 <!-- Weekly Progress Section -->
@@ -103,7 +103,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"
+                    android:padding="@dimen/spacing_medium"
                     android:background="@drawable/rounded_box">
 
                     <TextView
@@ -111,16 +111,16 @@
                         android:layout_height="wrap_content"
                         android:text="This Week's Progress"
                         android:textColor="@color/text_secondary"
-                        android:textSize="14sp"
+                        android:textSize="@dimen/text_size_small"
                         android:fontFamily="sans-serif"
-                        android:layout_marginBottom="12dp"/>
+                        android:layout_marginBottom="@dimen/spacing_small"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="@dimen/spacing_small">
 
                         <TextView
                             android:id="@+id/text_workouts_count"
@@ -129,7 +129,7 @@
                             android:layout_weight="1"
                             android:text="0/10 workouts"
                             android:textColor="@color/text_primary"
-                            android:textSize="20sp"
+                            android:textSize="@dimen/text_size_large"
                             android:textStyle="bold"
                             android:fontFamily="sans-serif-medium"/>
 
@@ -138,7 +138,7 @@
                             android:layout_height="wrap_content"
                             android:text="Goal: 10"
                             android:textColor="@color/text_secondary"
-                            android:textSize="14sp"
+                            android:textSize="@dimen/text_size_small"
                             android:fontFamily="sans-serif"/>
                     </LinearLayout>
 
@@ -158,9 +158,9 @@
             android:id="@+id/card_motivation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="8dp"
+            android:layout_marginTop="@dimen/spacing_large"
+            app:cardCornerRadius="@dimen/card_corner_radius"
+            app:cardElevation="@dimen/card_elevation"
             app:cardBackgroundColor="@color/theme_purple"
             app:layout_constraintTop_toBottomOf="@id/card_main_stats"
             app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +170,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp"
+                android:padding="@dimen/card_padding"
                 android:gravity="center">
 
                 <TextView
@@ -179,11 +179,11 @@
                     android:layout_height="wrap_content"
                     android:text="🌟 Keep Going! 🌟"
                     android:textColor="@color/white"
-                    android:textSize="24sp"
+                    android:textSize="@dimen/text_size_xlarge"
                     android:textStyle="bold"
                     android:gravity="center"
                     android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="12dp"/>
+                    android:layout_marginBottom="@dimen/spacing_small"/>
 
                 <TextView
                     android:id="@+id/text_motivation_message"
@@ -191,7 +191,7 @@
                     android:layout_height="wrap_content"
                     android:text="Every workout brings you closer to your goals. Stay consistent and watch your progress grow!"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_size_medium"
                     android:gravity="center"
                     android:alpha="0.95"
                     android:lineSpacingExtra="4dp"
@@ -205,7 +205,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/spacing_large"
             app:layout_constraintTop_toBottomOf="@id/card_motivation"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">

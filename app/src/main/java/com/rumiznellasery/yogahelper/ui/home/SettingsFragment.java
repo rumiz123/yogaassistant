@@ -27,6 +27,7 @@ import com.rumiznellasery.yogahelper.utils.DeveloperMode;
 import com.rumiznellasery.yogahelper.utils.Logger;
 import com.rumiznellasery.yogahelper.utils.BadgeManager;
 import com.rumiznellasery.yogahelper.ui.badges.BadgesShowcaseAdapter;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -384,7 +385,7 @@ public class SettingsFragment extends Fragment {
     }
 
     private void showDeleteAccountDialog() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
             .setTitle("Delete Account")
             .setMessage("Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently lost.")
             .setPositiveButton("Delete", (dialog, which) -> deleteAccount())
@@ -464,7 +465,7 @@ public class SettingsFragment extends Fragment {
 
     private void setupLogout() {
         binding.buttonLogout.setOnClickListener(v -> {
-            new AlertDialog.Builder(requireContext())
+            new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Logout")
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Logout", (dialog, which) -> logout())

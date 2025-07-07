@@ -28,6 +28,8 @@ import com.rumiznellasery.yogahelper.R;
 import android.widget.TextView;
 import android.widget.LinearLayout;
 import com.rumiznellasery.yogahelper.utils.Logger;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import androidx.appcompat.app.AlertDialog;
     
 public class DashboardFragment extends Fragment {
 
@@ -236,16 +238,13 @@ public class DashboardFragment extends Fragment {
     }
 
     private void showAchievementNotification(String title, String message) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle(title);
         builder.setMessage(message);
         builder.setPositiveButton("Awesome!", null);
         builder.setCancelable(false);
-        
-        android.app.AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
         dialog.show();
-        
-        // Auto-dismiss after 3 seconds
         new android.os.Handler().postDelayed(() -> {
             if (dialog.isShowing()) {
                 dialog.dismiss();
@@ -381,27 +380,21 @@ public class DashboardFragment extends Fragment {
     }
 
     private void showQuickTimerDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
-        builder.setTitle("⏱️ Quick Timer");
-        
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("\u23f1\ufe0f Quick Timer");
         android.view.View dialogView = android.view.LayoutInflater.from(requireContext()).inflate(android.R.layout.simple_list_item_1, null);
         android.widget.ListView listView = new android.widget.ListView(requireContext());
-        
         String[] timerOptions = {"5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes"};
         android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, timerOptions);
         listView.setAdapter(adapter);
-        
         builder.setView(listView);
         builder.setNegativeButton("Cancel", null);
-        
-        android.app.AlertDialog dialog = builder.create();
-        
+        AlertDialog dialog = builder.create();
         listView.setOnItemClickListener((parent, view, position, id) -> {
             int minutes = (position + 1) * 5;
             startQuickTimer(minutes);
             dialog.dismiss();
         });
-        
         dialog.show();
     }
     
@@ -411,33 +404,28 @@ public class DashboardFragment extends Fragment {
     }
     
     private void showPoseGuideDialog() {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
-        builder.setTitle("🧘 Pose Guide");
-        
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("\ud83e\uddd8 Pose Guide");
         String[] poses = {
             "Mountain Pose (Tadasana)",
-            "Cobra Pose (Bhujangasana)", 
+            "Cobra Pose (Bhujangasana)",
             "Tree Pose (Vrikshasana)",
             "Downward Dog (Adho Mukha Svanasana)",
             "Child's Pose (Balasana)"
         };
-        
         builder.setItems(poses, (dialog, which) -> {
             showPoseInstructions(poses[which]);
         });
-        
         builder.setNegativeButton("Close", null);
         builder.show();
     }
     
     private void showPoseInstructions(String poseName) {
         String instructions = getPoseInstructions(poseName);
-        
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle(poseName);
         builder.setMessage(instructions);
         builder.setPositiveButton("Practice Now", (dialog, which) -> {
-            // TODO: Launch pose practice mode
             android.widget.Toast.makeText(requireContext(), "Launching " + poseName + " practice", android.widget.Toast.LENGTH_SHORT).show();
         });
         builder.setNegativeButton("Close", null);
@@ -468,8 +456,7 @@ public class DashboardFragment extends Fragment {
         int currentStreak = statsPrefs.getInt("streak", 0);
         int longestStreak = statsPrefs.getInt("longest_streak", 0);
         int workoutsThisWeek = getWeeklyWorkouts(statsPrefs);
-        
-        String historyText = "📊 Workout History\n\n" +
+        String historyText = "\ud83d\udcca Workout History\n\n" +
             "Total Workouts: " + totalWorkouts + "\n" +
             "Current Streak: " + currentStreak + " days\n" +
             "Longest Streak: " + longestStreak + " days\n" +
@@ -485,27 +472,19 @@ public class DashboardFragment extends Fragment {
             historyText += "🚀 Time to begin your yoga journey! 🚀\n";
         }
         
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
-        builder.setTitle("📈 Workout History");
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle("Workout History");
         builder.setMessage(historyText);
-        builder.setPositiveButton("Start New Workout", (dialog, which) -> {
-            // Launch workout
-            android.content.Intent intent = new android.content.Intent(requireContext(), com.rumiznellasery.yogahelper.camera.PoseInstructionsActivity.class);
-            startActivity(intent);
-        });
-        builder.setNegativeButton("Close", null);
+        builder.setPositiveButton("Close", null);
         builder.show();
     }
     
     private void showQuickSettingsDialog() {
         SharedPreferences prefs = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE);
-        
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(requireContext());
         builder.setTitle("⚙️ Quick Settings");
-        
         android.view.View dialogView = android.view.LayoutInflater.from(requireContext()).inflate(android.R.layout.simple_list_item_1, null);
         android.widget.ListView listView = new android.widget.ListView(requireContext());
-        
         String[] settingsOptions = {
             "🔔 Workout Reminders: " + (prefs.getBoolean("workout_reminders", false) ? "ON" : "OFF"),
             "🌙 Dark Mode: " + (prefs.getBoolean("dark_mode", false) ? "ON" : "OFF"),
@@ -513,27 +492,21 @@ public class DashboardFragment extends Fragment {
             "🎯 Badge Notifications: " + (prefs.getBoolean("badge_notifications", true) ? "ON" : "OFF"),
             "👥 Friend Activity: " + (prefs.getBoolean("friend_activity", true) ? "ON" : "OFF")
         };
-        
         android.widget.ArrayAdapter<String> adapter = new android.widget.ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, settingsOptions);
         listView.setAdapter(adapter);
-        
         builder.setView(listView);
         builder.setNegativeButton("Close", null);
         builder.setPositiveButton("Full Settings", (dialog, which) -> {
-            // Switch to settings tab
             com.google.android.material.bottomnavigation.BottomNavigationView bottomNav = 
                 requireActivity().findViewById(R.id.nav_view);
             bottomNav.setSelectedItemId(R.id.navigation_home);
         });
-        
-        android.app.AlertDialog dialog = builder.create();
-        
+        AlertDialog dialog = builder.create();
         listView.setOnItemClickListener((parent, view, position, id) -> {
             toggleQuickSetting(position, prefs);
             dialog.dismiss();
-            showQuickSettingsDialog(); // Refresh the dialog
+            showQuickSettingsDialog();
         });
-        
         dialog.show();
     }
     

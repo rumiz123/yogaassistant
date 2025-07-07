@@ -1,6 +1,5 @@
 package com.rumiznellasery.yogahelper.ui.leaderboard;
 
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -26,6 +26,7 @@ import com.rumiznellasery.yogahelper.R;
 import com.rumiznellasery.yogahelper.databinding.FragmentLeaderboardBinding;
 import com.rumiznellasery.yogahelper.data.DbKeys;
 import com.rumiznellasery.yogahelper.utils.DeveloperMode;
+import androidx.appcompat.app.AlertDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -131,8 +132,7 @@ public class LeaderboardFragment extends Fragment {
     
     private void showDeveloperOptionsDialog(int position) {
         String[] options = {"Edit Score", "Reset Leaderboard"};
-        
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
             .setTitle("Developer Options")
             .setItems(options, (dialog, which) -> {
                 switch (which) {
@@ -152,53 +152,43 @@ public class LeaderboardFragment extends Fragment {
         if (position >= entries.size() || position >= userIds.size()) {
             return;
         }
-        
         Entry entry = entries.get(position);
         String userId = userIds.get(position);
-        
         View dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_edit_user_score, null);
-        
         TextView tvUserName = dialogView.findViewById(R.id.tvUserName);
         EditText etNewScore = dialogView.findViewById(R.id.etNewScore);
         EditText etNewLevel = dialogView.findViewById(R.id.etNewLevel);
         MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
         MaterialButton btnUpdate = dialogView.findViewById(R.id.btnUpdate);
-        
         tvUserName.setText("User: " + (entry.name != null ? entry.name : "Unknown"));
         etNewScore.setText(String.valueOf(entry.score));
         etNewLevel.setText(String.valueOf(entry.level));
-        
-        AlertDialog dialog = new AlertDialog.Builder(requireContext())
+        final AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
             .create();
-        
         btnCancel.setOnClickListener(v -> dialog.dismiss());
         btnUpdate.setOnClickListener(v -> {
             try {
                 int newScore = Integer.parseInt(etNewScore.getText().toString());
                 int newLevel = Integer.parseInt(etNewLevel.getText().toString());
-                
                 DeveloperMode.updateUserScore(requireContext(), userId, newScore, newLevel);
                 dialog.dismiss();
-                
-                // Reload data after update
                 loadData();
             } catch (NumberFormatException e) {
                 Toast.makeText(requireContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
             }
         });
-        
         dialog.show();
     }
     
     private void showResetConfirmationDialog() {
-        new AlertDialog.Builder(requireContext())
+        new MaterialAlertDialogBuilder(requireContext())
             .setTitle("Reset Leaderboard")
             .setMessage("Are you sure you want to reset all scores to 0? This action cannot be undone.")
             .setPositiveButton("Reset", (dialog, which) -> {
                 DeveloperMode.resetLeaderboard(requireContext());
-                loadData(); // Reload data after reset
+                loadData();
             })
             .setNegativeButton("Cancel", null)
             .show();
