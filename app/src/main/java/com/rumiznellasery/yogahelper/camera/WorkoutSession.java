@@ -65,7 +65,7 @@ public class WorkoutSession {
     
     private List<Pose> createWorkoutPoses() {
         List<Pose> poses = new ArrayList<>();
-        int defaultDuration = 10; // Shorter, achievable hold time
+        int defaultDuration = 5; // Shorter, achievable hold time
         // 1. Easy Standing Pose - Foundation
         poses.add(new Pose(
             "Mountain Pose",
