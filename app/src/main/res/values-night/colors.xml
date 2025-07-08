@@ -5,13 +5,21 @@
     <color name="purple_500">#6200EE</color>
     <color name="purple_700">#3700B3</color>
     
-    <!-- Enhanced Purple Theme -->
+    <!-- Modern Purple Theme -->
     <color name="theme_purple">#8B5CF6</color>
     <color name="theme_purple_light">#A78BFA</color>
     <color name="theme_purple_dark">#7C3AED</color>
     <color name="theme_purple_accent">#C084FC</color>
     <color name="theme_purple_gradient_start">#8B5CF6</color>
     <color name="theme_purple_gradient_end">#A78BFA</color>
+    
+    <!-- Enhanced Gradient Colors -->
+    <color name="gradient_primary_start">#667eea</color>
+    <color name="gradient_primary_end">#764ba2</color>
+    <color name="gradient_secondary_start">#f093fb</color>
+    <color name="gradient_secondary_end">#f5576c</color>
+    <color name="gradient_accent_start">#4facfe</color>
+    <color name="gradient_accent_end">#00f2fe</color>
     
     <!-- Secondary Colors -->
     <color name="teal_200">#03DAC5</color>
@@ -22,49 +30,56 @@
     <color name="white">#FFFFFF</color>
     
     <!-- Enhanced Dark Theme -->
-    <color name="theme_dark">#1A1A1A</color>
-    <color name="theme_darker">#0D0D0D</color>
-    <color name="theme_dark_surface">#2A2A2A</color>
-    <color name="theme_dark_surface_light">#333333</color>
-    <color name="theme_dark_surface_lighter">#404040</color>
+    <color name="theme_dark">#0F0F23</color>
+    <color name="theme_darker">#0A0A1A</color>
+    <color name="theme_dark_surface">#1A1A2E</color>
+    <color name="theme_dark_surface_light">#16213E</color>
+    <color name="theme_dark_surface_lighter">#0F3460</color>
     
     <!-- Background Gradients -->
-    <color name="gradient_start">#1A1A1A</color>
-    <color name="gradient_end">#2A2A2A</color>
-    <color name="gradient_accent_start">#2A2A2A</color>
-    <color name="gradient_accent_end">#404040</color>
+    <color name="gradient_start">#0F0F23</color>
+    <color name="gradient_end">#1A1A2E</color>
+    <color name="gradient_bg_accent_start">#16213E</color>
+    <color name="gradient_bg_accent_end">#0F3460</color>
     
     <!-- Card Backgrounds -->
-    <color name="card_background">#2A2A2A</color>
-    <color name="card_background_light">#333333</color>
-    <color name="card_background_lighter">#404040</color>
-    <color name="card_background_accent">#3A3A3A</color>
+    <color name="card_background">#1A1A2E</color>
+    <color name="card_background_light">#16213E</color>
+    <color name="card_background_lighter">#0F3460</color>
+    <color name="card_background_accent">#533483</color>
+    <color name="card_background_glass">#1A1A2E80</color>
     
     <!-- Text Colors -->
     <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#B3B3B3</color>
-    <color name="text_tertiary">#808080</color>
-    <color name="text_secondary_alpha">#33B3B3B3</color>
+    <color name="text_secondary">#E2E8F0</color>
+    <color name="text_tertiary">#94A3B8</color>
+    <color name="text_secondary_alpha">#33E2E8F0</color>
     <color name="text_accent">#A78BFA</color>
+    <color name="text_gradient">#8B5CF6</color>
     
     <!-- Interactive Elements -->
     <color name="button_primary">#8B5CF6</color>
     <color name="button_primary_pressed">#7C3AED</color>
-    <color name="button_secondary">#404040</color>
-    <color name="button_secondary_pressed">#333333</color>
+    <color name="button_secondary">#16213E</color>
+    <color name="button_secondary_pressed">#0F3460</color>
+    <color name="button_accent">#4F46E5</color>
+    <color name="button_success">#10B981</color>
+    <color name="button_warning">#F59E0B</color>
+    <color name="button_danger">#EF4444</color>
     
     <!-- Progress and Status -->
     <color name="progress_purple">#8B5CF6</color>
-    <color name="progress_background">#404040</color>
+    <color name="progress_background">#16213E</color>
     <color name="success_green">#10B981</color>
     <color name="warning_orange">#F59E0B</color>
     <color name="error_red">#EF4444</color>
+    <color name="info_blue">#3B82F6</color>
     
     <!-- Leaderboard Colors -->
     <color name="medal_gold">#FFD700</color>
     <color name="medal_silver">#C0C0C0</color>
     <color name="medal_bronze">#CD7F32</color>
-    <color name="medal_bg">#404040</color>
+    <color name="medal_bg">#16213E</color>
     
     <!-- Special Actions -->
     <color name="red_logout">#EF4444</color>
@@ -75,4 +90,17 @@
     <color name="learning_green">#10B981</color>
     <color name="learning_yellow">#F59E0B</color>
     <color name="learning_purple">#8B5CF6</color>
+    <color name="learning_pink">#EC4899</color>
+    <color name="learning_orange">#F97316</color>
+    
+    <!-- Glass Effect Colors -->
+    <color name="glass_primary">#1A1A2E80</color>
+    <color name="glass_secondary">#16213E80</color>
+    <color name="glass_accent">#53348380</color>
+    
+    <!-- Additional Colors -->
+    <color name="red">#EF4444</color>
+    <color name="transparent">#00000000</color>
+    <color name="overlay_dark">#00000080</color>
+    <color name="overlay_light">#FFFFFF20</color>
 </resources>

@@ -594,16 +594,16 @@ public class HomeFragment extends Fragment {
             SharedPreferences prefs = requireContext().getSharedPreferences("stats", android.content.Context.MODE_PRIVATE);
             int totalWorkouts = prefs.getInt("workouts", 0);
             int currentStreak = prefs.getInt("streak", 0);
-            int totalCalories = prefs.getInt("calories", 0);
+            int bestScore = prefs.getInt("best_score", 0);
             
             // Update stats
-            binding.textTotalWorkouts.setText(String.valueOf(totalWorkouts));
+            binding.textWorkoutsCompleted.setText(String.valueOf(totalWorkouts));
             binding.textCurrentStreak.setText(String.valueOf(currentStreak));
-            binding.textTotalCalories.setText(String.valueOf(totalCalories));
+            binding.textBestScore.setText(String.valueOf(bestScore));
             
             // Add click listeners for detailed stats
             binding.cardQuickStats.setOnClickListener(v -> {
-                showDetailedStatsDialog(totalWorkouts, currentStreak, totalCalories);
+                showDetailedStatsDialog(totalWorkouts, currentStreak, bestScore);
             });
         } catch (Exception e) {
             Logger.error("Error in setupQuickStats", e);
@@ -699,7 +699,7 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void showDetailedStatsDialog(int totalWorkouts, int currentStreak, int totalCalories) {
+    private void showDetailedStatsDialog(int totalWorkouts, int currentStreak, int bestScore) {
         try {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(requireContext());
             builder.setTitle("📊 Your Detailed Stats");
@@ -708,13 +708,13 @@ public class HomeFragment extends Fragment {
                 "🏃‍♀️ Total Workouts: %d\n\n" +
                 "🔥 Current Streak: %d days\n\n" +
                 "🔥 Longest Streak: %d days\n\n" +
-                "⚡ Calories Burned: %d\n\n" +
+                "⭐ Best Score: %d\n\n" +
                 "⏱️ Total Time: %d minutes\n\n" +
                 "🏆 Level: %d",
                 totalWorkouts,
                 currentStreak,
                 Math.max(currentStreak, requireContext().getSharedPreferences("stats", android.content.Context.MODE_PRIVATE).getInt("longest_streak", 0)),
-                totalCalories,
+                bestScore,
                 totalWorkouts * 15, // Assuming 15 minutes per workout
                 (totalWorkouts / 10) + 1 // Simple level calculation
             );
@@ -722,7 +722,7 @@ public class HomeFragment extends Fragment {
             builder.setMessage(statsText);
             builder.setPositiveButton("Close", null);
             builder.setNegativeButton("Share", (dialog, which) -> {
-                shareStats(totalWorkouts, currentStreak, totalCalories);
+                shareStats(totalWorkouts, currentStreak, bestScore);
             });
             
             builder.show();
@@ -791,15 +791,15 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    private void shareStats(int totalWorkouts, int currentStreak, int totalCalories) {
+    private void shareStats(int totalWorkouts, int currentStreak, int bestScore) {
         try {
             String shareText = String.format(
                 "Check out my yoga progress! 🧘‍♀️\n\n" +
                 "🏃‍♀️ Total Workouts: %d\n" +
                 "🔥 Current Streak: %d days\n" +
-                "⚡ Calories Burned: %d\n\n" +
+                "⭐ Best Score: %d\n\n" +
                 "Join me on YogaHelper!",
-                totalWorkouts, currentStreak, totalCalories
+                totalWorkouts, currentStreak, bestScore
             );
             
             Intent shareIntent = new Intent(Intent.ACTION_SEND);

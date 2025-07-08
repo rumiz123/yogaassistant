@@ -193,16 +193,16 @@ public class BadgeManager {
     }
 
     private void onBadgeUnlocked(Badge badge) {
-        // Show notification
-        SharedPreferences prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
-        boolean notificationsEnabled = prefs.getBoolean("badge_notifications", true);
+        // Show notification - DISABLED
+        // SharedPreferences prefs = context.getSharedPreferences("settings", Context.MODE_PRIVATE);
+        // boolean notificationsEnabled = prefs.getBoolean("badge_notifications", true);
         
-        if (notificationsEnabled) {
-            String rarityEmoji = getRarityEmoji(badge.rarity);
-            Toast.makeText(context, 
-                rarityEmoji + " Badge Unlocked: " + badge.title + "! " + rarityEmoji, 
-                Toast.LENGTH_LONG).show();
-        }
+        // if (notificationsEnabled) {
+        //     String rarityEmoji = getRarityEmoji(badge.rarity);
+        //     Toast.makeText(context, 
+        //         rarityEmoji + " Badge Unlocked: " + badge.title + "! " + rarityEmoji, 
+        //         Toast.LENGTH_LONG).show();
+        // }
 
         // Save to Firebase
         saveBadgeToFirebase(badge);

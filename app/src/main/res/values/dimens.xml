@@ -1,35 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Spacing -->
+    <!-- Spacing - Enhanced for better visual hierarchy -->
+    <dimen name="spacing_xsmall">4dp</dimen>
     <dimen name="spacing_small">8dp</dimen>
     <dimen name="spacing_medium">16dp</dimen>
     <dimen name="spacing_large">24dp</dimen>
     <dimen name="spacing_xlarge">32dp</dimen>
+    <dimen name="spacing_xxlarge">48dp</dimen>
     
-    <!-- Card dimensions -->
-    <dimen name="card_corner_radius">20dp</dimen>
-    <dimen name="card_elevation">12dp</dimen>
-    <dimen name="card_padding">20dp</dimen>
+    <!-- Card dimensions - More modern -->
+    <dimen name="card_corner_radius">24dp</dimen>
+    <dimen name="card_elevation">16dp</dimen>
+    <dimen name="card_padding">24dp</dimen>
+    <dimen name="card_padding_small">16dp</dimen>
+    <dimen name="card_padding_large">32dp</dimen>
     
-    <!-- Button dimensions -->
+    <!-- Button dimensions - Better touch targets -->
     <dimen name="button_height">56dp</dimen>
-    <dimen name="button_corner_radius">24dp</dimen>
-    <dimen name="button_padding">16dp</dimen>
+    <dimen name="button_height_small">48dp</dimen>
+    <dimen name="button_corner_radius">28dp</dimen>
+    <dimen name="button_padding">24dp</dimen>
+    <dimen name="button_padding_small">16dp</dimen>
     
-    <!-- Text sizes -->
+    <!-- Text sizes - Improved hierarchy -->
+    <dimen name="text_size_xsmall">12sp</dimen>
     <dimen name="text_size_small">14sp</dimen>
     <dimen name="text_size_medium">16sp</dimen>
     <dimen name="text_size_large">20sp</dimen>
-    <dimen name="text_size_xlarge">28sp</dimen>
+    <dimen name="text_size_xlarge">24sp</dimen>
     <dimen name="text_size_xxlarge">32sp</dimen>
+    <dimen name="text_size_display">40sp</dimen>
     
-    <!-- Icon sizes -->
+    <!-- Icon sizes - Better proportions -->
+    <dimen name="icon_size_xsmall">16dp</dimen>
     <dimen name="icon_size_small">24dp</dimen>
     <dimen name="icon_size_medium">32dp</dimen>
     <dimen name="icon_size_large">48dp</dimen>
+    <dimen name="icon_size_xlarge">64dp</dimen>
     
-    <!-- Avatar sizes -->
+    <!-- Avatar sizes - More variety -->
+    <dimen name="avatar_size_xsmall">32dp</dimen>
     <dimen name="avatar_size_small">40dp</dimen>
     <dimen name="avatar_size_medium">56dp</dimen>
     <dimen name="avatar_size_large">80dp</dimen>
+    <dimen name="avatar_size_xlarge">120dp</dimen>
+    
+    <!-- Dialog dimensions -->
+    <dimen name="dialog_corner_radius">28dp</dimen>
+    <dimen name="dialog_padding">24dp</dimen>
+    <dimen name="dialog_margin">24dp</dimen>
+    
+    <!-- Bottom navigation -->
+    <dimen name="bottom_nav_height">80dp</dimen>
+    <dimen name="bottom_nav_padding">16dp</dimen>
+    
+    <!-- Progress indicators -->
+    <dimen name="progress_stroke_width">8dp</dimen>
+    <dimen name="progress_size">120dp</dimen>
+    
+    <!-- Chip dimensions -->
+    <dimen name="chip_height">40dp</dimen>
+    <dimen name="chip_corner_radius">20dp</dimen>
+    <dimen name="chip_padding">16dp</dimen>
+    
+    <!-- Input field dimensions -->
+    <dimen name="input_height">56dp</dimen>
+    <dimen name="input_corner_radius">16dp</dimen>
+    <dimen name="input_padding">16dp</dimen>
+    
+    <!-- List item dimensions -->
+    <dimen name="list_item_height">72dp</dimen>
+    <dimen name="list_item_padding">16dp</dimen>
+    
+    <!-- Floating action button -->
+    <dimen name="fab_size">56dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
 </resources>

@@ -4,71 +4,86 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="8dp"
-    android:layout_margin="16dp"
-    android:backgroundTint="@color/card_background_light">
+    app:cardCornerRadius="@dimen/dialog_corner_radius"
+    app:cardElevation="24dp"
+    android:layout_margin="@dimen/dialog_margin"
+    app:cardBackgroundColor="@color/card_background">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="24dp">
+        android:padding="@dimen/dialog_padding">
 
+        <!-- Header -->
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Edit User Score"
-            android:textSize="20sp"
+            android:text="Edit Score"
+            android:textSize="@dimen/text_size_xlarge"
             android:textStyle="bold"
             android:textColor="@color/text_primary"
-            android:gravity="center"
-            android:layout_marginBottom="16dp"
-            android:fontFamily="sans-serif-medium" />
+            android:fontFamily="sans-serif-medium"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:gravity="center" />
 
-        <TextView
-            android:id="@+id/tvUserName"
+        <!-- User Info -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="User: "
-            android:textSize="16sp"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="16dp"
-            android:gravity="center"
-            android:fontFamily="sans-serif" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:padding="@dimen/spacing_medium"
+            android:background="@drawable/glass_effect"
+            android:layout_marginStart="@dimen/spacing_medium"
+            android:layout_marginEnd="@dimen/spacing_medium">
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/image_user_avatar"
+                android:layout_width="@dimen/avatar_size_medium"
+                android:layout_height="@dimen/avatar_size_medium"
+                android:layout_marginEnd="@dimen/spacing_medium"
+                android:contentDescription="User avatar"
+                android:src="@drawable/ic_avatar_placeholder" />
+
+            <TextView
+                android:id="@+id/text_user_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="User Name"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <!-- Score Input -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="New Score">
+            android:layout_marginBottom="@dimen/spacing_large"
+            android:hint="Enter Score"
+            app:boxBackgroundColor="@color/card_background_light"
+            app:boxStrokeColor="@color/theme_purple"
+            app:hintTextColor="@color/theme_purple"
+            app:boxStrokeWidth="2dp"
+            app:cornerRadius="@dimen/input_corner_radius">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNewScore"
+                android:id="@+id/etUserScore"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
+                android:layout_height="@dimen/input_height"
                 android:textColor="@color/text_primary"
-                android:fontFamily="sans-serif" />
+                android:inputType="number"
+                android:maxLines="1"
+                android:fontFamily="sans-serif-medium" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="New Level">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNewLevel"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:textColor="@color/text_primary"
-                android:fontFamily="sans-serif" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
+        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,21 +91,20 @@
             android:gravity="end">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
+                android:id="@+id/button_cancel"
+                style="@style/Widget.App.Button.Text"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height_small"
+                android:layout_marginEnd="@dimen/spacing_medium"
                 android:text="Cancel"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_marginEnd="8dp" />
+                android:textColor="@color/text_secondary" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnUpdate"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Update"
-                style="@style/Widget.Material3.Button"
+                android:id="@+id/button_save"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height_small"
+                android:text="Save"
+                android:textColor="@color/white"
                 android:background="@drawable/button_primary_gradient" />
 
         </LinearLayout>

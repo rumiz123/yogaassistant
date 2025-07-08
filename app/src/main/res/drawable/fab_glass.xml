@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Outer glow -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/overlay_light" />
+        </shape>
+    </item>
+    <!-- Main glass background -->
+    <item android:top="1dp" android:left="1dp" android:right="1dp" android:bottom="1dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="135"
+                android:startColor="@color/theme_purple"
+                android:centerColor="@color/theme_purple_light"
+                android:endColor="@color/theme_purple_accent"
+                android:type="linear" />
+        </shape>
+    </item>
+    <!-- Inner highlight -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="135"
+                android:startColor="@color/overlay_light"
+                android:centerColor="@color/transparent"
+                android:endColor="@color/transparent"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list> 

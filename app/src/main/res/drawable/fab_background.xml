@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Shadow layer -->
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/overlay_dark" />
+        </shape>
+    </item>
+    <!-- Button background -->
+    <item android:top="2dp" android:left="2dp" android:right="2dp" android:bottom="2dp">
+        <shape android:shape="oval">
+            <gradient
+                android:angle="135"
+                android:startColor="@color/theme_purple"
+                android:centerColor="@color/theme_purple_light"
+                android:endColor="@color/theme_purple_accent"
+                android:type="linear" />
+        </shape>
+    </item>
+</layer-list> 

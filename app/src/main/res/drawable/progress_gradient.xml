@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
+    android:shape="rectangle">
     <gradient
-        android:angle="135"
+        android:angle="0"
         android:startColor="@color/theme_purple"
         android:centerColor="@color/theme_purple_light"
         android:endColor="@color/theme_purple_accent"
         android:type="linear" />
-    <stroke
-        android:width="2dp"
-        android:color="@color/overlay_light" />
-</shape>
+    <corners android:radius="@dimen/progress_stroke_width" />
+</shape> 

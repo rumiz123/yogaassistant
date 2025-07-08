@@ -4,10 +4,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="20dp"
-    app:cardElevation="8dp"
-    android:layout_margin="16dp"
-    android:backgroundTint="@color/card_background_light">
+    app:cardCornerRadius="@dimen/dialog_corner_radius"
+    app:cardElevation="24dp"
+    android:layout_margin="@dimen/dialog_margin"
+    app:cardBackgroundColor="@color/card_background">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="@dimen/dialog_padding">
 
             <!-- Header -->
             <LinearLayout
@@ -25,14 +25,14 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="@dimen/spacing_large">
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="🏆 Create Challenge"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/text_size_xlarge"
                     android:textStyle="bold"
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
@@ -44,7 +44,7 @@
                     android:layout_height="wrap_content"
                     android:text="0 friends"
                     android:textColor="@color/theme_purple"
-                    android:textSize="14sp"
+                    android:textSize="@dimen/text_size_medium"
                     android:fontFamily="sans-serif-medium" />
 
             </LinearLayout>
@@ -53,16 +53,18 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/spacing_medium"
                 android:hint="Challenge Title"
                 app:boxBackgroundColor="@color/card_background_light"
                 app:boxStrokeColor="@color/theme_purple"
-                app:hintTextColor="@color/theme_purple">
+                app:hintTextColor="@color/theme_purple"
+                app:boxStrokeWidth="2dp"
+                app:cornerRadius="@dimen/input_corner_radius">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCompetitionTitle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/input_height"
                     android:textColor="@color/text_primary"
                     android:inputType="text"
                     android:maxLines="1"
@@ -74,11 +76,13 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/spacing_large"
                 android:hint="Description (optional)"
                 app:boxBackgroundColor="@color/card_background_light"
                 app:boxStrokeColor="@color/theme_purple"
-                app:hintTextColor="@color/theme_purple">
+                app:hintTextColor="@color/theme_purple"
+                app:boxStrokeWidth="2dp"
+                app:cornerRadius="@dimen/input_corner_radius">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etCompetitionDescription"
@@ -97,16 +101,16 @@
                 android:layout_height="wrap_content"
                 android:text="Challenge Type"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="@dimen/spacing_medium" />
 
             <RadioGroup
                 android:id="@+id/rgCompetitionType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/spacing_large"
                 android:orientation="vertical">
 
                 <RadioButton
@@ -117,7 +121,8 @@
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
                     android:checked="true"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="@dimen/spacing_small"
+                    android:buttonTint="@color/theme_purple" />
 
                 <RadioButton
                     android:id="@+id/rbScore"
@@ -126,7 +131,8 @@
                     android:text="⭐ Highest Score"
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="@dimen/spacing_small"
+                    android:buttonTint="@color/theme_purple" />
 
                 <RadioButton
                     android:id="@+id/rbStreak"
@@ -135,7 +141,8 @@
                     android:text="🔥 Longest Streak"
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
-                    android:layout_marginBottom="8dp" />
+                    android:layout_marginBottom="@dimen/spacing_small"
+                    android:buttonTint="@color/theme_purple" />
 
             </RadioGroup>
 
@@ -145,16 +152,16 @@
                 android:layout_height="wrap_content"
                 android:text="Duration"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="@dimen/spacing_medium" />
 
             <RadioGroup
                 android:id="@+id/rgDuration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="@dimen/spacing_large"
                 android:orientation="horizontal">
 
                 <RadioButton
@@ -165,7 +172,8 @@
                     android:text="1 Day"
                     android:textColor="@color/text_primary"
                     android:fontFamily="sans-serif-medium"
-                    android:checked="true" />
+                    android:checked="true"
+                    android:buttonTint="@color/theme_purple" />
 
                 <RadioButton
                     android:id="@+id/rb3Days"
@@ -174,7 +182,8 @@
                     android:layout_weight="1"
                     android:text="3 Days"
                     android:textColor="@color/text_primary"
-                    android:fontFamily="sans-serif-medium" />
+                    android:fontFamily="sans-serif-medium"
+                    android:buttonTint="@color/theme_purple" />
 
                 <RadioButton
                     android:id="@+id/rb1Week"
@@ -183,7 +192,8 @@
                     android:layout_weight="1"
                     android:text="1 Week"
                     android:textColor="@color/text_primary"
-                    android:fontFamily="sans-serif-medium" />
+                    android:fontFamily="sans-serif-medium"
+                    android:buttonTint="@color/theme_purple" />
 
             </RadioGroup>
 
@@ -193,10 +203,10 @@
                 android:layout_height="wrap_content"
                 android:text="Select Friends"
                 android:textColor="@color/text_primary"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_size_medium"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
-                android:layout_marginBottom="12dp" />
+                android:layout_marginBottom="@dimen/spacing_medium" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFriendsSelection"

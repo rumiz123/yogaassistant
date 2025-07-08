@@ -15,6 +15,7 @@
         <item name="android:statusBarColor">@color/theme_dark</item>
         <item name="android:navigationBarColor">@color/theme_dark</item>
         <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
         
         <!-- Background colors -->
         <item name="android:colorBackground">@color/theme_dark</item>
@@ -27,14 +28,21 @@
         
         <!-- Card and elevation -->
         <item name="cardBackgroundColor">@color/card_background</item>
-        <item name="cardElevation">8dp</item>
-        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">16dp</item>
+        <item name="cardCornerRadius">24dp</item>
         
         <!-- Button styles -->
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="materialButtonOutlinedStyle">@style/Widget.App.Button.Outlined</item>
         
         <!-- Bottom navigation -->
         <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
+        
+        <!-- Text Input Layout -->
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+        
+        <!-- Chip styles -->
+        <item name="chipStyle">@style/Widget.App.Chip</item>
         
         <!-- Customize your theme here. -->
     </style>
@@ -42,11 +50,39 @@
     <!-- Custom Button Style -->
     <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/white</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="cornerRadius">24dp</item>
-        <item name="elevation">4dp</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="elevation">8dp</item>
         <item name="rippleColor">@color/theme_purple_accent</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="backgroundTint">@color/button_primary</item>
+    </style>
+    
+    <!-- Outlined Button Style -->
+    <style name="Widget.App.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/theme_purple</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="cornerRadius">28dp</item>
+        <item name="strokeColor">@color/theme_purple</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:minHeight">56dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+    </style>
+    
+    <!-- Text Button Style -->
+    <style name="Widget.App.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/theme_purple</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="rippleColor">@color/theme_purple_accent</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
     </style>
     
     <!-- Custom Bottom Navigation Style -->
@@ -54,9 +90,46 @@
         <item name="android:background">@color/card_background</item>
         <item name="itemIconTint">@color/bottom_nav_item_color</item>
         <item name="itemTextColor">@color/bottom_nav_item_color</item>
-        <item name="elevation">8dp</item>
+        <item name="elevation">16dp</item>
+        <item name="itemRippleColor">@color/theme_purple_accent</item>
+    </style>
+    
+    <!-- Custom Text Input Layout -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/card_background_light</item>
+        <item name="boxStrokeColor">@color/theme_purple</item>
+        <item name="boxStrokeWidth">2dp</item>
+        <item name="hintTextColor">@color/theme_purple</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:textColorHint">@color/text_tertiary</item>
+    </style>
+    
+    <!-- Custom Chip Style -->
+    <style name="Widget.App.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="chipBackgroundColor">@color/card_background_light</item>
+        <item name="chipStrokeColor">@color/theme_purple</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="rippleColor">@color/theme_purple_accent</item>
+        <item name="cornerRadius">20dp</item>
     </style>
     
     <!-- Bottom Navigation Item Color Selector -->
     <color name="bottom_nav_item_color">@color/bottom_nav_item_color_selector</color>
+    
+    <!-- Modern Card Style -->
+    <style name="Widget.App.Card" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/card_background</item>
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">16dp</item>
+        <item name="contentPadding">20dp</item>
+    </style>
+    
+    <!-- Glass Effect Card Style -->
+    <style name="Widget.App.Card.Glass" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@color/glass_primary</item>
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="contentPadding">20dp</item>
+    </style>
 </resources>

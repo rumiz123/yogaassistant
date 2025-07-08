@@ -156,14 +156,12 @@ public class LeaderboardFragment extends Fragment {
         String userId = userIds.get(position);
         View dialogView = LayoutInflater.from(requireContext())
             .inflate(R.layout.dialog_edit_user_score, null);
-        TextView tvUserName = dialogView.findViewById(R.id.tvUserName);
-        EditText etNewScore = dialogView.findViewById(R.id.etNewScore);
-        EditText etNewLevel = dialogView.findViewById(R.id.etNewLevel);
-        MaterialButton btnCancel = dialogView.findViewById(R.id.btnCancel);
-        MaterialButton btnUpdate = dialogView.findViewById(R.id.btnUpdate);
-        tvUserName.setText("User: " + (entry.name != null ? entry.name : "Unknown"));
+        TextView tvUserName = dialogView.findViewById(R.id.text_user_name);
+        EditText etNewScore = dialogView.findViewById(R.id.etUserScore);
+        MaterialButton btnCancel = dialogView.findViewById(R.id.button_cancel);
+        MaterialButton btnUpdate = dialogView.findViewById(R.id.button_save);
+        tvUserName.setText(entry.name != null ? entry.name : "Unknown User");
         etNewScore.setText(String.valueOf(entry.score));
-        etNewLevel.setText(String.valueOf(entry.level));
         final AlertDialog dialog = new MaterialAlertDialogBuilder(requireContext())
             .setView(dialogView)
             .create();
@@ -171,12 +169,11 @@ public class LeaderboardFragment extends Fragment {
         btnUpdate.setOnClickListener(v -> {
             try {
                 int newScore = Integer.parseInt(etNewScore.getText().toString());
-                int newLevel = Integer.parseInt(etNewLevel.getText().toString());
-                DeveloperMode.updateUserScore(requireContext(), userId, newScore, newLevel);
+                DeveloperMode.updateUserScore(requireContext(), userId, newScore, entry.level);
                 dialog.dismiss();
                 loadData();
             } catch (NumberFormatException e) {
-                Toast.makeText(requireContext(), "Please enter valid numbers", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Please enter a valid score", Toast.LENGTH_SHORT).show();
             }
         });
         dialog.show();

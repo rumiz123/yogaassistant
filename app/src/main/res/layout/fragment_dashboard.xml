@@ -29,7 +29,7 @@
             android:layout_marginTop="@dimen/spacing_large"/>
 
         <!-- Main Stats Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_main_stats"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -151,10 +151,10 @@
                         app:trackColor="@color/progress_background"/>
                 </LinearLayout>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Motivational Card -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_motivation"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -197,7 +197,7 @@
                     android:lineSpacingExtra="4dp"
                     android:fontFamily="sans-serif"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Quick Actions -->
         <LinearLayout
