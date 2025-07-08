@@ -121,6 +121,19 @@
                 android:fontFamily="sans-serif-medium"
                 app:cornerRadius="@dimen/button_corner_radius" />
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnChallenge"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/button_height_small"
+                android:text="Challenge"
+                android:textSize="@dimen/text_size_small"
+                android:background="@drawable/button_secondary_gradient"
+                android:textColor="@color/white"
+                android:fontFamily="sans-serif-medium"
+                app:cornerRadius="@dimen/button_corner_radius"
+                android:layout_marginStart="@dimen/spacing_small"
+                android:visibility="gone" />
+
         </LinearLayout>
 
     </LinearLayout>

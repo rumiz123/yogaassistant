@@ -74,15 +74,19 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.VH> {
                 h.btnAction2.setText("Reject");
                 h.btnAction1.setBackgroundResource(R.drawable.button_primary_gradient);
                 h.btnAction2.setBackgroundResource(R.drawable.button_red_rounded);
+                h.btnChallenge.setVisibility(View.GONE);
                 break;
                 
             case "accepted":
                 h.tvStatus.setText("Friend");
                 h.tvStatus.setTextColor(ContextCompat.getColor(ctx, R.color.success_green));
                 h.btnAction1.setVisibility(View.VISIBLE);
-                h.btnAction2.setVisibility(View.GONE);
+                h.btnAction2.setVisibility(View.VISIBLE);
                 h.btnAction1.setText("Remove");
+                h.btnAction2.setText("Challenge");
                 h.btnAction1.setBackgroundResource(R.drawable.button_red_rounded);
+                h.btnAction2.setBackgroundResource(R.drawable.button_primary_gradient);
+                h.btnChallenge.setVisibility(View.VISIBLE);
                 break;
                 
             default:
@@ -90,6 +94,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.VH> {
                 h.tvStatus.setTextColor(ContextCompat.getColor(ctx, R.color.text_secondary));
                 h.btnAction1.setVisibility(View.GONE);
                 h.btnAction2.setVisibility(View.GONE);
+                h.btnChallenge.setVisibility(View.GONE);
                 break;
         }
         
@@ -107,6 +112,10 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.VH> {
                 actionListener.onFriendAction(friend, "reject");
             }
         });
+        
+        h.btnChallenge.setOnClickListener(v -> {
+            actionListener.onFriendAction(friend, "challenge");
+        });
     }
 
     @Override
@@ -117,7 +126,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.VH> {
     static class VH extends RecyclerView.ViewHolder {
         final TextView tvName, tvDetails, tvStatus;
         final ImageView ivAvatar, ivVerified;
-        final MaterialButton btnAction1, btnAction2;
+        final MaterialButton btnAction1, btnAction2, btnChallenge;
 
         VH(View v) {
             super(v);
@@ -128,6 +137,7 @@ public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.VH> {
             ivVerified = v.findViewById(R.id.ivVerified);
             btnAction1 = v.findViewById(R.id.btnAction1);
             btnAction2 = v.findViewById(R.id.btnAction2);
+            btnChallenge = v.findViewById(R.id.btnChallenge);
         }
     }
 } 

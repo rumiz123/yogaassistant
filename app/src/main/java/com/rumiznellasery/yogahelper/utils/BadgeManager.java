@@ -27,6 +27,10 @@ public class BadgeManager {
     private final List<Badge> badges = new ArrayList<>();
     private final Map<String, Badge> badgeMap = new HashMap<>();
 
+    // Theme unlock keys
+    private static final String THEME_OCEAN = "theme_ocean";
+    private static final String THEME_FOREST = "theme_forest";
+
     private BadgeManager(Context context) {
         this.context = context.getApplicationContext();
         initializeBadges();
@@ -133,6 +137,62 @@ public class BadgeManager {
             Badge.BadgeRarity.LEGENDARY
         );
 
+        // New Gamification Badges
+        Badge poseCollector = new Badge(
+            "pose_collector",
+            "Pose Collector",
+            "Try 20 unique yoga poses.",
+            "🧘‍♂️",
+            20,
+            Badge.BadgeType.POSE_MASTERY,
+            Badge.BadgeRarity.UNCOMMON
+        );
+        Badge earlyBird = new Badge(
+            "early_bird",
+            "Early Bird",
+            "Complete 5 workouts before 7am.",
+            "🌅",
+            5,
+            Badge.BadgeType.WORKOUT_COUNT,
+            Badge.BadgeRarity.UNCOMMON
+        );
+        Badge nightOwl = new Badge(
+            "night_owl",
+            "Night Owl",
+            "Complete 5 workouts after 9pm.",
+            "🌙",
+            5,
+            Badge.BadgeType.WORKOUT_COUNT,
+            Badge.BadgeRarity.UNCOMMON
+        );
+        Badge consistencyKing = new Badge(
+            "consistency_king",
+            "Consistency King/Queen",
+            "Workout every day for 30 days.",
+            "👑",
+            30,
+            Badge.BadgeType.STREAK_DAYS,
+            Badge.BadgeRarity.LEGENDARY
+        );
+        Badge socialStar = new Badge(
+            "social_star",
+            "Social Star",
+            "Add 20 friends.",
+            "⭐",
+            20,
+            Badge.BadgeType.FRIENDS_COUNT,
+            Badge.BadgeRarity.EPIC
+        );
+        Badge challengeChamp = new Badge(
+            "challenge_champ",
+            "Challenge Champ",
+            "Win 5 friend challenges.",
+            "🏅",
+            5,
+            Badge.BadgeType.CHALLENGE_COMPLETION,
+            Badge.BadgeRarity.EPIC
+        );
+
         // Add badges to lists
         badges.add(firstWorkout);
         badges.add(weekWarrior);
@@ -143,6 +203,12 @@ public class BadgeManager {
         badges.add(poseMaster);
         badges.add(timeMaster);
         badges.add(perfectWeek);
+        badges.add(poseCollector);
+        badges.add(earlyBird);
+        badges.add(nightOwl);
+        badges.add(consistencyKing);
+        badges.add(socialStar);
+        badges.add(challengeChamp);
 
         // Create map for quick access
         for (Badge badge : badges) {
@@ -209,6 +275,13 @@ public class BadgeManager {
         
         // Save locally
         saveBadgeLocally(badge);
+
+        // Unlock themes for specific badges
+        if ("pose_collector".equals(badge.id)) {
+            unlockTheme(context, THEME_OCEAN);
+        } else if ("consistency_king".equals(badge.id)) {
+            unlockTheme(context, THEME_FOREST);
+        }
     }
 
     private String getRarityEmoji(Badge.BadgeRarity rarity) {
@@ -408,5 +481,33 @@ public class BadgeManager {
             }
         }
         return count;
+    }
+
+    // Check if all badges are unlocked
+    public boolean areAllBadgesUnlocked() {
+        for (Badge badge : badges) {
+            if (!badge.unlocked) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Call this after any badge unlock
+    public void checkSecretModeUnlock(Context context) {
+        if (areAllBadgesUnlocked()) {
+            // Unlock Secret Mode
+            SecretMode.setSecretMode(context, true);
+        }
+    }
+
+    public static boolean isThemeUnlocked(Context context, String themeKey) {
+        SharedPreferences prefs = context.getSharedPreferences(BADGES_PREFS, Context.MODE_PRIVATE);
+        return prefs.getBoolean(themeKey, false);
+    }
+
+    public static void unlockTheme(Context context, String themeKey) {
+        SharedPreferences prefs = context.getSharedPreferences(BADGES_PREFS, Context.MODE_PRIVATE);
+        prefs.edit().putBoolean(themeKey, true).apply();
     }
 } 

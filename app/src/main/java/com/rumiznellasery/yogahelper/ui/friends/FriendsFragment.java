@@ -24,6 +24,7 @@ import com.rumiznellasery.yogahelper.databinding.FragmentFriendsBinding;
 import com.rumiznellasery.yogahelper.utils.FriendsManager;
 import com.rumiznellasery.yogahelper.utils.CompetitionManager;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.rumiznellasery.yogahelper.ui.friends.ChallengesFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,14 @@ public class FriendsFragment extends Fragment {
         setupCompetitionButton();
         setupAnimations();
         loadFriends();
+
+        binding.btnViewChallenges.setOnClickListener(v -> {
+            requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.nav_host_fragment_activity_main, new ChallengesFragment())
+                .addToBackStack("challenges")
+                .commit();
+        });
 
         return binding.getRoot();
     }
@@ -202,6 +211,9 @@ public class FriendsFragment extends Fragment {
             case "remove":
                 showRemoveFriendDialog(friend);
                 break;
+            case "challenge":
+                showFriendChallengeDialog(friend);
+                break;
         }
     }
 
@@ -260,6 +272,33 @@ public class FriendsFragment extends Fragment {
         // This would open the competition creation dialog
         // For now, just show a simple message
         Toast.makeText(requireContext(), "Competition feature coming soon! You have " + acceptedFriends.size() + " friends to challenge.", Toast.LENGTH_LONG).show();
+    }
+
+    private void showFriendChallengeDialog(Friend friend) {
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_create_competition, null);
+        EditText etGoal = dialogView.findViewById(R.id.etCompetitionTitle);
+        EditText etDescription = dialogView.findViewById(R.id.etCompetitionDescription);
+        new MaterialAlertDialogBuilder(requireContext())
+            .setView(dialogView)
+            .setPositiveButton("Send Challenge", (dialog, which) -> {
+                String goal = etGoal.getText().toString().trim();
+                String desc = etDescription.getText().toString().trim();
+                int target = 1; // Default target value
+                long now = System.currentTimeMillis();
+                long week = 7 * 24 * 60 * 60 * 1000L;
+                CompetitionManager.createFriendChallenge(requireContext(), friend.userId, goal + (desc.isEmpty() ? "" : (": " + desc)), now, now + week, target, new CompetitionManager.CompetitionCreatedCallback() {
+                    @Override
+                    public void onCompetitionCreated(com.rumiznellasery.yogahelper.data.Competition competition) {
+                        Toast.makeText(requireContext(), "Challenge sent!", Toast.LENGTH_SHORT).show();
+                    }
+                    @Override
+                    public void onError(String error) {
+                        Toast.makeText(requireContext(), error, Toast.LENGTH_SHORT).show();
+                    }
+                });
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 
     private void setupAnimations() {

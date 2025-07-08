@@ -28,6 +28,9 @@ import com.rumiznellasery.yogahelper.utils.Logger;
 import com.rumiznellasery.yogahelper.utils.BadgeManager;
 import com.rumiznellasery.yogahelper.ui.badges.BadgesShowcaseAdapter;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.rumiznellasery.yogahelper.utils.SecretMode;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,6 +39,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.io.InputStream;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SettingsFragment extends Fragment {
     private FragmentSettingsBinding binding;
@@ -147,6 +152,8 @@ public class SettingsFragment extends Fragment {
         setupProfileBadgesRow();
         setupDeveloperMode();
         setupLogout();
+        setupSecretMode();
+        setupThemeSelector();
         
         return binding.getRoot();
     }
@@ -377,8 +384,6 @@ public class SettingsFragment extends Fragment {
         binding.textBadgesCount.setText(unlockedCount + "/" + totalCount);
     }
 
-
-
     private void backupData() {
         // TODO: Implement cloud backup functionality
         Toast.makeText(requireContext(), "Cloud backup feature coming soon!", Toast.LENGTH_SHORT).show();
@@ -533,6 +538,73 @@ public class SettingsFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void setupSecretMode() {
+        boolean isSecretUnlocked = SecretMode.isSecretMode(requireContext());
+        if (isSecretUnlocked) {
+            binding.layoutSecretMode.setVisibility(View.VISIBLE);
+            binding.switchSecretMode.setChecked(true);
+            binding.switchSecretMode.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SecretMode.setSecretMode(requireContext(), isChecked);
+                if (isChecked) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO); // Ensure not night
+                    requireActivity().setTheme(R.style.Theme_YogaHelper_Secret);
+                    Toast.makeText(requireContext(), "✨ Secret Mode Activated! Enjoy the magic! ✨", Toast.LENGTH_LONG).show();
+                    // Simple color flash as placeholder for confetti
+                    binding.getRoot().setBackgroundColor(getResources().getColor(R.color.secret_bg));
+                    binding.getRoot().postDelayed(() -> binding.getRoot().setBackgroundColor(getResources().getColor(R.color.theme_dark)), 800);
+                } else {
+                    requireActivity().setTheme(R.style.Theme_YogaHelper);
+                    Toast.makeText(requireContext(), "Secret Mode deactivated.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            binding.layoutSecretMode.setVisibility(View.GONE);
+        }
+    }
+
+    private void setupThemeSelector() {
+        Spinner spinner = binding.spinnerThemeSelector;
+        List<String> themeNames = new ArrayList<>();
+        List<String> themeKeys = new ArrayList<>();
+        themeNames.add("Default");
+        themeKeys.add("default");
+        if (BadgeManager.isThemeUnlocked(requireContext(), "theme_ocean")) {
+            themeNames.add("Ocean");
+            themeKeys.add("ocean");
+        }
+        if (BadgeManager.isThemeUnlocked(requireContext(), "theme_forest")) {
+            themeNames.add("Forest");
+            themeKeys.add("forest");
+        }
+        if (SecretMode.isSecretMode(requireContext())) {
+            themeNames.add("Secret");
+            themeKeys.add("secret");
+        }
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, themeNames);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        // Load saved theme
+        String savedTheme = requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE).getString("selected_theme", "default");
+        int selectedIndex = themeKeys.indexOf(savedTheme);
+        if (selectedIndex >= 0) spinner.setSelection(selectedIndex);
+        spinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, android.view.View view, int position, long id) {
+                String key = themeKeys.get(position);
+                int styleId = R.style.Theme_YogaHelper;
+                switch (key) {
+                    case "ocean": styleId = R.style.Theme_YogaHelper_Ocean; break;
+                    case "forest": styleId = R.style.Theme_YogaHelper_Forest; break;
+                    case "secret": styleId = R.style.Theme_YogaHelper_Secret; break;
+                }
+                requireActivity().setTheme(styleId);
+                requireContext().getSharedPreferences("settings", Context.MODE_PRIVATE).edit().putString("selected_theme", key).apply();
+            }
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
     }
 
     @Override

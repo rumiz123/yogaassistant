@@ -47,6 +47,39 @@
         <!-- Customize your theme here. -->
     </style>
     
+    <!-- Secret Mode Theme -->
+    <style name="Theme.YogaHelper.Secret" parent="Theme.YogaHelper">
+        <item name="colorPrimary">@color/secret_pink</item>
+        <item name="colorPrimaryVariant">@color/secret_pink_dark</item>
+        <item name="colorSecondary">@color/secret_accent</item>
+        <item name="colorSecondaryVariant">@color/secret_accent</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/secret_bg</item>
+    </style>
+    
+    <!-- Ocean Theme -->
+    <style name="Theme.YogaHelper.Ocean" parent="Theme.YogaHelper">
+        <item name="colorPrimary">@color/ocean_blue</item>
+        <item name="colorPrimaryVariant">@color/ocean_blue_dark</item>
+        <item name="colorSecondary">@color/ocean_cyan</item>
+        <item name="colorSecondaryVariant">@color/ocean_cyan_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/ocean_bg</item>
+    </style>
+    
+    <!-- Forest Theme -->
+    <style name="Theme.YogaHelper.Forest" parent="Theme.YogaHelper">
+        <item name="colorPrimary">@color/forest_green</item>
+        <item name="colorPrimaryVariant">@color/forest_green_dark</item>
+        <item name="colorSecondary">@color/forest_accent</item>
+        <item name="colorSecondaryVariant">@color/forest_accent_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="android:colorBackground">@color/forest_bg</item>
+    </style>
+    
     <!-- Custom Button Style -->
     <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
         <item name="android:textColor">@color/white</item>

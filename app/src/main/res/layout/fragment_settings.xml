@@ -685,6 +685,59 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Secret Mode Section (hidden by default) -->
+        <LinearLayout
+            android:id="@+id/layoutSecretMode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:padding="12dp"
+            android:background="@drawable/glass_effect_accent">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Secret Mode"
+                android:textColor="@color/secret_pink"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <Switch
+                android:id="@+id/switchSecretMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="false" />
+        </LinearLayout>
+
+        <!-- Theme Selector Section -->
+        <LinearLayout
+            android:id="@+id/layoutThemeSelector"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"
+            android:padding="12dp"
+            android:background="@drawable/glass_effect_enhanced">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="App Theme"
+                android:textColor="@color/text_primary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <Spinner
+                android:id="@+id/spinnerThemeSelector"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:spinnerMode="dropdown" />
+        </LinearLayout>
+
     <!-- Logout Button -->
         <com.google.android.material.button.MaterialButton
         android:id="@+id/button_logout"

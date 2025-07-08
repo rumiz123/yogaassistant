@@ -243,4 +243,13 @@ public class CompetitionManager {
             }
         });
     }
+    
+    public static void createFriendChallenge(Context context, String friendId, String goalDescription, long startTime, long endTime, int targetValue, CompetitionCreatedCallback callback) {
+        List<String> friendIds = new ArrayList<>();
+        friendIds.add(friendId);
+        String title = "Friend Challenge";
+        String description = goalDescription;
+        String type = "friend_challenge";
+        createCompetition(context, title, description, startTime, endTime, type, targetValue, friendIds, callback);
+    }
 } 

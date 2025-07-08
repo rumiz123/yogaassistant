@@ -103,4 +103,24 @@
     <color name="transparent">#00000000</color>
     <color name="overlay_dark">#00000080</color>
     <color name="overlay_light">#FFFFFF20</color>
+    
+    <!-- Playful Colors for Secret Mode -->
+    <color name="secret_pink">#FF69B4</color>
+    <color name="secret_pink_dark">#C2185B</color>
+    <color name="secret_accent">#FFD600</color>
+    <color name="secret_bg">#FFF0F8FF</color>
+    
+    <!-- Ocean Theme Colors -->
+    <color name="ocean_blue">#2196F3</color>
+    <color name="ocean_blue_dark">#1565C0</color>
+    <color name="ocean_cyan">#00BCD4</color>
+    <color name="ocean_cyan_dark">#00838F</color>
+    <color name="ocean_bg">#E3F2FD</color>
+    
+    <!-- Forest Theme Colors -->
+    <color name="forest_green">#388E3C</color>
+    <color name="forest_green_dark">#1B5E20</color>
+    <color name="forest_accent">#8BC34A</color>
+    <color name="forest_accent_dark">#558B2F</color>
+    <color name="forest_bg">#E8F5E9</color>
 </resources>
